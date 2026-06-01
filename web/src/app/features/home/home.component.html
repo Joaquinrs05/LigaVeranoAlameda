@@ -4,59 +4,75 @@
   class="pt-24 pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-[1440px] mx-auto"
 >
   <div class="flex flex-col gap-lg">
-    <!-- ── SECCIÓN 1: Partidos en directo ── -->
+
+    <!-- ── SECCIÓN 1: Partidos ── -->
     <section class="flex flex-col gap-md">
-      <div data-anim="section-1-header" class="flex items-center justify-between">
+      <div data-anim="partidos-header" class="flex items-center justify-between">
         <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
           Partidos en Directo
-          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline"
-            >| Jornada {{ jornada.numero }}</span
-          >
+          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline">| Jornada {{ jornadaNumero }}</span>
         </h2>
-        <a
-          routerLink="/clasificacion"
-          class="text-label-bold font-bold text-primary hover:underline transition-colors text-[11px] uppercase tracking-wider"
-        >
-          Ver todos
-        </a>
+        <div class="flex items-center gap-md">
+          <div class="flex gap-1">
+            <button
+              (click)="scrollCards(-1)"
+              class="w-7 h-7 rounded border border-outline flex items-center justify-center text-on-background/40 hover:text-primary hover:border-primary transition-colors"
+            >
+              <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+            </button>
+            <button
+              (click)="scrollCards(1)"
+              class="w-7 h-7 rounded border border-outline flex items-center justify-center text-on-background/40 hover:text-primary hover:border-primary transition-colors"
+            >
+              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+            </button>
+          </div>
+          <a
+            routerLink="/clasificacion"
+            class="text-label-bold font-bold text-primary hover:underline transition-colors text-[11px] uppercase tracking-wider hidden sm:block"
+          >
+            Ver todos
+          </a>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-        @for (partido of partidos; track partido.id) {
+      <div
+        #cardsScroll
+        data-anim="cards-scroll"
+        class="flex gap-md overflow-x-auto"
+        style="scrollbar-width: none; -ms-overflow-style: none"
+        (mouseenter)="pauseScroll()"
+        (mouseleave)="resumeScroll()"
+      >
+        @for (partido of partidos; track $index) {
           <div
-            data-anim="match-card"
-            class="bg-surface border rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer"
+            class="shrink-0 w-[85vw] md:w-[calc((100%-2rem)/3)] bg-surface border rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer"
             [class.border-primary]="partido.estado === 'live'"
             [class.glow-active]="partido.estado === 'live'"
             [class.border-outline]="partido.estado !== 'live'"
+            [class.opacity-60]="partido.estado === 'finished'"
             [class.opacity-70]="partido.estado === 'upcoming'"
           >
-            <!-- Estado del partido -->
-            <div
-              class="flex justify-between items-center text-[10px] uppercase tracking-widest font-bold"
-            >
+            <div class="flex justify-between items-center text-[10px] uppercase tracking-widest font-bold">
               <span class="text-on-background/50">{{
                 partido.estado === 'upcoming' ? partido.horaInicio : partido.minuto
               }}</span>
               @if (partido.estado === 'live') {
                 <span class="text-primary flex items-center gap-1">
-                  <span
-                    class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"
-                  ></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
                   EN VIVO
                 </span>
+              } @else if (partido.estado === 'finished') {
+                <span class="text-on-background/30">FINAL</span>
               } @else {
                 <span class="text-on-background/40">PRÓXIMO</span>
               }
             </div>
 
-            <!-- Equipo local -->
             <div class="flex justify-between items-center text-data-mono font-semibold">
               <div class="flex items-center gap-2">
-                <div
-                  class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-background text-[10px] font-bold shrink-0"
-                >
+                <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-background text-[10px] font-bold shrink-0">
                   {{ partido.abrevLocal }}
                 </div>
                 <span>{{ partido.equipoLocal }}</span>
@@ -68,22 +84,15 @@
               }
             </div>
 
-            <!-- Equipo visitante -->
             <div class="flex justify-between items-center text-data-mono">
               <div class="flex items-center gap-2">
-                <div
-                  class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-background text-[10px] font-bold shrink-0"
-                >
+                <div class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-background text-[10px] font-bold shrink-0">
                   {{ partido.abrevVisitante }}
                 </div>
                 <span class="text-on-background/70">{{ partido.equipoVisitante }}</span>
               </div>
               @if (partido.golesVisitante !== null) {
-                <span
-                  class="text-lg"
-                  [class.font-bold]="partido.estado === 'live'"
-                  [class.text-on-background/40]="partido.estado !== 'live'"
-                >
+                <span class="text-lg" [class.font-bold]="partido.estado === 'live'" [class.text-on-background/40]="partido.estado !== 'live'">
                   {{ partido.golesVisitante }}
                 </span>
               } @else {
@@ -95,294 +104,91 @@
       </div>
     </section>
 
-    <!-- ── SECCIÓN 2: Bento grid ── -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
-      <!-- Jornada summary (oscuro) -->
-      <div
-        data-anim="bento-left"
-        class="lg:col-span-4 bg-tertiary border border-white/10 rounded p-lg relative overflow-hidden flex flex-col justify-between min-h-[300px]"
-      >
-        <!-- Dot pattern -->
-        <div
-          class="absolute inset-0 opacity-10 pointer-events-none"
-          style="
-            background-image: radial-gradient(#ffd600 1px, transparent 1px);
-            background-size: 24px 24px;
-          "
-        ></div>
-
-        <div class="relative z-10">
-          <h3 class="text-headline-md font-semibold text-background/70 mb-2">
-            Jornada {{ jornada.numero }}
-          </h3>
-          <div class="flex items-baseline gap-2">
-            <span #pointsDisplay class="text-display-lg font-bold text-secondary leading-none"
-              >0</span
-            >
-            <span class="text-data-mono text-background/50">pts</span>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-sm relative z-10">
-          <div class="flex justify-between items-center py-sm border-b border-white/10">
-            <span class="text-body-md text-background/70">Ranking Global</span>
-            <div class="flex items-center gap-1 text-data-mono font-semibold text-secondary">
-              <span>{{ jornada.rankGlobal | number }}</span>
-              <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
-              <span class="text-[10px]">+{{ (jornada.rankGlobalDelta / 1000).toFixed(1) }}k</span>
-            </div>
-          </div>
-          <div class="flex justify-between items-center py-sm">
-            <span class="text-body-md text-background/70">Posición Liga</span>
-            <span class="text-data-mono font-semibold text-secondary">{{
-              jornada.posicionLiga
-            }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Breaking news -->
-      <div
-        data-anim="bento-right"
-        class="lg:col-span-8 bg-surface border border-outline rounded overflow-hidden flex flex-col md:flex-row relative group shadow-sm"
-      >
-        <!-- Imagen / placeholder -->
-        <div
-          class="md:w-2/5 h-44 md:h-auto relative overflow-hidden bg-tertiary/10 flex items-center justify-center"
-        >
-          <span class="material-symbols-outlined text-[96px] text-tertiary/20">sports_soccer</span>
-          <div
-            class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-surface via-surface/70 to-transparent"
-          ></div>
-          <span
-            class="absolute top-sm left-sm bg-primary text-background font-bold text-[10px] px-2 py-1 rounded uppercase tracking-wider z-10"
-          >
-            {{ noticia.tipo }}
-          </span>
-        </div>
-
-        <!-- Texto -->
-        <div class="p-lg md:w-3/5 flex flex-col justify-center bg-surface relative z-10">
-          <span class="text-primary font-bold text-label-bold mb-2 flex items-center gap-1">
-            <span class="material-symbols-outlined text-[15px]">{{ noticia.icono }}</span>
-            {{ noticia.tipo }}
-          </span>
-          <h3 class="text-headline-md font-semibold text-on-background mb-sm leading-snug">
-            {{ noticia.titulo }}
-          </h3>
-          <p class="text-body-md text-on-background/65 line-clamp-3">
-            {{ noticia.descripcion }}
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── SECCIÓN 3: Rankings y héroes ── -->
+    <!-- ── SECCIÓN 2: Clasificación + Goleadores ── -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
-      <!-- Mini clasificación -->
-      <div
-        data-anim="bottom-left"
-        class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm"
-      >
-        <div
-          class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20"
-        >
-          <h3 class="text-headline-md font-semibold text-tertiary">Clasificación General</h3>
-          <span
-            class="material-symbols-outlined text-on-background/40 cursor-pointer hover:text-primary transition-colors"
-            >more_horiz</span
+
+      <!-- Clasificación real -->
+      <div data-anim="clasificacion" class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm">
+        <div class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20">
+          <h3 class="text-headline-md font-semibold text-tertiary">Clasificación</h3>
+          <a
+            routerLink="/clasificacion"
+            class="font-bold text-[11px] uppercase tracking-wider text-primary hover:underline transition-colors"
           >
+            Ver completa
+          </a>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr
-                class="border-b border-outline/40 text-[10px] font-bold text-on-background/50 uppercase tracking-widest bg-background/10"
-              >
-                <th class="p-sm pl-md w-10">Pos</th>
+              <tr class="border-b border-outline/40 text-[10px] font-bold text-on-background/50 uppercase tracking-widest bg-background/10">
+                <th class="p-sm pl-md w-8">#</th>
                 <th class="p-sm">Equipo</th>
-                <th class="p-sm text-center">J{{ jornada.numero }}</th>
-                <th class="p-sm pr-md text-right">Total</th>
+                <th class="p-sm text-center w-8">PJ</th>
+                <th class="p-sm text-center w-8">PG</th>
+                <th class="p-sm text-center w-8">PE</th>
+                <th class="p-sm text-center w-8">PP</th>
+                <th class="p-sm text-center w-10">GD</th>
+                <th class="p-sm pr-md text-right w-10">Pts</th>
               </tr>
             </thead>
-            <tbody class="text-data-mono font-semibold">
+            <tbody class="text-data-mono">
               @for (entry of clasificacion; track entry.posicion) {
-                <tr
-                  data-anim="ranking-row"
-                  class="border-b border-outline/20 transition-colors"
-                  [class.bg-background]="entry.esUsuario"
-                  [class.hover:bg-background/70]="entry.esUsuario"
-                  [class.hover:bg-background]="!entry.esUsuario"
-                >
-                  <td
-                    class="p-sm pl-md"
-                    [class.text-primary]="entry.esUsuario"
-                    [class.font-bold]="entry.esUsuario"
-                    [class.text-on-background/40]="!entry.esUsuario"
-                  >
-                    {{ entry.posicion }}
-                  </td>
-                  <td class="p-sm">
-                    <div
-                      class="text-body-md font-bold"
-                      [class.text-primary]="entry.esUsuario"
-                      [class.text-on-background]="!entry.esUsuario"
-                    >
-                      {{ entry.equipo }}
-                    </div>
-                    <div
-                      class="text-[10px] font-normal"
-                      [class.text-primary/60]="entry.esUsuario"
-                      [class.text-on-background/45]="!entry.esUsuario"
-                    >
-                      {{ entry.manager }}
-                    </div>
-                  </td>
-                  <td
-                    class="p-sm text-center"
-                    [class.text-primary]="entry.esUsuario"
-                    [class.text-on-background/50]="!entry.esUsuario"
-                  >
-                    {{ entry.puntosSemana }}
-                  </td>
-                  <td
-                    class="p-sm pr-md text-right font-bold"
-                    [class.text-primary]="entry.esUsuario"
-                    [class.text-on-background]="!entry.esUsuario"
-                  >
-                    {{ entry.puntosTotal | number }}
-                  </td>
+                <tr class="border-b border-outline/20 hover:bg-background/40 transition-colors">
+                  <td class="p-sm pl-md text-on-background/40 font-bold">{{ entry.posicion }}</td>
+                  <td class="p-sm font-semibold text-on-background text-body-md">{{ entry.equipo }}</td>
+                  <td class="p-sm text-center text-on-background/60">{{ entry.pj }}</td>
+                  <td class="p-sm text-center text-on-background/60">{{ entry.pg }}</td>
+                  <td class="p-sm text-center text-on-background/60">{{ entry.pe }}</td>
+                  <td class="p-sm text-center text-on-background/60">{{ entry.pp }}</td>
+                  <td class="p-sm text-center text-on-background/60">{{ entry.gf - entry.gc }}</td>
+                  <td class="p-sm pr-md text-right font-bold text-primary">{{ entry.puntos }}</td>
                 </tr>
               }
             </tbody>
           </table>
         </div>
-
-        <div class="p-sm text-center border-t border-outline/30 bg-background/20">
-          <a
-            routerLink="/clasificacion"
-            class="font-bold text-[11px] uppercase tracking-wider text-primary hover:underline transition-colors"
-          >
-            Ver clasificación completa
-          </a>
-        </div>
       </div>
 
-      <!-- Héroes de la jornada -->
-      <div
-        data-anim="bottom-right"
-        class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm"
-      >
-        <div
-          class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20"
-        >
-          <h3 class="text-headline-md font-semibold text-tertiary">Héroes de la Jornada</h3>
-          <a
-            routerLink="/fantasy/mi-equipo"
-            class="font-bold text-[10px] uppercase tracking-wider text-primary hover:underline transition-colors"
-          >
-            Ver equipo
-          </a>
+      <!-- Goleadores de la jornada -->
+      <div data-anim="goleadores" class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm">
+        <div class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20">
+          <h3 class="text-headline-md font-semibold text-tertiary">Goleadores · Jornada {{ jornadaNumero }}</h3>
         </div>
 
         <div class="p-md flex flex-col gap-sm">
-          @for (jugador of topPerformers; track jugador.id) {
-            <div
-              data-anim="performer"
-              class="flex items-center justify-between p-sm rounded border transition-colors"
-              [class.bg-tertiary]="jugador.esCaptain"
-              [class.border-white/10]="jugador.esCaptain"
-              [class.hover:bg-tertiary/90]="jugador.esCaptain"
-              [class.bg-background]="!jugador.esCaptain"
-              [class.border-outline/30]="!jugador.esCaptain"
-              [class.hover:bg-background/70]="!jugador.esCaptain"
-            >
-              <!-- Avatar + info -->
+          @for (jugador of goleadores; track jugador.id) {
+            <div class="flex items-center justify-between p-sm rounded border border-outline/30 bg-background hover:bg-background/70 transition-colors">
               <div class="flex items-center gap-md">
-                <div class="relative">
-                  <div
-                    class="w-10 h-10 rounded flex items-center justify-center border"
-                    [class.bg-background]="jugador.esCaptain"
-                    [class.border-white/20]="jugador.esCaptain"
-                    [class.bg-surface]="!jugador.esCaptain"
-                    [class.border-outline/30]="!jugador.esCaptain"
-                  >
-                    <span
-                      class="material-symbols-outlined text-[26px]"
-                      [class.text-tertiary]="!jugador.esCaptain"
-                      [class.text-primary]="jugador.esCaptain"
-                      >person</span
-                    >
-                  </div>
-                  @if (jugador.esCaptain) {
-                    <span
-                      class="absolute -bottom-1 -right-1 w-4 h-4 bg-secondary text-on-background rounded-full flex items-center justify-center text-[8px] font-bold border-2"
-                      [style.border-color]="'#1A4A2E'"
-                      >C</span
-                    >
-                  }
+                <span class="text-data-mono font-bold text-on-background/30 w-4 text-center">{{ $index + 1 }}</span>
+                <div class="w-9 h-9 rounded-full bg-tertiary/10 border border-outline/30 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[20px] text-tertiary/60">person</span>
                 </div>
                 <div class="flex flex-col">
-                  <span
-                    class="font-bold text-body-md"
-                    [class.text-background]="jugador.esCaptain"
-                    [class.text-on-background]="!jugador.esCaptain"
-                  >
-                    {{ jugador.nombre }}
-                  </span>
-                  <span
-                    class="text-[11px] text-data-mono"
-                    [class.text-background/65]="jugador.esCaptain"
-                    [class.text-on-background/55]="!jugador.esCaptain"
-                  >
-                    {{ jugador.posicion }} · {{ jugador.equipo }}
-                  </span>
+                  <span class="font-bold text-body-md text-on-background">{{ jugador.nombre }}</span>
+                  <span class="text-[11px] text-on-background/50">{{ jugador.posicion }} · {{ jugador.equipo }}</span>
                 </div>
               </div>
 
-              <!-- Puntos + stats -->
-              <div class="flex flex-col items-end gap-1">
-                <span
-                  class="text-data-mono font-bold text-lg"
-                  [class.text-secondary]="jugador.esCaptain"
-                  [class.text-primary]="!jugador.esCaptain"
-                >
-                  {{ jugador.puntos }} pts
-                </span>
-                <div class="flex gap-1">
-                  @if (jugador.goles > 0) {
-                    <span
-                      class="px-1.5 py-0.5 rounded text-[9px] font-bold border"
-                      [class.bg-white/10]="jugador.esCaptain"
-                      [class.text-background/80]="jugador.esCaptain"
-                      [class.border-white/20]="jugador.esCaptain"
-                      [class.bg-surface]="!jugador.esCaptain"
-                      [class.text-on-background/50]="!jugador.esCaptain"
-                      [class.border-outline/40]="!jugador.esCaptain"
-                    >
-                      {{ jugador.goles }}G
-                    </span>
-                  }
-                  @if (jugador.asistencias > 0) {
-                    <span
-                      class="px-1.5 py-0.5 rounded text-[9px] font-bold border"
-                      [class.bg-white/10]="jugador.esCaptain"
-                      [class.text-background/80]="jugador.esCaptain"
-                      [class.border-white/20]="jugador.esCaptain"
-                      [class.bg-surface]="!jugador.esCaptain"
-                      [class.text-on-background/50]="!jugador.esCaptain"
-                      [class.border-outline/40]="!jugador.esCaptain"
-                    >
-                      {{ jugador.asistencias }}A
-                    </span>
-                  }
-                </div>
+              <div class="flex items-center gap-1">
+                @if (jugador.goles > 0) {
+                  <span class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[11px] font-bold">
+                    {{ jugador.goles }}G
+                  </span>
+                }
+                @if (jugador.asistencias > 0) {
+                  <span class="px-2 py-0.5 rounded bg-tertiary/10 text-tertiary text-[11px] font-bold">
+                    {{ jugador.asistencias }}A
+                  </span>
+                }
               </div>
             </div>
           }
         </div>
       </div>
+
     </section>
+
   </div>
 </main>

@@ -1,71 +1,84 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, inject } from '@angular/core';
+import { NgZone } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DecimalPipe } from '@angular/common';
 import { gsap } from 'gsap';
 
 import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
 import { PARTIDOS_DATA } from '../../core/data/partidos.data';
 import { CLASIFICACION_DATA } from '../../core/data/clasificacion.data';
-import { TOP_PERFORMERS, JORNADA_STATS, NOTICIA_BREAKING } from '../../core/data/jornada.data';
+import { GOLEADORES_JORNADA } from '../../core/data/jornada.data';
 import { IPartido } from '../../core/models/partido.model';
 import { IClasificacionEntry } from '../../core/models/clasificacion.model';
-import { ITopPerformer } from '../../core/models/jugador.model';
-import { IJornadaStats, INoticia } from '../../core/models/jornada.model';
+import { IGoleadorJornada } from '../../core/models/jugador.model';
+
+const SCROLL_SPEED  = 0.6;
+const JORNADA_NUMERO = 12;
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NavbarLightComponent, RouterLink, DecimalPipe],
+  imports: [NavbarLightComponent, RouterLink],
   templateUrl: './home.component.html',
 })
-export class HomeComponent implements AfterViewInit {
-  @ViewChild('pointsDisplay') private pointsDisplayRef!: ElementRef<HTMLElement>;
+export class HomeComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('cardsScroll') private cardsScrollRef!: ElementRef<HTMLElement>;
 
-  readonly partidos: IPartido[]            = PARTIDOS_DATA;
+  private readonly zone = inject(NgZone);
+  private rafId?: number;
+
+  readonly partidos: IPartido[]                 = [...PARTIDOS_DATA, ...PARTIDOS_DATA];
   readonly clasificacion: IClasificacionEntry[] = CLASIFICACION_DATA;
-  readonly topPerformers: ITopPerformer[]  = TOP_PERFORMERS;
-  readonly jornada: IJornadaStats          = JORNADA_STATS;
-  readonly noticia: INoticia               = NOTICIA_BREAKING;
+  readonly goleadores: IGoleadorJornada[]       = GOLEADORES_JORNADA;
+  readonly jornadaNumero                        = JORNADA_NUMERO;
 
   ngAfterViewInit(): void {
     this.runEntryAnimation();
   }
 
+  ngOnDestroy(): void {
+    this.stopScroll();
+  }
+
+  pauseScroll(): void  { this.stopScroll(); }
+  resumeScroll(): void { this.startScroll(); }
+
+  scrollCards(dir: 1 | -1): void {
+    const el = this.cardsScrollRef.nativeElement;
+    const card = el.firstElementChild as HTMLElement;
+    if (!card) return;
+    el.scrollLeft += dir * (card.offsetWidth + 16);
+  }
+
   private runEntryAnimation(): void {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    gsap.timeline({ defaults: { ease: 'power3.out' } })
+      .from('[data-anim="partidos-header"]', { y: -20, opacity: 0, duration: 0.5 })
+      .from('[data-anim="cards-scroll"]',    { y: 36, opacity: 0, duration: 0.55 }, '-=0.2')
+      .from('[data-anim="clasificacion"]',   { y: 28, opacity: 0, duration: 0.45 }, '-=0.15')
+      .from('[data-anim="goleadores"]',      { y: 28, opacity: 0, duration: 0.45 }, '<0.08')
+      .call(() => this.startScroll());
+  }
 
-    tl
-      // 1. Navbar y sidebar entran primero
-      .from('[data-anim="navbar"]',    { y: -80,  opacity: 0, duration: 0.65 })
-      .from('[data-anim="sidebar"]',   { x: -300, opacity: 0, duration: 0.65 }, '-=0.4')
+  private readonly tick = (): void => {
+    const el = this.cardsScrollRef.nativeElement;
+    const halfway = el.scrollWidth / 2;
+    if (el.scrollLeft >= halfway) {
+      el.scrollLeft -= halfway;
+    } else {
+      el.scrollLeft += SCROLL_SPEED;
+    }
+    this.rafId = requestAnimationFrame(this.tick);
+  };
 
-      // 2. Cabecera de la primera sección
-      .from('[data-anim="section-1-header"]', { y: 28, opacity: 0, duration: 0.45 }, '-=0.25')
+  private startScroll(): void {
+    this.zone.runOutsideAngular(() => {
+      this.rafId = requestAnimationFrame(this.tick);
+    });
+  }
 
-      // 3. Cards de partidos en stagger
-      .from('[data-anim="match-card"]', { y: 48, opacity: 0, duration: 0.45, stagger: 0.12 }, '-=0.2')
-
-      // 4. Bento grid — izquierda y derecha con desfase
-      .from('[data-anim="bento-left"]',  { y: 40, opacity: 0, duration: 0.5 }, '-=0.2')
-      .from('[data-anim="bento-right"]', { y: 40, opacity: 0, duration: 0.5 }, '<0.12')
-
-      // 5. Sección inferior
-      .from('[data-anim="bottom-left"]',  { y: 32, opacity: 0, duration: 0.45 }, '-=0.25')
-      .from('[data-anim="bottom-right"]', { y: 32, opacity: 0, duration: 0.45 }, '<0.1')
-      .from('[data-anim="ranking-row"]',  { x: -18, opacity: 0, duration: 0.3, stagger: 0.07 }, '-=0.35')
-      .from('[data-anim="performer"]',    { y: 20,  opacity: 0, duration: 0.35, stagger: 0.1 }, '<0.05');
-
-    // Counter del marcador de la jornada
-    const el = this.pointsDisplayRef?.nativeElement;
-    if (el) {
-      const obj = { val: 0 };
-      gsap.to(obj, {
-        val: this.jornada.puntos,
-        duration: 1.8,
-        delay: 0.85,
-        ease: 'power2.out',
-        onUpdate: () => { el.textContent = String(Math.round(obj.val)); },
-      });
+  private stopScroll(): void {
+    if (this.rafId !== undefined) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = undefined;
     }
   }
 }

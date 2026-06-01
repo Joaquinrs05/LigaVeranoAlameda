@@ -1,8 +1,11 @@
 export interface IClasificacionEntry {
   posicion: number;
   equipo: string;
-  manager: string;
-  puntosSemana: number;
-  puntosTotal: number;
-  esUsuario?: boolean;
+  pj: number;
+  pg: number;
+  pe: number;
+  pp: number;
+  gf: number;
+  gc: number;
+  puntos: number;
 }
