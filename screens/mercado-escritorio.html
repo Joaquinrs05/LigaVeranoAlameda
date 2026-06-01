@@ -1,0 +1,327 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Fantasy League - Market</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Oswald:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#1b5e20",
+                      "surface-tint": "#91d78a",
+                      "surface-dim": "#10140f",
+                      "on-secondary-fixed": "#141f00",
+                      "surface-container-high": "#272b25",
+                      "surface-container-highest": "#323630",
+                      "on-primary": "#003909",
+                      "outline": "#8a9386",
+                      "inverse-on-surface": "#2d322c",
+                      "on-error": "#690005",
+                      "inverse-primary": "#2a6b2c",
+                      "surface-variant": "#323630",
+                      "primary": "#91d78a",
+                      "surface-container-low": "#191d17",
+                      "on-tertiary-fixed-variant": "#394951",
+                      "on-primary-fixed-variant": "#0c5216",
+                      "secondary-fixed": "#b9f61d",
+                      "error": "#ffb4ab",
+                      "tertiary-fixed": "#d4e5ef",
+                      "primary-fixed-dim": "#91d78a",
+                      "surface-container": "#1d211b",
+                      "on-primary-container": "#90d689",
+                      "on-secondary": "#253500",
+                      "on-tertiary-container": "#b6c8d1",
+                      "on-tertiary": "#23333a",
+                      "on-surface-variant": "#c0c9bb",
+                      "surface-container-lowest": "#0b0f0a",
+                      "on-error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#b8c9d3",
+                      "primary-fixed": "#acf4a4",
+                      "surface-bright": "#363a34",
+                      "secondary-container": "#aeea01",
+                      "on-background": "#e0e4db",
+                      "on-secondary-container": "#4a6600",
+                      "on-primary-fixed": "#002203",
+                      "on-surface": "#e0e4db",
+                      "surface": "#10140f",
+                      "inverse-surface": "#e0e4db",
+                      "secondary-fixed-dim": "#a0d800",
+                      "outline-variant": "#41493e",
+                      "background": "#10140f",
+                      "tertiary-container": "#44545c",
+                      "on-tertiary-fixed": "#0d1e25",
+                      "tertiary": "#b8c9d3",
+                      "secondary": "#e1ffa0",
+                      "error-container": "#93000a",
+                      "on-secondary-fixed-variant": "#384e00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "sm": "8px",
+                      "margin-desktop": "32px",
+                      "gutter": "16px",
+                      "md": "16px",
+                      "xl": "48px",
+                      "base": "4px",
+                      "margin-mobile": "16px",
+                      "xs": "4px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Oswald"],
+                      "display-lg": ["Oswald"],
+                      "headline-md": ["Oswald"],
+                      "data-mono": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-bold": ["Inter"],
+                      "headline-lg-mobile": ["Oswald"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md": ["20px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                      "data-mono": ["14px", {"lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for deep dark theme */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #10140f; }
+        ::-webkit-scrollbar-thumb { background: #323630; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #41493e; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen antialiased selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface dark:bg-surface border-b border-outline-variant/50">
+<div class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary dark:text-primary tracking-tight">FantasyLeague Pro</div>
+<div class="flex items-center gap-md">
+<div class="hidden md:flex flex-col items-end">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase">Budget</span>
+<span class="font-data-mono text-data-mono text-secondary-fixed">$100M</span>
+</div>
+<div class="hidden md:flex flex-col items-end border-l border-outline-variant/30 pl-md">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase">Points</span>
+<span class="font-data-mono text-data-mono text-primary">1,250</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/50 overflow-hidden ml-sm">
+<img alt="User profile avatar showing a stylized portrait" class="w-full h-full object-cover" data-alt="A striking digital portrait avatar of a user. The image features a minimalist, high-contrast aesthetic suitable for a sleek sports analytics platform. Deep shadows contrast with bright, crisp highlights. The overall color palette is muted with subtle hints of neon green." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDdkJ9_uWumW-AE_bX5N6ROmZInPVCit53QiHvM-rz96xRIZ0CN9DXy-FuZ6saWdUmq47JHFayOmGMjkJPN_pVgJZa5RYmTuQIe8r48zFIMcHNQslMfqPMJGkQ_7BPT-cWJCrB4WR03Y1hv9ic9MCL_U4_99aubhCz-HpbLokYXJU-bEeVG39DFXAWx1V-3Cck-7GpDaLxsayAByRMc7g2ss_ZrvzCazbffqmN64j5AwEU8yM7Q2EQ3yAFG8qI5EFnGl454vCbqA">
+</div>
+</div>
+</header>
+<!-- SideNavBar (Desktop) -->
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-full w-64 pt-20 p-md border-r border-outline-variant/30 bg-surface-container dark:bg-surface-container shadow-sm z-40">
+<div class="mb-xl flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center border border-outline-variant/50">
+<span class="material-symbols-outlined text-primary">sports_soccer</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-primary truncate">Premier League</div>
+<div class="font-body-md text-body-md text-on-surface-variant">Season 2024/25</div>
+</div>
+</div>
+<nav class="flex flex-col gap-sm">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm hover:bg-surface-container-highest transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm hover:bg-surface-container-highest transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined">group</span> My Team
+            </a>
+<!-- Active Nav Item: Market -->
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-full px-md py-sm scale-98 transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_cart</span> Market
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm hover:bg-surface-container-highest transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined">leaderboard</span> Standings
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm hover:bg-surface-container-highest transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+</nav>
+<div class="mt-auto pt-md border-t border-outline-variant/30">
+<button class="w-full py-sm rounded-full bg-surface-container-high text-primary border border-outline-variant/50 hover:bg-surface-variant transition-colors font-label-bold text-label-bold">
+                Create League
+            </button>
+</div>
+</aside>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm py-xs pb-safe bg-surface-container-highest dark:bg-surface-container-highest rounded-t-xl shadow-[0_-4px_10px_rgba(0,0,0,0.3)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-bold text-[10px] uppercase tracking-wider">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-label-bold text-[10px] uppercase tracking-wider">Team</span>
+</a>
+<!-- Active Nav Item: Market -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:bg-surface-variant scale-90 duration-150 shadow-inner" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">storefront</span>
+<span class="font-label-bold text-[10px] uppercase tracking-wider">Market</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16" href="#">
+<span class="material-symbols-outlined mb-1">emoji_events</span>
+<span class="font-label-bold text-[10px] uppercase tracking-wider">Rank</span>
+</a>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pt-20 pb-24 md:pl-64 md:pb-lg px-margin-mobile md:px-margin-desktop max-w-[1280px] mx-auto min-h-screen">
+<!-- Page Header & Mobile Budget -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-lg gap-md">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-1">Transfer Market</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Scout, bid, and assemble your ultimate squad.</p>
+</div>
+<!-- Mobile Prominent Budget Card (Hidden on Desktop as it's in TopNav) -->
+<div class="md:hidden w-full bg-surface-container border border-outline-variant/30 rounded-xl p-md flex justify-between items-center shadow-sm">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase">Available Budget</span>
+<span class="font-data-mono text-data-mono text-secondary-fixed text-lg">$100,000,000</span>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="bg-surface border border-outline-variant/30 rounded-xl p-md mb-lg flex flex-col xl:flex-row gap-md items-start xl:items-center justify-between">
+<!-- Position Filters -->
+<div class="flex flex-wrap gap-2 w-full xl:w-auto">
+<button class="px-md py-sm rounded-full bg-secondary-container text-on-secondary-container font-label-bold text-label-bold transition-colors">ALL</button>
+<button class="px-md py-sm rounded-full bg-surface-container-high border border-outline-variant/50 text-on-surface hover:border-primary transition-colors font-label-bold text-label-bold">GK</button>
+<button class="px-md py-sm rounded-full bg-surface-container-high border border-outline-variant/50 text-on-surface hover:border-primary transition-colors font-label-bold text-label-bold">DEF</button>
+<button class="px-md py-sm rounded-full bg-surface-container-high border border-outline-variant/50 text-on-surface hover:border-primary transition-colors font-label-bold text-label-bold">MID</button>
+<button class="px-md py-sm rounded-full bg-surface-container-high border border-outline-variant/50 text-on-surface hover:border-primary transition-colors font-label-bold text-label-bold">FWD</button>
+</div>
+<div class="flex flex-col sm:flex-row gap-md w-full xl:w-auto">
+<!-- Search -->
+<div class="relative w-full sm:w-64">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface-container-highest border border-outline-variant/50 rounded-lg py-sm pl-xl pr-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md placeholder:text-outline outline-none transition-all" placeholder="Search player..." type="text">
+</div>
+<!-- Price Sort -->
+<div class="relative w-full sm:w-48">
+<select class="w-full bg-surface-container-highest border border-outline-variant/50 rounded-lg py-sm px-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md appearance-none outline-none cursor-pointer">
+<option>Sort by: Value (High to Low)</option>
+<option>Sort by: Value (Low to High)</option>
+<option>Sort by: Form</option>
+</select>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Player List Grid (High Density Corporate UI) -->
+<div class="flex flex-col gap-sm">
+<!-- List Header (Desktop only) -->
+<div class="hidden md:grid grid-cols-12 gap-sm px-md py-sm border-b border-outline-variant/30 text-on-surface-variant font-label-bold text-label-bold uppercase tracking-wider">
+<div class="col-span-5">Player</div>
+<div class="col-span-2 text-center">Next Fixture</div>
+<div class="col-span-2 text-right">Form</div>
+<div class="col-span-3 text-right pr-2">Value &amp; Action</div>
+</div>
+<!-- Player Row 1 -->
+<div class="group bg-surface border border-outline-variant/50 rounded-lg p-md md:p-sm grid grid-cols-1 md:grid-cols-12 gap-y-md md:gap-sm items-center hover:shadow-[0_4px_20px_rgba(174,234,0,0.08)] hover:border-primary/50 transition-all duration-200">
+<!-- Player Info -->
+<div class="md:col-span-5 flex items-center gap-md">
+<div class="relative">
+<img alt="Soccer player portrait" class="w-12 h-12 rounded-full object-cover border border-outline-variant/30" data-alt="A striking digital portrait of a professional soccer player in a dark studio setting. The lighting is high-contrast, highlighting the athlete's focused expression. The overall aesthetic is dark and moody, with deep green background tones and subtle rim lighting simulating stadium floodlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnLx2TzxNEEVTGn5htFYUbrMV0Tz34EDFANtGAviv5R0C3iSFjunRRPoQqgT0s-OhEsfaP0QYWoJ770fZi8Dol1sFOPQbBKWK4wloYzEZ_rQwXOjX8R_g0BYBcAMlvLguIYSjqMcLgDqze8umWgncV3zglDyr6_S024VnuXs5Mb6b86zWJ5o7Lk52FMLnG5Akw6RTeMaxGQaekmP2ytq2guADlvit6UIdqNKP2WgD8L24dx4DFjT3euD7vRr0QXdFrumOk9iJM1A">
+<div class="absolute -bottom-1 -right-1 bg-surface border border-outline-variant w-5 h-5 rounded-full flex items-center justify-center shadow-sm">
+<span class="font-label-bold text-[8px] text-primary">MC</span>
+</div>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">E. Haaland</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-bold text-[10px] uppercase">FWD</span>
+<span class="font-body-md text-[12px] text-on-surface-variant">Man City</span>
+</div>
+</div>
+</div>
+<!-- Next Fixture -->
+<div class="md:col-span-2 flex justify-between md:justify-center items-center border-t border-outline-variant/20 pt-sm md:pt-0 md:border-0">
+<span class="md:hidden font-label-bold text-[10px] text-on-surface-variant uppercase">Next</span>
+<div class="font-data-mono text-data-mono text-on-surface flex items-center gap-1">
+                        vs ARS <span class="w-2 h-2 rounded-full bg-error ml-1" title="Hard fixture"></span>
+</div>
+</div>
+<!-- Form/Trend -->
+<div class="md:col-span-2 flex justify-between md:justify-end items-center">
+<span class="md:hidden font-label-bold text-[10px] text-on-surface-variant uppercase">Form</span>
+<div class="flex items-center gap-1 text-primary">
+<span class="font-data-mono text-data-mono">8.5</span>
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+</div>
+</div>
+<!-- Value & Action -->
+<div class="md:col-span-3 flex justify-between md:justify-end items-center gap-md">
+<div class="text-right">
+<div class="font-data-mono text-data-mono text-secondary-fixed">$14.2M</div>
+<div class="font-label-bold text-[10px] text-primary flex items-center justify-end gap-0.5">
+<span class="material-symbols-outlined text-[12px]">arrow_drop_up</span> $0.1M
+                        </div>
+</div>
+<button class="bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container font-label-bold text-label-bold px-md py-sm rounded-lg transition-colors whitespace-nowrap shadow-sm">
+                        BID
+                    </button>
+</div>
+</div>
+<!-- Player Row 2 -->
+<div class="group bg-surface border border-outline-variant/50 rounded-lg p-md md:p-sm grid grid-cols-1 md:grid-cols-12 gap-y-md md:gap-sm items-center hover:shadow-[0_4px_20px_rgba(174,234,0,0.08)] hover:border-primary/50 transition-all duration-200">
+<div class="md:col-span-5 flex items-center gap-md">
+<div class="relative">
+<img alt="Soccer player portrait" class="w-12 h-12 rounded-full object-cover border border-outline-variant/30 grayscale" data-alt="A striking digital portrait of a professional soccer player in a dark studio setting. The lighting is high-contrast, highlighting the athlete's focused expression. The overall aesthetic is dark and moody, with deep green background tones and subtle rim lighting simulating stadium floodlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATgeWWgYY65D9xzBx5DFXQ4dXeKwrL09lQvKQBO4SqQmHW4LwV78fj98c--0h96IlKGVeaXpvhEiRXzIGsE7LOZSLaN0uaxbM1U30tq-OkxWXN5sN1L6mR09WHeb9PNrE-lxf6U0imejr69bd-6pdWZPzlRaPbt_uP04c6U0sLGAP4fq-E_u3Sk6NeT1b6t4hFj1b2Z3fp_ejZZA0FR7eVSLjEsunFNBJ34duXwLg2WdT4w2bPXaTJEa2jNuC0YIphcSjPbwv72Q">
+<div class="absolute -bottom-1 -right-1 bg-surface border border-outline-variant w-5 h-5 rounded-full flex items-center justify-center shadow-sm">
+<span class="font-label-bold text-[8px] text-on-surface">LIV</span>
+</div>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">M. Salah</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-bold text-[10px] uppercase">MID</span>
+<span class="font-body-md text-[12px] text-on-surface-variant">Liverpool</span>
+</div>
+</div>
+</div>
+<div class="md:col-span-2 flex justify-between md:justify-center items-center border-t border-outline-variant/20 pt-sm md:pt-0 md:border-0">
+<span class="md:hidden font-label-bold text-[10px] text-on-surface-variant uppercase">Next</span>
+<div class="font-data-mono text-data-mono text-on-surface flex items-center gap-1">
+                        @ SHU <span class="w-2 h-2 rounded-full bg-primary ml-1" title="Easy fixture"></span>
+</div>
+</div>
+<div class="md:col-span-2 flex justify-between md:justify-end items-center">
+<span class="md:hidden font-label-bold text-[10px] text-on-surface-variant uppercase">Form</span>
+<div class="flex items-center gap-1 text-error">
+<span class="font-data-mono text-data-mono">4.2</span>
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+</div>
+</div>
+<div class="md:col-span-3 flex justify-between md:justify-end items-center gap-md">
+<div class="text-right">
+<div class="font-data-mono text-data-mono text-secondary-fixed">$12.8M</div>
+<div class="font-label-bold text-[10px] text-error flex items-center justify-end gap-0.5">
+<span class="material-symbols-outlined text-[12px]">arrow_drop_down</span> $0.2M
+                        </div>
+</div>
+<button class="bg-surface-container-high border border-outline-variant hover:border-error text-on-surface hover:text-error font-label-bold text-label-bold px-md py-sm rounded-lg transition-colors whitespace-nowrap shadow-sm flex items-center gap-1">
+                        SELL
+                    </button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

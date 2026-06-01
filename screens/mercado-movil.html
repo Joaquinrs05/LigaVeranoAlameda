@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FantasyLeague Pro - Mercado de Fichajes</title>
+<!-- Google Fonts: Chivo -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-secondary-fixed": "#00210f",
+                "secondary-container": "#b8ecc5",
+                "tertiary-container": "#caa900",
+                "surface-container-highest": "#d9e3f2",
+                "outline-variant": "#dec0b7",
+                "surface-dim": "#d1dbe9",
+                "surface-container-lowest": "#ffffff",
+                "secondary-fixed": "#bbefc8",
+                "inverse-on-surface": "#e8f1ff",
+                "background": "#0F1923",
+                "primary-fixed": "#ffdbcf",
+                "error-container": "#ffdad6",
+                "surface-tint": "#a23f15",
+                "primary-fixed-dim": "#ffb59b",
+                "outline": "#8a7269",
+                "secondary": "#396849",
+                "surface": "#0F1923",
+                "on-tertiary-fixed-variant": "#544600",
+                "error": "#ba1a1a",
+                "surface-container-high": "#1a2530",
+                "surface-container": "#151f29",
+                "on-background": "#f7f9ff",
+                "on-secondary-fixed-variant": "#205033",
+                "surface-variant": "#1e2935",
+                "on-primary-fixed-variant": "#812900",
+                "warm-night": "#0F1923",
+                "inverse-surface": "#e8f1ff",
+                "on-primary": "#0F1923",
+                "golden-yellow": "#FFD600",
+                "on-primary-container": "#fffdff",
+                "surface-bright": "#f7f9ff",
+                "terracotta": "#C0552A",
+                "on-primary-fixed": "#380d00",
+                "tertiary": "#705d00",
+                "on-surface": "#f7f9ff",
+                "tertiary-fixed-dim": "#e9c400",
+                "tertiary-fixed": "#ffe170",
+                "secondary-fixed-dim": "#9fd2ad",
+                "on-error-container": "#93000a",
+                "on-tertiary-fixed": "#221b00",
+                "inverse-primary": "#ffb59b",
+                "on-tertiary-container": "#4c3e00",
+                "on-secondary": "#ffffff",
+                "chalk-white": "#F5F0E8",
+                "on-surface-variant": "#d9e3f2",
+                "primary": "#FFD600",
+                "on-tertiary": "#ffffff",
+                "field-green": "#1A4A2E",
+                "primary-container": "#FFD600",
+                "on-error": "#ffffff",
+                "on-secondary-container": "#3d6c4d",
+                "surface-container-low": "#121c27"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+        },
+        "spacing": {
+                "container-max": "1200px",
+                "stack-md": "16px",
+                "stack-lg": "32px",
+                "stack-sm": "8px",
+                "margin-desktop": "48px",
+                "gutter": "24px",
+                "margin-mobile": "20px"
+        },
+        "fontFamily": {
+                "body-md": ["Chivo"],
+                "label-sm": ["Chivo"],
+                "headline-h2": ["Chivo"],
+                "headline-h1-mobile": ["Chivo"],
+                "headline-h1": ["Chivo"],
+                "label-xs": ["Chivo"],
+                "headline-h3": ["Chivo"],
+                "score-display": ["Chivo"],
+                "body-lg": ["Chivo"]
+        },
+        "fontSize": {
+                "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-sm": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                "headline-h2": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                "headline-h1-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                "headline-h1": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "label-xs": ["12px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                "headline-h3": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                "score-display": ["32px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+        }
+      },
+    },
+  }
+</script>
+<style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    body { background-color: #0F1923; }
+</style>
+</head>
+<body class="bg-warm-night text-on-background min-h-screen font-body-md antialiased">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-warm-night border-b border-surface-variant">
+<div class="flex items-center gap-sm">
+<img alt="Escudo Alameda" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJMdTdPhuIry4uRa7Vd5IhjhNvSmNJUzVOzE8DG8Nk0n5ZgpgKc_eyT9MT5P6OuiY74OACaDKd9lVZL8QE6oND89966QqDT93GXFg0wAkQ7CMcTu79UPqVqs4t6INv9I03a8XinkdfENRBeDfjtKWMe3BMBknkVP2BjLRb6kb45JhlJV4XiVc9O_tedJ6Z1XbCTCO89YdxcU2Js3LtZCvk40TSP05VxpIwKXHMmMBcPjwzYDmklkGto_M4uvTly8PqLwLXRDdU1g"/>
+<span class="font-headline-h3 text-primary ml-2">Fantasy Pro</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="md:flex flex-col items-end hidden">
+<span class="text-label-xs text-on-surface-variant">Presupuesto: $100M</span>
+<span class="text-label-sm text-primary font-bold">1,250 pts</span>
+</div>
+<div class="md:hidden bg-surface-container px-sm py-1 rounded-full border border-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px;">account_balance_wallet</span>
+<span class="text-label-xs font-bold">$100M</span>
+</div>
+<button class="relative rounded-full overflow-hidden w-8 h-8 border border-surface-variant hover:border-primary transition-colors">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNosoK9-f3x8ZpLxmF05KUzVwoFe-4BUVHBNHsCKfLNYL20hd8Prx2LAf1lRCM70p8nlwkICH3wzqImpzax6d88J10msLL5I4SXfgRYk3cIHd1-HO62XSyvSu9l4TAgnsQxaz4y5SttkINrtorhA47JoBK2QtBBtLyL5NJ9iCjcAzdLvqcdRmTmASDWBiSunIDS1qgCZXu97zQazY9tVckdIe6eG1zA9KOBmMbbLFZJdiaPR1Bn9YMi_6I5I3h8Gi9q-lqRT47Pw"/>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="pt-16 pb-24 px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto">
+<!-- Page Header & Search -->
+<div class="py-stack-md sticky top-16 bg-warm-night/95 backdrop-blur-md z-40 space-y-stack-md border-b border-surface-variant">
+<div class="flex items-center justify-between">
+<h1 class="font-headline-h2 text-on-surface">Mercado</h1>
+<button class="p-xs text-on-surface-variant">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<!-- Search Bar -->
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container border border-surface-variant rounded-lg py-sm pl-xl pr-sm text-on-surface font-body-md focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all placeholder:text-on-surface-variant/50" placeholder="Buscar jugadores..." type="text"/>
+</div>
+<!-- Filters Rail -->
+<div class="flex gap-sm overflow-x-auto no-scrollbar pb-1">
+<button class="shrink-0 bg-primary text-on-primary font-bold px-md py-1 rounded-full text-label-sm">Todos</button>
+<button class="shrink-0 bg-surface-container text-on-surface border border-surface-variant px-md py-1 rounded-full text-label-sm">POR</button>
+<button class="shrink-0 bg-surface-container text-on-surface border border-surface-variant px-md py-1 rounded-full text-label-sm">DEF</button>
+<button class="shrink-0 bg-surface-container text-on-surface border border-surface-variant px-md py-1 rounded-full text-label-sm">MED</button>
+<button class="shrink-0 bg-surface-container text-on-surface border border-surface-variant px-md py-1 rounded-full text-label-sm">DEL</button>
+</div>
+</div>
+<!-- Player List -->
+<div class="mt-stack-md space-y-2">
+<!-- Player Card 1 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-sm flex items-center justify-between hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-sm">
+<div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-surface-variant group-hover:border-primary transition-colors">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_4h6kJWjx98Lvlun-1utjsbTdJCvc9YwfZiuK6OieX26vCNOUJE4P3Y0yxv8bp0rTMJJWkYW5nUBGtHaHVeGapSBJsbiBSFI3yuVYwJFFwNqhQgC2UyQ2Q0WrZtBsnGXYxTjtZpYRrKyRR67AWyoXXiwOL8ZDR95-1jC8RB3aYLg5U_Cz6NmDNYhZMZGVYNAMK-pe7rTuXVYFAsMC1GlQ_WSN5dev-TQ_rbaTfe2kHSy0gKxDl9tuo2IRAI80rbmTQDLgz1LHrg"/>
+<div class="absolute bottom-0 right-0 bg-secondary text-on-secondary text-[9px] font-bold px-1 rounded-sm">DEL</div>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">E. Haaland</span>
+<div class="flex items-center gap-xs text-[11px] text-on-surface-variant">
+<span>MCI</span>
+<span class="w-1 h-1 rounded-full bg-surface-variant"></span>
+<div class="flex gap-[2px]">
+<span class="w-2 h-2 rounded-sm bg-primary"></span>
+<span class="w-2 h-2 rounded-sm bg-primary"></span>
+<span class="w-2 h-2 rounded-sm bg-surface-variant"></span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex flex-col items-end">
+<span class="font-bold text-on-surface">$14.2M</span>
+<span class="text-[10px] text-primary flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> 0.1</span>
+</div>
+<button class="bg-primary hover:opacity-90 text-on-primary font-bold px-sm py-1 rounded text-label-sm transition-all active:scale-95">
+                    Pujar
+                </button>
+</div>
+</div>
+<!-- Player Card 2 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-sm flex items-center justify-between hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-sm">
+<div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-surface-variant group-hover:border-primary transition-colors">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtog4GP7jTM33CzVr9cEoxd7FNRn3znpEwwSiayN5BHXd6dW4_PNCTM4p9oQUQ8qJpcUbBR3vREzZpIGrG0wlGT-1PURhCyRZkYX17OLKxzCErJlvP5W8ovfTCTdDOy-M7V9Kk1jjIesOYxtd6oJSUMkiTTIEVUDUjcsZruZKyvRKwHbggE8JSSzZlWpgSK7IxsmOaXk7JyPcy89NLhUGyC9Mf8OqBMUTjLEBBN3n6qal3kyBgYR62QngiO9dXPu90FhLQsVS6oA"/>
+<div class="absolute bottom-0 right-0 bg-tertiary-container text-on-tertiary-container text-[9px] font-bold px-1 rounded-sm">MED</div>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">K. De Bruyne</span>
+<div class="flex items-center gap-xs text-[11px] text-on-surface-variant">
+<span>MCI</span>
+<span class="w-1 h-1 rounded-full bg-surface-variant"></span>
+<div class="flex gap-[2px]">
+<span class="w-2 h-2 rounded-sm bg-primary"></span>
+<span class="w-2 h-2 rounded-sm bg-surface-variant"></span>
+<span class="w-2 h-2 rounded-sm bg-surface-variant"></span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex flex-col items-end">
+<span class="font-bold text-on-surface">$10.5M</span>
+<span class="text-[10px] text-on-surface-variant flex items-center"><span class="material-symbols-outlined text-[12px]">horizontal_rule</span> 0.0</span>
+</div>
+<button class="bg-primary hover:opacity-90 text-on-primary font-bold px-sm py-1 rounded text-label-sm transition-all active:scale-95">
+                    Pujar
+                </button>
+</div>
+</div>
+<!-- Player Card 3 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-sm flex items-center justify-between opacity-60 group">
+<div class="flex items-center gap-sm">
+<div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-surface-variant grayscale">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUKpf5eHD1Qq2_hswC1AKDg2ic5MlgalGmiFU4dECbFWYvs7jcCOxxsM-lBLEzMvdoXiK_1fod6TNKmm5tO0eSKo3eKOEvQey6HXzUoy1Cb3hIUGn49qTRWaq2sP0P9M_xqyAzpvhFIwzYElg_n6PAdMLQRh_08CVUEht_gbK5cSCh5DxylY-dB7gr4u0kw2x1QAWouPRAhRWNDRb0rMOs4TjsmrnYHhCj9VhEgYgNpbfHWY7KQeDcY2xIR0-Cv9jFNdqFDLuFLA"/>
+<div class="absolute bottom-0 right-0 bg-outline text-white text-[9px] font-bold px-1 rounded-sm">DEF</div>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface flex items-center gap-xs">V. van Dijk <span class="material-symbols-outlined text-error text-[14px]">medical_services</span></span>
+<div class="flex items-center gap-xs text-[11px] text-error font-bold">
+<span>LIV</span>
+<span class="w-1 h-1 rounded-full bg-error/30"></span>
+<span>Lesionado</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex flex-col items-end">
+<span class="text-on-surface-variant line-through">$6.0M</span>
+</div>
+<button class="bg-surface-variant text-on-surface-variant font-bold px-sm py-1 rounded text-label-sm cursor-not-allowed" disabled="">
+                    Pujar
+                </button>
+</div>
+</div>
+<!-- Player Card 4 -->
+<div class="bg-surface-container border border-surface-variant rounded-xl p-sm flex items-center justify-between hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-sm">
+<div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-surface-variant group-hover:border-primary transition-colors">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA04l6YphmpA8WxEwm7VVOuxyM3mOfV0liUfl2uw2pO2CIqfQ-Tn2HKjCc1Wzj3-VBHWs2z3KG7KlbAMsmP6Lk1gzyF0cQiJDvjaCJT2jhqlYCBQskEHq4KVailKwIwth60s46eMCu0ezDHsMN85LrhGIuBiyunF8qPgHrU_vamXmfiOUqnBDAaZEUmvS2T1QyshdOCk3yZNuYp0xGSEr3OUhkCAe0guBtZ6-VySuIECtcjoe-DeyOsdQ8u5ikX5tFEktKlLJobeA"/>
+<div class="absolute bottom-0 right-0 bg-secondary text-on-secondary text-[9px] font-bold px-1 rounded-sm">DEL</div>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">B. Saka</span>
+<div class="flex items-center gap-xs text-[11px] text-on-surface-variant">
+<span>ARS</span>
+<span class="w-1 h-1 rounded-full bg-surface-variant"></span>
+<div class="flex gap-[2px]">
+<span class="w-2 h-2 rounded-sm bg-primary"></span>
+<span class="w-2 h-2 rounded-sm bg-primary"></span>
+<span class="w-2 h-2 rounded-sm bg-primary"></span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex flex-col items-end">
+<span class="font-bold text-on-surface">$8.8M</span>
+<span class="text-[10px] text-primary flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> 0.2</span>
+</div>
+<button class="bg-primary hover:opacity-90 text-on-primary font-bold px-sm py-1 rounded text-label-sm transition-all active:scale-95">
+                    Pujar
+                </button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm py-xs pb-safe bg-surface-container border-t border-surface-variant rounded-t-xl shadow-2xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 transition-colors">
+<span class="material-symbols-outlined">home</span>
+<span class="font-bold mt-1 text-[10px]">Inicio</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="font-bold mt-1 text-[10px]">Equipo</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-4 py-1 active:scale-90 duration-150 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+<span class="font-bold mt-1 text-[10px]">Mercado</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 transition-colors">
+<span class="material-symbols-outlined">emoji_events</span>
+<span class="font-bold mt-1 text-[10px]">Ranking</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-bold mt-1 text-[10px]">Ajustes</span>
+</button>
+</nav>
+<script>
+    document.documentElement.style.setProperty('--safe-area-inset-bottom', 'env(safe-area-inset-bottom)');
+</script>
+</body></html>

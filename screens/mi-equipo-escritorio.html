@@ -1,0 +1,436 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>FantasyLeague Pro - My Team</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Oswald:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .pitch-pattern {
+            background-color: #10140f;
+            background-image: linear-gradient(to right, rgba(145, 215, 138, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(145, 215, 138, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1b5e20",
+                        "surface-tint": "#91d78a",
+                        "surface-dim": "#10140f",
+                        "on-secondary-fixed": "#141f00",
+                        "surface-container-high": "#272b25",
+                        "surface-container-highest": "#323630",
+                        "on-primary": "#003909",
+                        "outline": "#8a9386",
+                        "inverse-on-surface": "#2d322c",
+                        "on-error": "#690005",
+                        "inverse-primary": "#2a6b2c",
+                        "surface-variant": "#323630",
+                        "primary": "#91d78a",
+                        "surface-container-low": "#191d17",
+                        "on-tertiary-fixed-variant": "#394951",
+                        "on-primary-fixed-variant": "#0c5216",
+                        "secondary-fixed": "#b9f61d",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed": "#d4e5ef",
+                        "primary-fixed-dim": "#91d78a",
+                        "surface-container": "#1d211b",
+                        "on-primary-container": "#90d689",
+                        "on-secondary": "#253500",
+                        "on-tertiary-container": "#b6c8d1",
+                        "on-tertiary": "#23333a",
+                        "on-surface-variant": "#c0c9bb",
+                        "surface-container-lowest": "#0b0f0a",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#b8c9d3",
+                        "primary-fixed": "#acf4a4",
+                        "surface-bright": "#363a34",
+                        "secondary-container": "#aeea01",
+                        "on-background": "#e0e4db",
+                        "on-secondary-container": "#4a6600",
+                        "on-primary-fixed": "#002203",
+                        "on-surface": "#e0e4db",
+                        "surface": "#10140f",
+                        "inverse-surface": "#e0e4db",
+                        "secondary-fixed-dim": "#a0d800",
+                        "outline-variant": "#41493e",
+                        "background": "#10140f",
+                        "tertiary-container": "#44545c",
+                        "on-tertiary-fixed": "#0d1e25",
+                        "tertiary": "#b8c9d3",
+                        "secondary": "#e1ffa0",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#384e00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "margin-desktop": "32px",
+                        "gutter": "16px",
+                        "md": "16px",
+                        "xl": "48px",
+                        "base": "4px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Oswald"],
+                        "display-lg": ["Oswald"],
+                        "headline-md": ["Oswald"],
+                        "data-mono": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-bold": ["Inter"],
+                        "headline-lg-mobile": ["Oswald"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "data-mono": ["14px", { "lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-surface fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 border-b border-outline-variant/50">
+<div class="flex items-center gap-md">
+<h1 class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary dark:text-primary tracking-tight">FantasyLeague Pro</h1>
+</div>
+<div class="flex items-center gap-lg hidden md:flex">
+<nav class="flex gap-lg">
+<a class="text-on-surface-variant font-label-bold text-label-bold hover:text-primary transition-colors py-1" href="#">Market</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-label-bold text-label-bold hover:text-primary transition-colors opacity-80 scale-95" href="#">My Team</a>
+<a class="text-on-surface-variant font-label-bold text-label-bold hover:text-primary transition-colors py-1" href="#">Leagues</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<span class="font-data-mono text-data-mono text-on-surface-variant hidden md:inline-block">Budget: $100M</span>
+<span class="font-data-mono text-data-mono text-primary bg-primary/10 px-sm py-xs rounded-lg hidden md:inline-block">1,250 pts</span>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-outline" data-alt="A professional headshot of a user profile avatar in a digital interface context, dark mode aesthetic with high contrast lighting, clean background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMeslN3dzoaSJdpi8nbXOo6NwEBGGcPDVHhBoapYM4fj3Y1yeI2R48-BEDOsxUv5x5OMbUypwpssUoYJPNfOuxK27qQVfYW8QFJwBJ9onUQQ43Bk4q3sCxM3Ifu5n8vJXkeHrLcFCFdejED4Zg4qN2BQWNlzEX-c6RlsSh35zuF8nAX8qTZVfHPqGoqTTGwdHNgSY02s_0ZaJEMaJt8g5-hPXme7cuwt49yAk-XSVcy7fgkkxNKB4uR0fBeIrdXSUDAMeGSBsKow">
+</div>
+</header>
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full w-64 p-md border-r border-outline-variant/30 bg-surface-container dark:bg-surface-container z-40 pt-24 shadow-sm">
+<div class="mb-lg flex items-center gap-md">
+<img alt="League Logo" class="w-10 h-10 rounded-lg" data-alt="A sleek, modern crest logo for a premier sports league, featuring metallic accents on a dark background, high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiqCrlD1sEnEKJOzpNt_5Uot2Q19iR1GYuZF4-ZFP33Ow1PiP-z-fZiAOmiDv-C3jvU3HHXuFuInL-1RmgLgRfqAkhxBjFbvZz4xF_BwyMwAHbYM67zBSAXQ153fkGnIDd8YkLDp4Yur1fOmyHC8mjrjbhdSriuxm1s66wv4PU4fNsGT_5yKMSB9Dj0CQAWUuVW4z4PBM-4J-NkbBIoRJ-c4qlndwORyIqTUoepvobQY2EiDUQGU9r_pIipGYbltXqIxQATvCidg">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Premier League</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Season 2024/25</p>
+</div>
+</div>
+<div class="flex flex-col gap-sm flex-grow">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm hover:bg-surface-container-highest transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-full px-md py-sm font-label-bold text-label-bold scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span> My Team
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm hover:bg-surface-container-highest transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span> Market
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm hover:bg-surface-container-highest transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span> Standings
+            </a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm hover:bg-surface-container-highest transition-all font-label-bold text-label-bold mt-auto" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span> Settings
+            </a>
+</div>
+<button class="mt-lg w-full bg-surface-container-highest border border-outline text-on-surface font-label-bold text-label-bold py-sm rounded-lg hover:bg-surface-variant transition-colors">
+            Create League
+        </button>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-grow pt-16 pb-20 md:pb-0 md:pl-64 flex flex-col xl:flex-row overflow-hidden relative min-h-[calc(100vh-64px)]">
+<!-- Field Area -->
+<div class="flex-grow p-gutter md:p-lg flex flex-col h-full xl:max-w-[70%]">
+<!-- Pitch View -->
+<div class="relative w-full flex-grow rounded-xl border border-outline-variant/50 overflow-hidden shadow-[0_4px_20px_rgba(145,215,138,0.05)] pitch-pattern flex flex-col justify-between py-8">
+<!-- Forwards -->
+<div class="flex justify-center gap-xl md:gap-24 w-full px-4">
+<!-- Player 1 -->
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-primary shadow-lg group-hover:scale-105 transition-transform" data-alt="Close up portrait of a male professional athlete looking determined, intense stadium lighting, dark background, highly detailed." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwk3id331na_7jm4Za9t16UgvWBXctC4cADTs0g_RXLMlVrweiDeuvcncJJHaJ3nKQaHqLklhRySIJ61gta5zqs7-1RA8NrTFQ8IwcdYrhhy9xUbDIagHoJmcx3k1O0AKRGEpzIWHiCs6stoLCy5AxHRBxIjBRHOciuJaYTJyIqP3lQXAz4DojyFCqtLE4s0P0YI5gvM5iQZQxLxAkgu3_AE1sG0wB8i70z9_BolqWRLpZ0n9qiqce9FXQxxIf2Xn_dvWseV5qWg">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-secondary text-on-secondary-container font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm">9.5</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Haaland</span>
+</div>
+</div>
+<!-- Player 2 -->
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-outline shadow-lg group-hover:scale-105 transition-transform" data-alt="Portrait of a young athletic male soccer player, dramatic rim lighting, wearing a dark jersey, shallow depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuADkXRoYO017H0xObNiXydkXpUcZmtCNmJsF5T_KCvGBpDn6RhcR-zvT2RHU-lWpEpAjxrOiz-IS120SMrGWmRir0HOxnV2YrQuMrIYDwlxBTlGyVg5l0Xesu4CAEd00Ilzho9LT3H8cZ-vNapeowuFhh1ALvOCgXdkotZ3uOXvTyliq4LatJGIuIxxYP8W0Ie1NJzMTNfnuE5w1IRmSTCF-foV5--2QqsPpnIpy1C0cBnXOhmKsFCAHwG2Yvf8CSuui7i79TnuFw">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface-variant font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm border border-outline/30">4.2</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Watkins</span>
+</div>
+</div>
+</div>
+<!-- Midfielders -->
+<div class="flex justify-around w-full px-2">
+<!-- Player 3 -->
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-outline shadow-lg group-hover:scale-105 transition-transform" data-alt="Dynamic shot of a midfielder looking forward, professional sports context, dark moody atmosphere, sharp focus on face." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGZD5l3YkeXT14RBtZH-PdQzRzxZRoT6bHeDmp0I7NVJbRTygghAupjSNYV5FLE3s4VVmysKSLAw94PdIb207dsg8tL7s-F5pSPIjDAogRr00h7MfC_08kMbDTKmiCoo8k39JI2Rpn-Vgxj7VBM3C3L8OCepxV4eRyzp3ofik0AkvTkVc1xtoPjiPWeik5DbcIPyj9Kq_RuEivnx_83FX1lhEXhP0KeOJe2QmI-iaHo-mj-YrlWUjiBOxXSyCaQAJsFPbYvcPfpQ">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface-variant font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm border border-outline/30">6.0</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Saka</span>
+</div>
+</div>
+<!-- Player 4 -->
+<div class="flex flex-col items-center group cursor-pointer mt-4">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-primary shadow-lg group-hover:scale-105 transition-transform" data-alt="Headshot of a focused sports player, sweat on brow, intense game day lighting, dark stadium background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAl3ozbNVI-4EHCjVZPLZI2-E686Vx8BK85CmxWtU35qDByTCGFx1Pqzsqi-3s-ROCnfolhUIW03Y0fiHFacy598glflYcc77p10MO93CqY7VjKsZiensneNQ8QAUKcg9CeOkVPCRuiXRpr_nMw-Dt7vLkRXYBdMxj4siQHOZYp6x0veiKYOFtABmHVf1JsF2ma6tqStt86Wf1SGC61HaNan3-mTBBaEA731x-jgEcUMpRiOwRCMAqUcsibbgB1C6jmRD4Z-8QUHA">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-secondary text-on-secondary-container font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm">12.1</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Salah</span>
+</div>
+</div>
+<!-- Player 5 -->
+<div class="flex flex-col items-center group cursor-pointer mt-4">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-outline shadow-lg group-hover:scale-105 transition-transform" data-alt="Close portrait of an athlete, neutral expression, high contrast studio lighting, deep green and black tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3e6uTxvb5h5fRMq4Y-FaPRRkbxPokZkqN08NzdpIGuwXDL142Ttun2tmJRiOig55Tg8CETZ9hHN43fD75dykYNyqjSV7ruM594rUFrAJYTBYE-bxnGmL9rPOId2s78tP7Ui72CfRDWKdaOPlOgfugZl8niP5WoknZFXKTQDcr8E7qw0SaLiLpRdmhY14ddyDB79PX5c73IebYoWy5mdvUq7xTJNUBnYP20PH-yhntiyGZ2f4mcxarJro4x_oYYw6AKTsTQTI9OA">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface-variant font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm border border-outline/30">3.5</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Foden</span>
+</div>
+</div>
+<!-- Player 6 -->
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-outline shadow-lg group-hover:scale-105 transition-transform" data-alt="Intense look of a professional football player, rim light catching sweat, dark cinematic background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJfrgEOkzAJ0XradPlElNq6Ud_N0XqCPdRuT5kWdTwWzehBn0QJ56yrEu3i5dduavnp8W0NphimJ77nvYEJYY3ogH_dYCInNNWx_CcEeyxYwZqlKmPtk7qQ2SF4RPHJW3gvAIb602fa75c5dXa6BnzqlmbvaRQTNo_BjBy9G4hxvuVMNTWOlhgqXz1IylrGCdeJoFxwW4f78eqxX0wJZRtplDO4579QAhsknvtyCVYpPEUzdBZiG2DX5y4cT2LE0CviALptxfQkw">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface-variant font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm border border-outline/30">5.8</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Mbeumo</span>
+</div>
+</div>
+</div>
+<!-- Defenders -->
+<div class="flex justify-around w-full px-4">
+<!-- Player 7 -->
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-outline shadow-lg group-hover:scale-105 transition-transform" data-alt="Portrait of a strong defender athlete, looking determined, stark lighting setup, professional sports team vibes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuPwWSEDVLucjVSLe7KIyHAMeWQkDiVPF1jLn0Rpdt0f4-74OqEzT-tcd5Rq4CdztzWFgQWNk3lf8925nIywP1IqmC9gNzYD5Ka6ADhtvJcKwDbMVZAZ1gVcDujubj_0BtMGnabI7SEiV6rJizLB5SGBGhIT_cukhlfO7GiLY3Z0NhWh_3XXmSsfzvOZFXI21GBWFOX1GLC7XEVSkE-CNdBuwq5tmkfDPicknpTQRD3BLAgu9VEfagSvSNpKIQaXvWYMYaupg57A">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface-variant font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm border border-outline/30">4.0</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Trippier</span>
+</div>
+</div>
+<!-- Player 8 -->
+<div class="flex flex-col items-center group cursor-pointer mt-2">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-primary shadow-lg group-hover:scale-105 transition-transform" data-alt="Headshot of an athletic man in a dark sports uniform, intense gaze, cinematic dark mode lighting, high detail." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTzbI3S6JrTwplN4XConVaGL6jkwwHFTJdnl4Ti-3mxo9K82mmqNW7bUjN5cuDvk56gLkKgCa2zV7dLEufptJA7wj240wsuD5uVPLnKzlROV0UhgMgQstpeJ1xzUnTVAPzDIa6XSPVTrStDec32f9Ngr0HSwscKiq9eTZEEkDXiafs7fAYVuz5C1oovGUi4fZSTLsXhKZXvFhiREWiHmIExRCaVJJayg7M_S7BkKw9mnu3QWJb5oBh_mfKUQXKudYdmnvwr8Sv3g">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-secondary text-on-secondary-container font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm">8.2</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Saliba</span>
+</div>
+</div>
+<!-- Player 9 -->
+<div class="flex flex-col items-center group cursor-pointer mt-2">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-outline shadow-lg group-hover:scale-105 transition-transform" data-alt="Close up of a professional soccer player, serious expression, wearing a team kit, deep shadows and highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBE9fwrueGSy-iTbnYS1X5dlC-LPYyq9xrz-ocx4Z_gNqT1Z8C1HYsUrPv1Dz8t-v3lJ7-sPTuVOaPKGOMBgBJ6Unr7MJwzC3P5GpUvPkt7cYvngSH6bD4RYVEK3eYEliJS6DvXHp8bt-VR4q8JJVsxwK_scWy8LwPrbOPGYFdLj_THGSB_4X8nBFZJ17elOcfTW8eDxbxNqP5K20Bstb7e4GWgsggcmBXmdEmpojfTtwbmcgpikJUR7-FJDShlP-UIK7E8SaazHw">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface-variant font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm border border-outline/30">2.1</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Botman</span>
+</div>
+</div>
+<!-- Player 10 -->
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-error shadow-lg group-hover:scale-105 transition-transform" data-alt="Portrait of a young male athlete, side profile slightly turned, high contrast lighting, premium sports aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWIK6R1YG80zX5mLZHab4rB28tN1mbdhEzpScaONkPBVz4IU5B5bbKF0Jf2ycSaahAp3TIyH36UUMKuI7dXoGSPGIKnXiTHnri6Sj4nRcgPEuY0vU8ZXkBFa_tLiCEA3w9f8HZTI74mBRbfcizqONqun0OaUTrkCm9GyoEbkiTDWh7eJU2gHQ1_BRGEguefvjlFlIczi3ke7K31y9BsfNlubRYjv8XEvdU-txNlsylY5ZqmiALg9h7VYrYYJAQuORu4RpvCBOSKg">
+<div class="absolute -top-1 -right-1 bg-error text-on-error font-label-bold px-1.5 py-0.5 rounded-full text-[8px]">INJ</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50 opacity-75">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Estupinan</span>
+</div>
+</div>
+</div>
+<!-- Goalkeeper -->
+<div class="flex justify-center w-full px-4">
+<div class="flex flex-col items-center group cursor-pointer">
+<div class="relative">
+<img alt="Player Avatar" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-outline shadow-lg group-hover:scale-105 transition-transform" data-alt="Headshot of a professional goalkeeper, focused and intense, dramatic dark lighting, wearing a bright jersey." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAy91BoJNGL83YgjvKogMUvUwL0Z7urNyK8YMyEPJd_GglOb8fANkP4Ru1z0UTT_IpR8SkzNeOIn1v_Fc9CAQnSr8LE85gtDV7lrrXwhVZOQ9jyo75o5NwssTJ5mOvzQQpamVrIODazyJkot0DbmprnQ3kt-EALUjtGQEYoS0GVisDkplD3ZT5ZQYCWW2PhrBr53yrvA6WxzK2-4JFroTZOb3OsgUBd1uWNOnpxUHxt_SBhmaFsbppgrfuIJuImthJN3lz6OTLwTQ">
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface-variant font-data-mono text-data-mono px-2 py-0.5 rounded-full text-[10px] md:text-[12px] whitespace-nowrap shadow-sm border border-outline/30">6.0</div>
+</div>
+<div class="mt-3 bg-surface-container-high/90 px-3 py-1 rounded backdrop-blur-sm border border-outline-variant/50">
+<span class="font-label-bold text-label-bold text-on-surface uppercase block text-center">Alisson</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bench Area -->
+<div class="mt-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-sm">Bench</h3>
+<div class="flex gap-md overflow-x-auto pb-sm snap-x">
+<!-- Bench Player 1 -->
+<div class="flex-shrink-0 w-24 flex flex-col items-center p-sm bg-surface-container rounded-lg border border-outline-variant/30 snap-start cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="relative mb-2">
+<img alt="Bench Player" class="w-10 h-10 rounded-full opacity-80 grayscale-[30%]" data-alt="Portrait of a substitute player looking towards the field, cinematic dark lighting, shallow focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDybHTGrFHv8ICMmVVc5Ev-X6v-prbrdH4v2HfDbQ59eFRrAQ8HeuFT7z8cyaw3veN27mz8ef5WdzQd5YQOKPZi-uqzGXR12a9hIp-ipcom7JZc2wV200M1FxpHL4szYOu2b85cNahFSCoQh9b9UafDiK8SAMXTYzpvppBUvkNRL83AUELpfzlaUTRwj1fMgplKhdTOQa1yw7FbCWeyQVfwSPbEOk2MOeK_tuuUk4syS58ISvyiWeneHGDQtvYByI-r98yIPtLjVw">
+</div>
+<span class="font-label-bold text-label-bold text-on-surface uppercase text-center block w-full truncate">Areola</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant mt-1">GK - WHU</span>
+</div>
+<!-- Bench Player 2 -->
+<div class="flex-shrink-0 w-24 flex flex-col items-center p-sm bg-surface-container rounded-lg border border-outline-variant/30 snap-start cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="relative mb-2">
+<img alt="Bench Player" class="w-10 h-10 rounded-full opacity-80 grayscale-[30%]" data-alt="Headshot of a young male athlete in a dark setting, professional sports photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPtw3A87MV9E3v89Tvdtvw_q-QLRPvNAj-0U6OCMqhOYInRGN4yuzPeQWTPy5Iux5wF7PNiUlbhL-f9_o3Not5AoK2UmTFpjdK7h2KOMlVR9W8T6lK-2AQD87lv6jERaESb6x0rAdGjIY7IuDwJyb2Q_i3PLd-BKGtdXVtwwFsWyUf7IlHeaCTH4hy6SC0zf4UTNj2lY-OR6NJmipMQkn3DJZKcJPoa99xoJV9Ys2b7CCWlD3Su1Tz6HmjmoKpYR9vksltO7ARsg">
+</div>
+<span class="font-label-bold text-label-bold text-on-surface uppercase text-center block w-full truncate">Gusto</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant mt-1">DEF - CHE</span>
+</div>
+<!-- Bench Player 3 -->
+<div class="flex-shrink-0 w-24 flex flex-col items-center p-sm bg-surface-container rounded-lg border border-outline-variant/30 snap-start cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="relative mb-2">
+<img alt="Bench Player" class="w-10 h-10 rounded-full opacity-80 grayscale-[30%]" data-alt="Portrait of a focused athlete, dramatic shadows, wearing a generic dark sports top." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTxB9-d96ghKvSvz5hyb33jyMIeQZ7Euj8C65cAW0tXwCpzY1ee8m8Ush6H3Bcan2E6o2qdRjUEY3V_75_QnIlbzC_oP9k2YxsScbyN5W1m5Ykw3Ta6fVllfccG6ldbj3Y3FVH4NSqRYbXtAiHl06UimC6t1AKc3wweyHGDtK1XwjiaFZmn_dyIKLS3ZvBBzi3H8gNkQbMiYOKczPrQ7AGnOrxYM2-juJouPBR90KJbaUutEoz3nARbt5Pt30X4FfkeUnyGXGjfA">
+</div>
+<span class="font-label-bold text-label-bold text-on-surface uppercase text-center block w-full truncate">Palmer</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant mt-1">MID - CHE</span>
+</div>
+<!-- Bench Player 4 -->
+<div class="flex-shrink-0 w-24 flex flex-col items-center p-sm bg-surface-container rounded-lg border border-outline-variant/30 snap-start cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="relative mb-2">
+<img alt="Bench Player" class="w-10 h-10 rounded-full opacity-80 grayscale-[30%]" data-alt="Close up portrait of a sports player, moody cinematic lighting, high detail on facial features." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK23cRTSGmpGk7INVlYwm25V6VzNRa7kCwzWtAePGli_Scq5m6U5leb0E9E9rZO_enwUgZxKRGzb8VcZAuYl9sSB4Tj1CYDwAiIK7ljtDsP8egOABGisXevOEEPRR4ZwF9iMNovo1M5vCLfYic5XS11iuTYHpkG5BqSdepmdN_MnU1NWkLpK8v9moJBYCKnVnfmwOVQaj2HxJEH6bpg5qJnFXGYmeEMYYxW6Jtt78BzSSdWzUYA1hU8GXtJu9XOD2m2OYsVBroug">
+</div>
+<span class="font-label-bold text-label-bold text-on-surface uppercase text-center block w-full truncate">Archer</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant mt-1">FWD - SHU</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Stats & Actions -->
+<div class="w-full xl:w-80 bg-surface-container-low border-l border-outline-variant/30 p-lg flex flex-col h-auto xl:h-full shrink-0 shadow-[-4px_0_20px_rgba(0,0,0,0.2)]">
+<div class="mb-xl flex items-center justify-between">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight">GW 24 Stats</h2>
+<p class="font-body-sm text-on-surface-variant mt-1">Overall Rank: 142,891</p>
+</div>
+<div class="bg-primary/10 text-primary w-12 h-12 rounded-full flex items-center justify-center font-headline-md">
+                    78
+                </div>
+</div>
+<!-- Bento Stats Grid -->
+<div class="grid grid-cols-2 gap-sm mb-lg">
+<div class="bg-surface-container rounded-lg p-md border border-outline-variant/30 flex flex-col">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase mb-2">Team Value</span>
+<span class="font-data-mono text-lg text-on-surface font-bold">$104.2m</span>
+<span class="text-primary font-label-bold text-[10px] mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> 0.3m
+                    </span>
+</div>
+<div class="bg-surface-container rounded-lg p-md border border-outline-variant/30 flex flex-col">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase mb-2">In Bank</span>
+<span class="font-data-mono text-lg text-on-surface font-bold">$1.5m</span>
+<span class="text-on-surface-variant font-label-bold text-[10px] mt-1 flex items-center gap-1">
+                        Available
+                    </span>
+</div>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md">Key Performers</h3>
+<!-- Player List -->
+<div class="flex flex-col gap-sm">
+<div class="bg-surface rounded-lg p-3 border border-outline-variant/30 flex items-center gap-md hover:bg-surface-container-high transition-colors cursor-pointer group">
+<img alt="Player Avatar" class="w-10 h-10 rounded-full border border-outline" data-alt="Close up portrait of a male professional athlete looking determined, intense stadium lighting, dark background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApuseMS6k54mNLO4RHzdWid_WAl6CDEiZMdgaUWn-aTeZJRBrgnCrObOviDR5NwnfZgEaTmgf9A-jWnsdmXR1Ab97OI780fap8OiUCtc7NVFZxFsSlTWtYdcfIKoOHl1QyJVBr0N0p4EgCNNVnKu-casKlUsHz2Yx7c6mujEkIiOY4iyOw9LnMg9_hLQBs9AnxOYY7zOgLnUJo7Is6baEpQ4ZL8aHUkKUPsgJKyrMOJk-RalST4NI9IxcW5s33H8XHqAuC8MP9UQ">
+<div class="flex-grow">
+<span class="font-label-bold text-label-bold text-on-surface block">E. Haaland</span>
+<span class="font-body-sm text-on-surface-variant text-[11px]">MCI - FWD</span>
+</div>
+<div class="text-right">
+<span class="font-data-mono text-data-mono text-on-surface block">12 pts</span>
+<span class="font-data-mono text-primary text-[11px] block">+0.1m</span>
+</div>
+</div>
+<div class="bg-surface rounded-lg p-3 border border-outline-variant/30 flex items-center gap-md hover:bg-surface-container-high transition-colors cursor-pointer group">
+<img alt="Player Avatar" class="w-10 h-10 rounded-full border border-outline" data-alt="Headshot of a focused sports player, sweat on brow, intense game day lighting, dark stadium background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7erAleS9oEradj8tvSJHMabEmAUig_Uv-fE_ePaD71OxhyjrVeno-eUpOmyuQQRpTogKt3z_CtcFLfp4SXWpMy_toW3ujXLKQSdh_ofrH24o9CdstSMkNcD35K6vUpKE3GOynid1Qiz36QYdF1ZmsO--6AoXNSyIJy9LTwsJtqywM69FxqDMqyXUrUO6IuZkxJvSc1vjFWe9ZQYhkTVy89LCRqtSYjLiewLl_8kvdqiQIwb1h87u52vL3kgB-2avTG4iyK3mPrg">
+<div class="flex-grow">
+<span class="font-label-bold text-label-bold text-on-surface block">M. Salah</span>
+<span class="font-body-sm text-on-surface-variant text-[11px]">LIV - MID</span>
+</div>
+<div class="text-right">
+<span class="font-data-mono text-data-mono text-on-surface block">9 pts</span>
+<span class="font-data-mono text-primary text-[11px] block">+0.2m</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="mt-xl pt-lg border-t border-outline-variant/30 flex flex-col gap-sm">
+<p class="font-body-md text-body-md text-on-surface-variant text-center mb-2">1 Free Transfer Remaining</p>
+<button class="w-full bg-secondary text-on-secondary-container font-label-bold text-label-bold uppercase tracking-wider py-4 rounded-lg hover:bg-secondary-fixed transition-colors shadow-[0_4px_20px_rgba(174,234,0,0.15)] flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="save">save</span>
+                    Save Alignment
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm py-xs pb-safe bg-surface-container-highest dark:bg-surface-container-highest rounded-t-xl shadow-[0_-4px_10px_rgba(0,0,0,0.3)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface w-16 h-14 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-bold text-[10px] mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:bg-surface-variant scale-90 duration-150 w-20" href="#">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-bold text-[10px] mt-1">Team</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface w-16 h-14 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-label-bold text-[10px] mt-1">Market</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface w-16 h-14 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+<span class="font-label-bold text-[10px] mt-1">Rank</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-on-surface w-16 h-14 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-bold text-[10px] mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

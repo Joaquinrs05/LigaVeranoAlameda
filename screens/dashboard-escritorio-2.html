@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FantasyLeague Pro - Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#C0552A", // Terracota Alameda
+                      "secondary": "#FFD600", // Amarillo Dorado
+                      "tertiary": "#1A4A2E", // Verde Campo
+                      "background": "#F5F0E8", // Blanco Cal
+                      "on-background": "#0F1923", // Noche Cálida
+                      "surface": "#ffffff",
+                      "on-surface": "#0F1923",
+                      "outline": "rgba(192, 85, 42, 0.3)", // Terracota 30%
+                      "error": "#93000a",
+                      "surface-container": "#F5F0E8"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.25rem",
+                      "xl": "0.25rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "xl": "48px",
+                      "margin-desktop": "32px",
+                      "sm": "8px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "margin-mobile": "16px",
+                      "base": "4px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "sans": ["Chivo", "sans-serif"],
+                      "headline-lg-mobile": ["Chivo"],
+                      "body-md": ["Chivo"],
+                      "body-lg": ["Chivo"],
+                      "label-bold": ["Chivo"],
+                      "display-lg": ["Chivo"],
+                      "headline-lg": ["Chivo"],
+                      "headline-md": ["Chivo"],
+                      "data-mono": ["Chivo"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "headline-md": ["20px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "data-mono": ["14px", {"lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C0552A; border-radius: 3px; }
+        .glow-active { box-shadow: 0px 4px 20px rgba(192, 85, 42, 0.1); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-sans antialiased overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="bg-[#1A4A2E] fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 shadow-lg">
+<div class="flex items-center gap-md">
+<span class="font-headline-lg text-[#F5F0E8] tracking-tight">FantasyLeague Pro</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex items-center bg-white/10 rounded px-4 py-2 border border-[#F5F0E8]/20 focus-within:border-[#FFD600] transition-colors">
+<span class="material-symbols-outlined text-[#F5F0E8] text-[18px] mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md text-[#F5F0E8] placeholder-[#F5F0E8]/50 w-48" placeholder="Search players, clubs..." type="text"/>
+</div>
+<div class="flex items-center gap-sm font-data-mono text-data-mono">
+<div class="bg-black/20 px-sm py-xs rounded flex flex-col items-end">
+<span class="text-[10px] text-[#F5F0E8]/70 uppercase tracking-wider">Budget</span>
+<span class="text-[#FFD600]">$100M</span>
+</div>
+<div class="bg-black/20 px-sm py-xs rounded flex flex-col items-end">
+<span class="text-[10px] text-[#F5F0E8]/70 uppercase tracking-wider">Total</span>
+<span class="text-[#FFD600]">1,250 pts</span>
+</div>
+</div>
+<div class="h-8 w-8 rounded-full bg-white/20 border border-[#F5F0E8]/50 overflow-hidden ml-sm cursor-pointer hover:border-[#FFD600] transition-colors">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXKQ1b3UJA9A8vs9jpBH5J2sMHseh1kCzz34cEJu5K7ymnk6O0VG99WN_wz7lyi1tIvza8Vnq3RGLR2nN4zNMn1RnUe0pK5FVZXuzMqHmGnlZzB1Hk2aQ3mUNgSSJk9YCInKC6R34PvF3OH9HkwN7CpbMUaaawv85NWfY6ooeJXk8_JcU_WDBrdSPy9fEhAoZDM85ykJawYSok75ceLDRjQ7jmTh80H2rRCqmGkg_0Olnb2wXsA22MGv2stxEhUgzwE2BMQ5EvKg"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="bg-white hidden md:flex flex-col fixed left-0 top-0 h-full p-md border-r border-primary/20 w-64 pt-24 z-40">
+<div class="flex items-center gap-md mb-xl p-sm rounded bg-background border border-primary/20">
+<div class="w-10 h-10 rounded bg-[#1A4A2E] flex items-center justify-center border border-white/20">
+<span class="material-symbols-outlined text-[#FFD600]">sports_soccer</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-bold text-label-bold text-on-background">Premier League</span>
+<span class="text-[11px] text-on-background/70">Season 2024/25</span>
+</div>
+</div>
+<nav class="flex flex-col gap-sm flex-1 font-label-bold text-label-bold">
+<a class="flex items-center gap-md bg-[#C0552A] text-[#F5F0E8] rounded px-md py-sm transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+            Dashboard
+        </a>
+<a class="flex items-center gap-md text-on-background/70 hover:bg-background hover:text-[#C0552A] transition-all rounded px-md py-sm" href="#">
+<span class="material-symbols-outlined">group</span>
+            My Team
+        </a>
+<a class="flex items-center gap-md text-on-background/70 hover:bg-background hover:text-[#C0552A] transition-all rounded px-md py-sm" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+            Market
+        </a>
+<a class="flex items-center gap-md text-on-background/70 hover:bg-background hover:text-[#C0552A] transition-all rounded px-md py-sm" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+            Standings
+        </a>
+<a class="flex items-center gap-md text-on-background/70 hover:bg-background hover:text-[#C0552A] transition-all rounded px-md py-sm" href="#">
+<span class="material-symbols-outlined">settings</span>
+            Settings
+        </a>
+</nav>
+<div class="mt-auto pt-lg">
+<button class="w-full bg-[#1A4A2E] text-[#F5F0E8] font-label-bold text-label-bold py-sm rounded border border-white/10 hover:bg-[#C0552A] transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#FFD600]">add</span>
+            Create League
+        </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-lg md:pl-[280px] pr-margin-mobile md:pr-margin-desktop min-h-screen max-w-[1440px] mx-auto">
+<div class="flex flex-col gap-lg">
+<!-- Section 1: Live Matches -->
+<section class="flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-[#C0552A] flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    Live Matches <span class="text-on-background/50 font-normal ml-2 hidden sm:inline">| Gameweek 12</span>
+</h2>
+<a class="font-label-bold text-label-bold text-[#C0552A] hover:underline transition-colors" href="#">View All</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Match Card 1 -->
+<div class="bg-white border border-primary/20 rounded p-md flex flex-col gap-sm hover:border-primary transition-colors glow-active">
+<div class="flex justify-between items-center text-[11px] text-on-background/50 uppercase tracking-wider font-bold">
+<span>82'</span>
+<span class="text-[#C0552A]">LIVE</span>
+</div>
+<div class="flex justify-between items-center font-data-mono text-data-mono">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-red-700 flex items-center justify-center text-white text-[10px] font-bold">MUN</div>
+<span>Man Utd</span>
+</div>
+<span class="text-lg font-bold">2</span>
+</div>
+<div class="flex justify-between items-center font-data-mono text-data-mono">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-[10px] font-bold">ARS</div>
+<span class="text-on-background/70">Arsenal</span>
+</div>
+<span class="text-lg text-on-background/40">1</span>
+</div>
+</div>
+<!-- Match Card 2 -->
+<div class="bg-white border border-primary/20 rounded p-md flex flex-col gap-sm hover:border-primary transition-colors">
+<div class="flex justify-between items-center text-[11px] text-on-background/50 uppercase tracking-wider font-bold">
+<span>60'</span>
+<span class="text-[#C0552A]">LIVE</span>
+</div>
+<div class="flex justify-between items-center font-data-mono text-data-mono">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold">CHE</div>
+<span>Chelsea</span>
+</div>
+<span class="text-lg font-bold">0</span>
+</div>
+<div class="flex justify-between items-center font-data-mono text-data-mono">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-red-800 flex items-center justify-center text-white text-[10px] font-bold">LIV</div>
+<span>Liverpool</span>
+</div>
+<span class="text-lg font-bold">0</span>
+</div>
+</div>
+<!-- Match Card 3 (Upcoming) -->
+<div class="bg-white/50 border border-primary/10 rounded p-md flex flex-col gap-sm opacity-80">
+<div class="flex justify-between items-center text-[11px] text-on-background/50 uppercase tracking-wider font-bold">
+<span>19:45</span>
+<span>UPCOMING</span>
+</div>
+<div class="flex justify-between items-center font-data-mono text-data-mono text-on-background/50">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-white border border-gray-200 text-black text-[10px] font-bold">TOT</div>
+<span>Tottenham</span>
+</div>
+<span>-</span>
+</div>
+<div class="flex justify-between items-center font-data-mono text-data-mono text-on-background/50">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-blue-400 flex items-center justify-center text-white text-[10px] font-bold">MCI</div>
+<span>Man City</span>
+</div>
+<span>-</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Bento Grid -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Gameweek Summary -->
+<div class="lg:col-span-4 bg-[#1A4A2E] border border-white/10 rounded p-lg relative overflow-hidden flex flex-col justify-between min-h-[320px]">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#FFD600 1px, transparent 1px); background-size: 24px 24px;"></div>
+<div class="relative z-10">
+<h3 class="font-headline-md text-[#F5F0E8]/80 mb-2">Gameweek 12</h3>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg text-[#FFD600]">84</span>
+<span class="font-data-mono text-data-mono text-[#F5F0E8]/60">pts</span>
+</div>
+</div>
+<div class="flex flex-col gap-sm mt-auto z-10">
+<div class="flex justify-between items-center py-sm border-b border-white/10">
+<span class="font-body-md text-body-md text-[#F5F0E8]/70">Global Rank</span>
+<div class="flex items-center gap-1 font-data-mono text-data-mono text-[#FFD600]">
+<span>14,502</span>
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span class="text-[10px]">1.2k</span>
+</div>
+</div>
+<div class="flex justify-between items-center py-sm">
+<span class="font-body-md text-body-md text-[#F5F0E8]/70">League Pos.</span>
+<div class="flex items-center gap-1 font-data-mono text-data-mono text-[#FFD600]">
+<span>2nd</span>
+<span class="material-symbols-outlined text-[14px]">horizontal_rule</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Breaking News Carousel -->
+<div class="lg:col-span-8 bg-white border border-primary/20 rounded overflow-hidden flex flex-col md:flex-row relative group shadow-sm">
+<div class="md:w-1/2 h-48 md:h-auto relative overflow-hidden">
+<img alt="Injury alert" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfB0FY35eoTWYqqiYwn6K3pq-F27k1I61J2tORbUHJkwDfeRwhQBlpk5QggrneqrT5N51gSpNg3xZVqrdVNOeE3aWnJLf5MlauEjTm10rWFp9zzSh1OlRtvuI5g8UxU1PK2RVdGdkBsmWcfDAEq6OPKd6QZFySmtEEl9oCuH6fIJUh_97Rtn9DUiT27Jymp0SWn6rcm4Xf7CAG-JpL8VGwBsxqIyIxP-8_c1EmN4Ig1fQs3jXrc36xIuU67YecX05dFAllcgLU5A"/>
+<div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-white via-white/80 to-transparent"></div>
+<div class="absolute top-sm left-sm bg-[#C0552A] text-[#F5F0E8] font-label-bold text-[10px] px-2 py-1 rounded">BREAKING</div>
+</div>
+<div class="p-lg md:w-1/2 flex flex-col justify-center relative z-10 bg-white">
+<span class="text-[#C0552A] font-label-bold text-label-bold mb-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">medical_services</span>
+                        Injury Update
+                    </span>
+<h3 class="font-headline-md text-[#0F1923] mb-sm leading-tight">Star Striker Ruled Out for 3 Weeks Following Collision</h3>
+<p class="font-body-md text-body-md text-on-background/70 mb-md line-clamp-3">Major blow for fantasy managers as the league's top scorer suffers an ankle sprain during the mid-week cup clash. Ensure your benches are set.</p>
+<div class="flex gap-2 mt-auto">
+<button class="w-2 h-2 rounded-full bg-[#C0552A] transition-colors"></button>
+<button class="w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-colors"></button>
+<button class="w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-colors"></button>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Rankings & Performers -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-lg mt-md">
+<!-- Mini-Standings -->
+<div class="bg-white border border-primary/20 rounded flex flex-col overflow-hidden shadow-sm">
+<div class="p-md border-b border-primary/10 flex justify-between items-center bg-background/30">
+<h3 class="font-headline-md text-[#1A4A2E]">Private League: Office Champs</h3>
+<span class="material-symbols-outlined text-on-background/50 cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-primary/10 text-[10px] font-label-bold text-on-background/50 uppercase tracking-wider bg-background/10">
+<th class="p-sm pl-md w-12">Pos</th>
+<th class="p-sm">Manager / Team</th>
+<th class="p-sm text-center">GW</th>
+<th class="p-sm pr-md text-right">Total</th>
+</tr>
+</thead>
+<tbody class="font-data-mono text-data-mono">
+<tr class="border-b border-primary/5 hover:bg-background transition-colors">
+<td class="p-sm pl-md text-on-background/50">1</td>
+<td class="p-sm">
+<div class="font-bold text-on-background font-body-md">Saka Potatoes</div>
+<div class="text-[10px] text-on-background/50 font-normal">Alex M.</div>
+</td>
+<td class="p-sm text-center text-on-background/50">72</td>
+<td class="p-sm pr-md text-right text-[#C0552A] font-bold">1,265</td>
+</tr>
+<tr class="border-b border-primary/5 bg-[#F5F0E8] hover:bg-[#F5F0E8]/80 transition-colors relative">
+<td class="p-sm pl-md font-bold text-[#C0552A]">2</td>
+<td class="p-sm">
+<div class="font-bold text-[#C0552A] font-body-md">Your Team FC</div>
+<div class="text-[10px] text-[#C0552A]/70 font-normal">You</div>
+</td>
+<td class="p-sm text-center text-[#C0552A]">84</td>
+<td class="p-sm pr-md text-right font-bold text-[#C0552A]">1,250</td>
+</tr>
+<tr class="border-b border-primary/5 hover:bg-background transition-colors">
+<td class="p-sm pl-md text-on-background/50">3</td>
+<td class="p-sm">
+<div class="font-bold text-on-background font-body-md">Haaland Globe Trotters</div>
+<div class="text-[10px] text-on-background/50 font-normal">Sarah J.</div>
+</td>
+<td class="p-sm text-center text-on-background/50">61</td>
+<td class="p-sm pr-md text-right text-on-background">1,210</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-sm text-center border-t border-primary/10 bg-background/30 mt-auto">
+<a class="font-label-bold text-label-bold text-[#C0552A] hover:underline transition-colors text-[11px] uppercase" href="#">Full Standings</a>
+</div>
+</div>
+<!-- Top Performers -->
+<div class="bg-white border border-primary/20 rounded flex flex-col overflow-hidden shadow-sm">
+<div class="p-md border-b border-primary/10 flex justify-between items-center bg-background/30">
+<h3 class="font-headline-md text-[#1A4A2E]">Gameweek Heroes</h3>
+<a class="font-label-bold text-[10px] uppercase text-[#C0552A] hover:underline" href="#">View Team</a>
+</div>
+<div class="p-md flex flex-col gap-sm">
+<!-- Hero 1 (Highlighting Dark Container Theme for Yellow Text) -->
+<div class="flex items-center justify-between p-sm rounded bg-[#1A4A2E] hover:bg-[#1A4A2E]/90 transition-colors border border-white/10">
+<div class="flex items-center gap-md">
+<div class="relative">
+<div class="w-10 h-10 rounded bg-[#F5F0E8] overflow-hidden border border-white/20">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ2aFSK6ZcEeaRpRCHVY0cpW5pZEk-kOu9P3RBn7iv0LCtrV8aGHQ1b79BxzENK2y8vKXP__JQrxhro2_8sdidWPDlcJGN6Wv66Sc97yCoEVnTRrf2MhlAJ3j_AiplCd_A6wqU1UYZxfjRiu8wUkzHA2y2XURmEj7W3GtL41VamkxtU8b2dXk6kUxSsnXE7QMM0RVCuNzzIvTADBU43XlqfYakUHoRRbdEvVVQMDTe8DDyUk3k1d_l7ddusLnmEUpQ3OK05PBHUg"/>
+</div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 bg-[#FFD600] text-[#0F1923] rounded-full flex items-center justify-center text-[8px] font-bold border border-[#1A4A2E]">C</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-[#F5F0E8] font-body-md">M. Salah</span>
+<span class="text-[11px] text-[#F5F0E8]/70 font-data-mono">MID | LIV</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-data-mono text-data-mono text-[#FFD600] text-lg">24 pts</span>
+<div class="flex gap-1 mt-1">
+<span class="px-1 bg-white/10 text-[#F5F0E8]/80 rounded text-[9px] font-bold">2 G</span>
+<span class="px-1 bg-white/10 text-[#F5F0E8]/80 rounded text-[9px] font-bold">1 A</span>
+</div>
+</div>
+</div>
+<!-- Hero 2 -->
+<div class="flex items-center justify-between p-sm rounded bg-[#F5F0E8] hover:bg-white transition-colors border border-primary/10">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded bg-white overflow-hidden border border-primary/20">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDp4ejhyEzvXGSxtfbxCsuUPzy7eWRiIkJX6lO2kNg-mNFSx2yohlKlfFhwWBvcoZg2axN2BGy3DKEiHH9bVweDwzvxpyLpQtxPjXZV1pgb73sNsqOr233hsttgQP4-exSvbXPDCLMkXZvZ-s-BxtJ80qWRVgORgjUHDxlAKSzNq52WZUXJT6CP-XHt-e9wuGN4RiozhpBybR0nKCApA8OfGoueQbx9F0MRYDwgDDswXYfPbhxRfx4cbr_SyRWEFSCnHTE2l8WQNQ"/>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-background font-body-md">E. Haaland</span>
+<span class="text-[11px] text-on-background/70 font-data-mono">FWD | MCI</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-data-mono text-data-mono text-[#C0552A] text-lg">12 pts</span>
+<div class="flex gap-1 mt-1">
+<span class="px-1 bg-white text-on-background/50 rounded text-[9px] font-bold border border-primary/10">1 G</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

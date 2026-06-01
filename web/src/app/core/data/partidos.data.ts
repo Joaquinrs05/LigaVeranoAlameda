@@ -1,0 +1,40 @@
+import { IPartido } from '../models/partido.model';
+
+export const PARTIDOS_DATA: IPartido[] = [
+  {
+    id: '1',
+    equipoLocal: 'FC Alameda',
+    abrevLocal: 'ALA',
+    equipoVisitante: 'Los Galácticos',
+    abrevVisitante: 'GAL',
+    golesLocal: 2,
+    golesVisitante: 1,
+    minuto: "72'",
+    estado: 'live',
+    horaInicio: null,
+  },
+  {
+    id: '2',
+    equipoLocal: 'Atleti Verde',
+    abrevLocal: 'ATV',
+    equipoVisitante: 'Deportivo Norte',
+    abrevVisitante: 'DNO',
+    golesLocal: 0,
+    golesVisitante: 0,
+    minuto: 'HT',
+    estado: 'live',
+    horaInicio: null,
+  },
+  {
+    id: '3',
+    equipoLocal: 'Real Barrio',
+    abrevLocal: 'RBA',
+    equipoVisitante: 'Thundercats FC',
+    abrevVisitante: 'THU',
+    golesLocal: null,
+    golesVisitante: null,
+    minuto: null,
+    estado: 'upcoming',
+    horaInicio: '19:45',
+  },
+];

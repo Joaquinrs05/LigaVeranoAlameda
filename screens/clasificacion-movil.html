@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Clasificación Global - Liga de Verano Alameda</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#00210f",
+                        "secondary-container": "#b8ecc5",
+                        "tertiary-container": "#caa900",
+                        "surface-container-highest": "#d9e3f2",
+                        "outline-variant": "#dec0b7",
+                        "surface-dim": "#d1dbe9",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#bbefc8",
+                        "inverse-on-surface": "#e8f1ff",
+                        "background": "#0F1923",
+                        "primary-fixed": "#ffdbcf",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#a23f15",
+                        "primary-fixed-dim": "#ffb59b",
+                        "outline": "#8a7269",
+                        "secondary": "#396849",
+                        "surface": "#0F1923",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#1a2530",
+                        "surface-container": "#151f2b",
+                        "on-background": "#f7f9ff",
+                        "on-secondary-fixed-variant": "#205033",
+                        "surface-variant": "#1d2a38",
+                        "on-primary-fixed-variant": "#812900",
+                        "warm-night": "#0F1923",
+                        "inverse-surface": "#e8f1ff",
+                        "on-primary": "#ffffff",
+                        "golden-yellow": "#FFD600",
+                        "on-primary-container": "#fffdff",
+                        "surface-bright": "#1d2a38",
+                        "terracotta": "#C0552A",
+                        "on-primary-fixed": "#380d00",
+                        "tertiary": "#705d00",
+                        "on-surface": "#f7f9ff",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "tertiary-fixed": "#ffe170",
+                        "secondary-fixed-dim": "#9fd2ad",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#221b00",
+                        "inverse-primary": "#ffb59b",
+                        "on-tertiary-container": "#4c3e00",
+                        "on-secondary": "#ffffff",
+                        "chalk-white": "#F5F0E8",
+                        "on-surface-variant": "#d9e3f2",
+                        "primary": "#C0552A",
+                        "on-tertiary": "#ffffff",
+                        "field-green": "#1A4A2E",
+                        "primary-container": "#C0552A",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#3d6c4d",
+                        "surface-container-low": "#121c27"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Chivo"],
+                        "label-sm": ["Chivo"],
+                        "headline-h2": ["Chivo"],
+                        "headline-h1-mobile": ["Chivo"],
+                        "headline-h1": ["Chivo"],
+                        "label-xs": ["Chivo"],
+                        "headline-h3": ["Chivo"],
+                        "score-display": ["Chivo"],
+                        "body-lg": ["Chivo"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "headline-h2": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-h1-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-h1": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-xs": ["12px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "headline-h3": ["24px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "score-display": ["32px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        body { font-family: 'Chivo', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface border-b border-white/10">
+<div class="flex items-center gap-2">
+<img alt="Escudo Alameda" class="h-10 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJMdTdPhuIry4uRa7Vd5IhjhNvSmNJUzVOzE8DG8Nk0n5ZgpgKc_eyT9MT5P6OuiY74OACaDKd9lVZL8QE6oND89966QqDT93GXFg0wAkQ7CMcTu79UPqVqs4t6INv9I03a8XinkdfENRBeDfjtKWMe3BMBknkVP2BjLRb6kb45JhlJV4XiVc9O_tedJ6Z1XbCTCO89YdxcU2Js3LtZCvk40TSP05VxpIwKXHMmMBcPjwzYDmklkGto_M4uvTly8PqLwLXRDdU1g"/>
+<h1 class="text-lg font-bold text-on-background tracking-tight">Alameda <span class="text-primary">Fantasy</span></h1>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden sm:flex flex-col items-end">
+<span class="text-xs text-on-surface-variant">Presupuesto: $100M</span>
+<span class="text-xs font-bold text-golden-yellow">1.250 pts</span>
+</div>
+<img alt="Perfil" class="w-8 h-8 rounded-full border border-outline-variant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_tatT-p_LGNdcksutANlds5_A-xroreB-6vGfCOofRMgPZIEX16CpPK0y1Vybkg3ldjXuT5T-AAIcZW85vp-D7rzsgnUwhIPrNBwLhm96JQLH6hsu196Z0Kn-Y53YEK0BJ8M18aRUrzNW5hl_NUsqGT7wogLz-0VQh5-y8Frf1xZfZtjeRRuS0S7JGBshMBj-bpy9zqQZutdwhq1_ZbSXAgTwUgGuWOcvf-KXQxu2ZreNFAhguPL_FEX9rSueEKLMeSBhakMNZQ"/>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow pt-20 pb-24 px-margin-mobile flex flex-col gap-stack-md">
+<!-- Screen Title & Tabs -->
+<div class="flex flex-col gap-stack-sm pt-sm">
+<h2 class="text-headline-h3 font-semibold">Clasificación Global</h2>
+<div class="flex bg-surface-container-low rounded-lg p-1">
+<button class="flex-1 py-2 rounded-md bg-primary text-on-primary font-bold shadow-sm transition-colors">General</button>
+<button class="flex-1 py-2 rounded-md text-on-surface-variant hover:text-on-surface font-bold transition-colors">Privada</button>
+</div>
+</div>
+<!-- Standings Table/List -->
+<div class="flex flex-col gap-2">
+<!-- Table Header -->
+<div class="flex items-center justify-between px-2 py-2 text-on-surface-variant opacity-60 uppercase text-[10px] font-bold tracking-widest border-b border-white/5">
+<div class="flex items-center gap-4">
+<span class="w-6 text-center">#</span>
+<span>Manager / Equipo</span>
+</div>
+<span>Puntos</span>
+</div>
+<!-- List Items -->
+<!-- 1st Place (Golden Highlight) -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container border border-white/5">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 flex items-center justify-center rounded-full bg-golden-yellow text-warm-night font-bold text-xs">1</div>
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center border border-white/10 overflow-hidden">
+<span class="material-symbols-outlined text-golden-yellow" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Alex Mercer</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">FC Spartans</span>
+</div>
+</div>
+<span class="font-bold text-golden-yellow">1.420</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container border border-white/5">
+<div class="flex items-center gap-4">
+<span class="w-6 text-center font-bold text-on-surface-variant">2</span>
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center border border-white/10 overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Sarah Jenkins</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">The Invincibles</span>
+</div>
+</div>
+<span class="font-bold text-on-surface">1.395</span>
+</div>
+<!-- Current User (Highlighted with Terracotta) -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high border-2 border-primary relative overflow-hidden">
+<div class="flex items-center gap-4">
+<span class="w-6 text-center font-bold text-primary">3</span>
+<img alt="Tú" class="w-10 h-10 rounded-full border border-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZF3AJBzqSYrHQRPfwKFjrmPzJaLuiaT_WqEYWnF-0N-l_Gb7nhaQcEhKhV5bR_JJ3T1QBsJ7h5iimx--kP8gJ8vyYXKWP-SMXqhpF0wQ4q2LAtkexNHmdmQQHrcPb8o-HPgziz8cOhcZPQnDzHW1O70lAUshmFoV4GQybNPI5p-mD3ivJs8VmjXXmuW425fLtbfQ8JMMTj7SMXr_Q88str7Z5K_H95Pg-USdltkNlwM1v06IHwsWmN6lyF6VhaRhFDRW4g-_yzQ"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Tú</span>
+<span class="text-[10px] text-primary uppercase font-bold tracking-wider">Your Team FC</span>
+</div>
+</div>
+<span class="font-bold text-primary">1.250</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container border border-white/5">
+<div class="flex items-center gap-4">
+<span class="w-6 text-center font-bold text-on-surface-variant">4</span>
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center border border-white/10 overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">David Chen</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Pitch Invaders</span>
+</div>
+</div>
+<span class="font-bold text-on-surface">1.210</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container border border-white/5">
+<div class="flex items-center gap-4">
+<span class="w-6 text-center font-bold text-on-surface-variant">5</span>
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center border border-white/10 overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Emma Watson</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Golden Boots</span>
+</div>
+</div>
+<span class="font-bold text-on-surface">1.185</span>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-2 pb-safe bg-surface-container border-t border-white/10 rounded-t-xl shadow-2xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-16 py-1" href="#">
+<span class="material-symbols-outlined text-xl">home</span>
+<span class="text-[10px] font-bold">Inicio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-16 py-1" href="#">
+<span class="material-symbols-outlined text-xl">person</span>
+<span class="text-[10px] font-bold">Equipo</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-16 py-1" href="#">
+<span class="material-symbols-outlined text-xl">storefront</span>
+<span class="text-[10px] font-bold">Mercado</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary w-16 py-1" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+<span class="text-[10px] font-bold">Rank</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-16 py-1" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="text-[10px] font-bold">Ajustes</span>
+</a>
+</nav>
+</body></html>

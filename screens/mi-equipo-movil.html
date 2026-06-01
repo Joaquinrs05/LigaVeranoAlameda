@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Liga de Verano Alameda - Fantasy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-secondary-fixed": "#00210f",
+                "secondary-container": "#b8ecc5",
+                "tertiary-container": "#caa900",
+                "surface-container-highest": "#d9e3f2",
+                "outline-variant": "#dec0b7",
+                "surface-dim": "#d1dbe9",
+                "surface-container-lowest": "#ffffff",
+                "secondary-fixed": "#bbefc8",
+                "inverse-on-surface": "#e8f1ff",
+                "background": "#0F1923",
+                "primary-fixed": "#ffdbcf",
+                "error-container": "#ffdad6",
+                "surface-tint": "#a23f15",
+                "primary-fixed-dim": "#ffb59b",
+                "outline": "#8a7269",
+                "secondary": "#396849",
+                "surface": "#0F1923",
+                "on-tertiary-fixed-variant": "#544600",
+                "error": "#ba1a1a",
+                "surface-container-high": "#1A242E",
+                "surface-container": "#151F29",
+                "on-background": "#f7f9ff",
+                "on-secondary-fixed-variant": "#205033",
+                "surface-variant": "#27313c",
+                "on-primary-fixed-variant": "#812900",
+                "warm-night": "#0F1923",
+                "inverse-surface": "#f7f9ff",
+                "on-primary": "#ffffff",
+                "golden-yellow": "#FFD600",
+                "on-primary-container": "#fffdff",
+                "surface-bright": "#1F2933",
+                "terracotta": "#C0552A",
+                "on-primary-fixed": "#380d00",
+                "tertiary": "#FFD600",
+                "on-surface": "#f7f9ff",
+                "tertiary-fixed-dim": "#e9c400",
+                "tertiary-fixed": "#ffe170",
+                "secondary-fixed-dim": "#9fd2ad",
+                "on-error-container": "#93000a",
+                "on-tertiary-fixed": "#221b00",
+                "inverse-primary": "#ffb59b",
+                "on-tertiary-container": "#4c3e00",
+                "on-secondary": "#ffffff",
+                "chalk-white": "#F5F0E8",
+                "on-surface-variant": "#d9e3f2",
+                "primary": "#C0552A",
+                "on-tertiary": "#000000",
+                "field-green": "#1A4A2E",
+                "primary-container": "#c0552a",
+                "on-error": "#ffffff",
+                "on-secondary-container": "#3d6c4d",
+                "surface-container-low": "#121C27"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+        },
+        "spacing": {
+                "container-max": "1200px",
+                "stack-md": "16px",
+                "stack-lg": "32px",
+                "stack-sm": "8px",
+                "margin-desktop": "48px",
+                "gutter": "24px",
+                "margin-mobile": "20px"
+        },
+        "fontFamily": {
+                "body-md": ["Chivo"],
+                "label-sm": ["Chivo"],
+                "headline-h2": ["Chivo"],
+                "headline-h1-mobile": ["Chivo"],
+                "headline-h1": ["Chivo"],
+                "label-xs": ["Chivo"],
+                "headline-h3": ["Chivo"],
+                "score-display": ["Chivo"],
+                "body-lg": ["Chivo"]
+        },
+        "fontSize": {
+                "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-sm": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                "headline-h2": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                "headline-h1-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                "headline-h1": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "label-xs": ["12px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                "headline-h3": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                "score-display": ["32px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+        }
+    },
+    },
+  }
+</script>
+<style>
+        body {
+            background-color: #0F1923;
+            color: #f7f9ff;
+            font-family: 'Chivo', sans-serif;
+        }
+        
+        .pitch-bg {
+            background: linear-gradient(180deg, #0F1923 0%, #1A242E 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pitch-lines {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            margin: 16px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        
+        .pitch-center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .pitch-center-line {
+            position: absolute;
+            top: 50%;
+            left: 16px;
+            right: 16px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+        
+        .player-card-bg {
+            background-color: #1A4A2E;
+        }
+        
+        .nav-safe-padding {
+            padding-bottom: 80px;
+            padding-top: 64px;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col font-body-md text-body-md pb-safe">
+<!-- TopNavBar -->
+<nav class="bg-surface dark:bg-surface border-b border-white/10 fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16">
+<div class="flex items-center gap-2">
+<img alt="Escudo Alameda" class="h-10 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJMdTdPhuIry4uRa7Vd5IhjhNvSmNJUzVOzE8DG8Nk0n5ZgpgKc_eyT9MT5P6OuiY74OACaDKd9lVZL8QE6oND89966QqDT93GXFg0wAkQ7CMcTu79UPqVqs4t6INv9I03a8XinkdfENRBeDfjtKWMe3BMBknkVP2BjLRb6kb45JhlJV4XiVc9O_tedJ6Z1XbCTCO89YdxcU2Js3LtZCvk40TSP05VxpIwKXHMmMBcPjwzYDmklkGto_M4uvTly8PqLwLXRDdU1g"/>
+<div class="font-headline-h3 text-headline-h3 text-on-surface">
+        Liga Alameda
+    </div>
+</div>
+<div class="flex items-center gap-sm">
+<div class="flex flex-col items-end mr-sm">
+<span class="font-label-xs text-label-xs text-on-surface-variant">Presupuesto: $100M</span>
+<span class="font-score-display text-[16px] text-golden-yellow">1,250 pts</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant flex-shrink-0">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhilkj5E2ZTqT3oAH5xBjeLGS8lcU4XIvwnnHlxcKLYQyT2mTcYJ8jj9_Zw0SmecC2CpM1WPnCX-Re2L3kup2MndB6OOG2_PsPjg5k-QNrJPikS9wOUuxca_Il6mczIt8iTXp8uOVZk8sMUeajBD1uG0TV7B-ao83t1J49vZ6FeduiPoo7FQrsZ3MmvsvBjK91LVPg6ugi6RBlwBJ3CdBcRwZDKbVCbKVU5h_ye4Y9c5ohARrb3W4Ja2x-1TWNov2AYs5SApM-uw"/>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow nav-safe-padding flex flex-col h-screen overflow-hidden">
+<!-- Pitch Area -->
+<div class="pitch-bg flex-grow relative flex flex-col justify-around py-stack-md px-stack-sm overflow-y-auto">
+<div class="pitch-lines"></div>
+<div class="pitch-center-circle"></div>
+<div class="pitch-center-line"></div>
+<!-- Attackers -->
+<div class="flex justify-around items-center w-full z-10 relative mt-sm">
+<!-- Player: LW -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer">
+<div class="relative">
+<div class="w-12 h-12 rounded-full border-2 border-golden-yellow player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5LxxXXosUKPb4SnID_6Ldfb74DbG8olPNL2b_ohzKTRtmSuUmiYNHnNEoc3DGkFjL4StHXPrzqhrXjRPFA7xFMECHgNUx_RLySQyGCp4pqUh3LvTWhpBR8OvUyFjtvd3LkwQA-PNGfrmdBbrTo4aisMC_stU0SDCdYPwO2ufJOQUShHv4Wck7odxRci8udsO8MBordmwHnwJghklHnyEXJYsIAeSX8repGb6pgCvQpIH55itm-wAor55YmCw4RE321tnPglguWw"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs px-1 rounded border border-white/20 whitespace-nowrap">
+                            SAKA
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-2 py-0.5 rounded border border-white/10">
+<span class="font-label-xs text-golden-yellow">8.5m</span>
+<span class="text-[8px] text-white/30">|</span>
+<span class="font-label-xs text-white">64</span>
+</div>
+</div>
+<!-- Player: ST -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer -mt-4">
+<div class="relative">
+<div class="w-14 h-14 rounded-full border-2 border-terracotta player-card-bg overflow-hidden shadow-[0px_4px_20px_rgba(255,214,0,0.2)]">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOdBg9gNrFOmOb-WgcjS_zIs_1uIz2euT9cxuJWx6hIIgO1V3g-_-hFbvLAm0RBHOOIKccF_3WxciH9tcJiI3lbatV5-j3zqLlcfBS79q8SJ--Z5Ibien51R8OFhR8rdGDOxML-n7gLrofA6YcWnMJSYdMISgFUFehGNWZDyoYgL41oBo--G7VawE96DDM9TxZnK_XFm69OIyMvzMQuptXxAtg3obfheAcJOdPA1yxLZlJTdtLXK3h3WpoDVDMwX6K9P9N7UxgNw"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-golden-yellow font-label-xs px-1 rounded border border-golden-yellow/50 whitespace-nowrap flex items-center gap-1">
+<span class="text-golden-yellow text-[10px] material-symbols-outlined font-bold">star</span> HAALAND
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-2 py-0.5 rounded border border-white/10">
+<span class="font-label-xs text-golden-yellow font-bold">14.0m</span>
+<span class="text-[8px] text-white/30">|</span>
+<span class="font-label-xs text-white">112</span>
+</div>
+</div>
+<!-- Player: RW -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer">
+<div class="relative">
+<div class="w-12 h-12 rounded-full border-2 border-golden-yellow player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBihnb890Bk_HtXZzBYhT-8eqtHHDTHe-02OJ1epBgRFLLXpu5vGHnoIZVCgBe0FkAC4hBUJlQc0lQzv2OVL89ErKEjNyRUtB4XKeLF-w6wCyFMd7oJPMuI8FIjrS4QFypbRUj8TP83995m_RlBDMC1W7ifTCFc8a3XAGE4SnDkcqioo-D9rXI4I47iMXoo7Ymx0r5CY1aLSv9f5oSi9bym2HtXGKOQvzQyzyJ1a041ZoitlABi9Tjdv6tFTBofWlmP3493wEV5eQ"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs px-1 rounded border border-white/20 whitespace-nowrap">
+                            SALAH
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-2 py-0.5 rounded border border-white/10">
+<span class="font-label-xs text-golden-yellow">12.5m</span>
+<span class="text-[8px] text-white/30">|</span>
+<span class="font-label-xs text-white">88</span>
+</div>
+</div>
+</div>
+<!-- Midfielders -->
+<div class="flex justify-around items-center w-full z-10 relative">
+<!-- Player: LM -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer mt-4">
+<div class="relative">
+<div class="w-12 h-12 rounded-full border-2 border-white/20 player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCD3lNqo-3yIY2-wsUtp0kxLnNdj8qJqK40l_VWIbhHwkO47phO-b9y3GDgt1Cyf8eBBHS4iFKZiK0X2Ne-0kgVCJ1v1zb256Jbt1G61xH28eWO6lqzqrzUxZjd-WZJPwSD8y6TGEJY2-RWCx-wAFTYkV_c6Rs2_JItDkcYGc13fKIleHWdlyNX_icmw_xoR7693BuCNYMstWqFcztfcyVDo6nIazA00mbYS8IhdAMZqVkNBzQqhjxCmKq4DddEaYp8-IIb9a0tuw"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs px-1 rounded border border-white/20 whitespace-nowrap">
+                            FODEN
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-2 py-0.5 rounded border border-white/10">
+<span class="font-label-xs text-on-surface-variant">7.5m</span>
+<span class="text-[8px] text-white/30">|</span>
+<span class="font-label-xs text-white">45</span>
+</div>
+</div>
+<!-- Player: CM -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer -mt-2">
+<div class="relative">
+<div class="w-12 h-12 rounded-full border-2 border-golden-yellow player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7z6A9NnySNokt8-T8UA7SNReLd6RLibKYUoWv1uEaHWpnKa0nj7XKpdE7rgW8rR85wWKALdFq81MqwmyEzQtdKKk3rJ8QzlhhJsHNT-q7_IB2aWgVu9r_QN2b1AUEx16oyg6MJnOWsj7QFwewadYHLINlTKqc9CqzzpLgDDv8bVclIoClZJJh9qYSVWBgxxIU8oVSmzcIs952CVva49D8sUXe8_g2qq8wErSTKoWjCfTVqGFcZ5YVoYn0mCylW9f6zBNT9mtSDg"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs px-1 rounded border border-white/20 whitespace-nowrap">
+                            RICE
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-2 py-0.5 rounded border border-white/10">
+<span class="font-label-xs text-golden-yellow">6.0m</span>
+<span class="text-[8px] text-white/30">|</span>
+<span class="font-label-xs text-white">52</span>
+</div>
+</div>
+<!-- Player: RM -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer mt-4">
+<div class="relative">
+<div class="w-12 h-12 rounded-full border-2 border-white/20 player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1v--ZbNa8A7pIOqDMW3KQuTttC1nkUlMFaCnR-uX9il2z7v9di1gpnJpUMeUGr2JOJ4lqMMRKRRJ0nEp42FQ_BUh91YzcuQEhXSuWvy048ZvnVFwHmqUslQH69dVZoxe8fUnzmOnbI6cxade4mMqqsZ2LxirMqPNwVVKUaHdJ_e92celGE6fENq4WkkkdqliQ-13Eflc8zB4iu7aj9TJr2DlR2sd25f-Yajj6icj-mB9KUy7pv9stoHIDImYFXkzFeiPKFp3uOw"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs px-1 rounded border border-white/20 whitespace-nowrap">
+                            BOWEN
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-2 py-0.5 rounded border border-white/10">
+<span class="font-label-xs text-on-surface-variant">7.0m</span>
+<span class="text-[8px] text-white/30">|</span>
+<span class="font-label-xs text-white">48</span>
+</div>
+</div>
+</div>
+<!-- Defenders -->
+<div class="flex justify-around items-center w-full z-10 relative">
+<!-- Player: LB -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer mt-2">
+<div class="relative">
+<div class="w-10 h-10 rounded-full border-2 border-white/10 player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDole8FIobhnxTcEM8US0dkv9aDhP0pzSJjARB8QX0dSohj5Mvj4MaTRNE5a9GC7dz9_PBNqdozwYcy8ND94s9Wog1fDSv6G7W-tNa3rWpZO1iwt6PVA0MEUwYQd-Ojc5jOZ-jx1_mSqWY9MIpyNpOywELFUO-BDjd9fzRmVe6xDoySqcS9aaMLh7NP3USDz7jsVCM5e5V2aVL_dL4pWqYhFTavKvW9o5mUQxwVhesaMzayzyeKiNTQqILifLUZC7AaZj8dFE5fgQ"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs text-[9px] px-1 rounded border border-white/10 whitespace-nowrap">
+                            ESTUPINAN
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-1 py-0.5 rounded border border-white/5">
+<span class="font-label-xs text-[9px] text-on-surface-variant">5.0m</span>
+</div>
+</div>
+<!-- Player: CB -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer -mt-2">
+<div class="relative">
+<div class="w-10 h-10 rounded-full border-2 border-golden-yellow player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYwwlxVcAZE31GUCxAm1mQxXakAoTdS5SYuXSVvkyRzbU8doPi0T5T6_ifYAsaiAhDYRzcHaMizD5ZszhSvBz_c1YcE4YtbUFQ1VwFX5DRzjOAJIog-GIoWkVeTH0RFRYX41GdGHgijZGuLcGdpRfLf4zR4Ne1KLheE1WudsNJaM3lBuyK2HV1cGOu6iFsM20k6emc68q1ovrb2MPLNfNymUQ1BqrcZ8aEpXoCu2bUD-ukSwOUfZNT2SFw-QYDOq64VYXRLM02FQ"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs text-[9px] px-1 rounded border border-white/10 whitespace-nowrap flex items-center gap-0.5">
+<span class="text-error text-[10px] material-symbols-outlined font-bold">medical_services</span> DIAS
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-error/20 px-1 py-0.5 rounded border border-error/50">
+<span class="font-label-xs text-[9px] text-error font-bold">5.5m</span>
+</div>
+</div>
+<!-- Player: CB -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer -mt-2">
+<div class="relative">
+<div class="w-10 h-10 rounded-full border-2 border-white/10 player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD70lqXS-8Zl-SCtZYHDCVSKLSHbmAP2T_xXV63qsAWSH8IaUBuxHZmOHvTzR7s6O00Yt5xfrzsmltgschDY9YFYiy3rwj6JYijT-bPzq37mt4M98r69xAUyO1Hna7lfsdAlQCa_W4ly5wqdivVVaaPW554Bl6i8kH5bmmbhlRjMUn5kD_Ea5Fw8-g2scIeo1Lr780Tq_n67i6D2JzGhjaadeemde4_8I8ElubsFAo0_yIVKmYh07_Kncs6YF6-AtP8ohDHkROuKQ"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs text-[9px] px-1 rounded border border-white/10 whitespace-nowrap">
+                            SALIBA
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-1 py-0.5 rounded border border-white/5">
+<span class="font-label-xs text-[9px] text-on-surface-variant">5.5m</span>
+</div>
+</div>
+<!-- Player: RB -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer mt-2">
+<div class="relative">
+<div class="w-10 h-10 rounded-full border-2 border-white/10 player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAQMAEfRt3FGH-kN5j51W5Oqnv2g-iBwz5bcwxc6-ZYsBnJGRERH11EukdO8TAxaG0iAj4FiEbhN09sEsS4UfWnoRcE6vVJgkzNhxZDzNHiHxC8MpJNCA4Kz6UG3arWuZ0tqji8_gUiciJLoSuYY24FJrilQMelJ8bDGSpa-2W7adnxhYNho2KeIHT08zlf1Wxed8q97XQ_llqbHpPYYq0JQt6uY55ZiUXq2RdeiiJ3iue2VXGdkklyK3e3ZbUysDjVFp2d9t0pQ"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs text-[9px] px-1 rounded border border-white/10 whitespace-nowrap">
+                            TRIPPIER
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-1 py-0.5 rounded border border-white/5">
+<span class="font-label-xs text-[9px] text-on-surface-variant">6.5m</span>
+</div>
+</div>
+</div>
+<!-- Goalkeeper -->
+<div class="flex justify-center items-center w-full z-10 relative mt-sm">
+<!-- Player: GK -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer">
+<div class="relative">
+<div class="w-12 h-12 rounded-full border-2 border-golden-yellow player-card-bg overflow-hidden shadow-sm">
+<img alt="Player" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-0dSYepQbOw_1q1g2RDgtgxezolQelBVzrEIF3bp3HPJCEDpjEZ5i-itySjr3J5Gq-oSg2eWo1J4NiruukjdqddF-lgnIx431hTJVoURDYXN3MR9zzcRyNzMtPq0HDDPLqVBDJcCfG8wLHcdkmv46snJVMxW1ZeVP65QAEZTRikjlLvMW_jfXTR33o0LqdF1hTkgEFk2QQVaXrZ7Ou3aC1Mbm8pCqzjtImwfbB_bEdY2h92A78pM7kIcrcqanADW_r9FWnhzI8A"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface font-label-xs px-1 rounded border border-white/20 whitespace-nowrap flex items-center gap-1">
+<span class="text-golden-yellow text-[10px] material-symbols-outlined font-bold">shield</span> ALISSON
+                        </div>
+</div>
+<div class="flex gap-1 items-center mt-2 bg-black/40 px-2 py-0.5 rounded border border-white/10">
+<span class="font-label-xs text-golden-yellow">5.5m</span>
+<span class="text-[8px] text-white/30">|</span>
+<span class="font-label-xs text-white">32</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bench Section -->
+<div class="bg-surface-container border-t border-white/10 py-stack-sm px-margin-mobile flex-shrink-0 z-20 shadow-[0_-4px_10px_rgba(0,0,0,0.5)]">
+<div class="flex justify-between items-center mb-xs">
+<span class="font-label-xs font-bold text-on-surface-variant uppercase tracking-wider">Banquillo</span>
+<span class="font-label-xs text-on-surface-variant">Max 4</span>
+</div>
+<div class="flex justify-between items-center gap-2">
+<!-- Bench Player 1 -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+<div class="relative">
+<div class="w-8 h-8 rounded-full border border-white/20 bg-surface-container-high overflow-hidden">
+<img alt="Bench Player" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3IQjwQGEujh2stswMc0xL6eKnTvRbCMXH6qGuxHfsRrrXBNanQxb6Nrz_8xJlYO8MvOZeCNY59ADlXwcaWB43vwKftA7EBMx84-uXaekiqt7cVWuLdZPjoS3IM5FO6QONZL0r1D6ZDqtXpRBUD5RGgy_-sJbSCQYxEyc4roWYwNJyB78Vz-s3TpQ_xREwLdD6Q1PrB84BvEi0a7JzIFl7w2vFvcvXgJ7mJK3csFlNC5PbgbGu6656tqc5qfGqumyrA0coMzJpFA"/>
+</div>
+<div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface-variant font-label-xs text-[8px] px-0.5 rounded border border-white/10 whitespace-nowrap">
+                            TURNER
+                        </div>
+</div>
+</div>
+<!-- Bench Player 2 -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+<div class="relative">
+<div class="w-8 h-8 rounded-full border border-white/20 bg-surface-container-high overflow-hidden">
+<img alt="Bench Player" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDheFLMsjhSf1FEPXanEIG7lUjhD1KPBhsNwOugy_IiKgHrQtHVs92xUHO5ePqk74YXavm5FhwP6IBb_Y_BexOerA9LioFIuVOAlFlPzJy3SI1LpClSSw1_sSoh4OzyEskD5CMy94QQqCs8074uQGrvhHbRdxI8dyZhCjcJrjGBHIB6KBpWW7AOxyEbepmkM5a05_CL8dMzpaj4eEWOeTA8vz6k2jXeW3c6qeNb74WamytkljchC9fpresCJFyQ2UWDvrYof4GorQ"/>
+</div>
+<div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface-variant font-label-xs text-[8px] px-0.5 rounded border border-white/10 whitespace-nowrap">
+                            BELL
+                        </div>
+</div>
+</div>
+<!-- Bench Player 3 -->
+<div class="player-card flex flex-col items-center gap-xs cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+<div class="relative">
+<div class="w-8 h-8 rounded-full border border-white/20 bg-surface-container-high overflow-hidden">
+<img alt="Bench Player" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3RwC6sozR-JL3t-HFx9j1ZgmeDynCHDuGI_F_YX_rN20XsS6taIA0oDlqP2GGdgkzUnTXmIiN9P7L9x7a71RaBXpUkaO2XK03VYiSvfXVIW7AY3aGgreNAEMt_fPigAhGGm8RWCGaTm-Ju_mH7BgdwqCt4iXMu9wwMwdQ31BfZI0ItWQNc61a0ngnU7z0Jv-_ljRnDtg0j7wdPijOYb33WqFc8gx1pEFF800sHwb2ix3-iYwVmPJ0Rux5OPNoqmI0Of6us2cAbw"/>
+</div>
+<div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-warm-night text-on-surface-variant font-label-xs text-[8px] px-0.5 rounded border border-white/10 whitespace-nowrap">
+                            CHUKWU
+                        </div>
+</div>
+</div>
+<!-- Empty Bench Slot -->
+<div class="flex flex-col items-center justify-center w-8 h-8 rounded-full border border-dashed border-white/30 bg-white/5 opacity-50">
+<span class="material-symbols-outlined text-[16px] text-white/50">add</span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm py-xs pb-safe bg-surface-container-highest rounded-t-xl text-on-secondary-fixed">
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">home</span>
+<span class="text-[10px]">Inicio</span>
+</a>
+<!-- Active State: Team -->
+<a class="flex flex-col items-center justify-center bg-terracotta text-white rounded-full px-4 py-1 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-[10px]">Equipo</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">storefront</span>
+<span class="text-[10px]">Mercado</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">emoji_events</span>
+<span class="text-[10px]">Ranking</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">settings</span>
+<span class="text-[10px]">Ajustes</span>
+</a>
+</nav>
+</body></html>

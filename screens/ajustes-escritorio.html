@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings | FantasyLeague Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#10140f",
+                    "surface-container-low": "#191d17",
+                    "on-tertiary": "#23333a",
+                    "surface-variant": "#323630",
+                    "on-secondary-fixed": "#141f00",
+                    "primary-container": "#1b5e20",
+                    "on-tertiary-fixed-variant": "#394951",
+                    "on-error-container": "#ffdad6",
+                    "surface-bright": "#363a34",
+                    "on-secondary": "#253500",
+                    "surface-container-high": "#272b25",
+                    "tertiary-container": "#44545c",
+                    "on-primary-fixed-variant": "#0c5216",
+                    "on-secondary-fixed-variant": "#384e00",
+                    "primary-fixed": "#acf4a4",
+                    "surface-container-lowest": "#0b0f0a",
+                    "surface-container-highest": "#323630",
+                    "tertiary-fixed": "#d4e5ef",
+                    "secondary": "#e1ffa0",
+                    "outline-variant": "#41493e",
+                    "on-background": "#e0e4db",
+                    "tertiary-fixed-dim": "#b8c9d3",
+                    "inverse-primary": "#2a6b2c",
+                    "on-surface": "#e0e4db",
+                    "on-secondary-container": "#4a6600",
+                    "on-primary-fixed": "#002203",
+                    "surface-container": "#1d211b",
+                    "on-tertiary-container": "#b6c8d1",
+                    "on-surface-variant": "#c0c9bb",
+                    "on-error": "#690005",
+                    "error": "#ffb4ab",
+                    "surface-tint": "#91d78a",
+                    "inverse-surface": "#e0e4db",
+                    "secondary-fixed-dim": "#a0d800",
+                    "secondary-container": "#aeea01",
+                    "outline": "#8a9386",
+                    "inverse-on-surface": "#2d322c",
+                    "error-container": "#93000a",
+                    "secondary-fixed": "#b9f61d",
+                    "on-primary-container": "#90d689",
+                    "surface": "#10140f",
+                    "primary-fixed-dim": "#91d78a",
+                    "primary": "#91d78a",
+                    "background": "#10140f",
+                    "tertiary": "#b8c9d3",
+                    "on-primary": "#003909",
+                    "on-tertiary-fixed": "#0d1e25"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "xl": "48px",
+                    "xs": "4px",
+                    "margin-desktop": "32px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "base": "4px",
+                    "gutter": "16px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Oswald"],
+                    "label-bold": ["Inter"],
+                    "headline-lg-mobile": ["Oswald"],
+                    "data-mono": ["Inter"],
+                    "headline-md": ["Oswald"],
+                    "headline-lg": ["Oswald"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "data-mono": ["14px", {"lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #10140f;
+            color: #e0e4db;
+        }
+        /* Custom scrollbar for high-density data feel */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #191d17; }
+        ::-webkit-scrollbar-thumb { background: #37474F; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #91d78a; }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface dark:bg-surface border-b border-outline-variant/50">
+<div class="flex items-center gap-md">
+<span class="text-headline-md font-headline-lg text-primary dark:text-primary">FantasyLeague Pro</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex items-center gap-md font-data-mono text-primary">
+<span>Budget: $100M</span>
+<span class="text-on-surface-variant">|</span>
+<span>1,250 pts</span>
+</div>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-primary/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdYubLTHuRVLPC2jtWWqdbZXXiGBM9LKtL88qf0DCt6BQ609vlE9AiWR6lkfsiTFdFL8q_z1AUU9jX5yT7eAOAqUsiPcqhi88_ya8K3t3_sSIDFR7zPHEFB70nD9XQ3WFTzyqEQ0xhQ8cpUdzGyHPM4yCyfPnJyfP6eirOWuO4RXAc98zqktUxX46jhIhPz9yYX5n7uqIgbDc9ppaNa9-Wtuv4CANEcPXmj8muR9peBnLaIa_nICzehXr2bIIfXbkGlnIKqncdtQ"/>
+</div>
+</header>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="hidden md:flex flex-col fixed left-0 top-0 h-full p-md border-r border-outline-variant/30 bg-surface-container dark:bg-surface-container w-64 pt-20 shadow-sm z-40">
+<div class="mb-xl px-md">
+<h2 class="font-headline-md text-primary">Premier League</h2>
+<p class="font-label-bold text-on-surface-variant text-[10px] uppercase tracking-widest">Season 2024/25</p>
+</div>
+<nav class="flex flex-col gap-sm flex-grow">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-bold text-label-bold">Dashboard</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-bold text-label-bold">My Team</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-bold text-label-bold">Market</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-md py-sm transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-label-bold text-label-bold">Standings</span>
+</a>
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-full px-md py-sm scale-98 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-bold text-label-bold">Settings</span>
+</a>
+</nav>
+<button class="mt-auto bg-primary text-on-primary font-label-bold py-md rounded-xl hover:opacity-90 transition-opacity">
+            Create League
+        </button>
+</aside>
+<!-- Main Content Area -->
+<main class="pt-20 pb-24 md:pl-64 min-h-screen">
+<div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-lg">
+<header class="mb-xl">
+<h1 class="font-display-lg text-display-lg text-primary uppercase">Settings</h1>
+<p class="text-on-surface-variant font-body-lg">Manage your team and account preferences for the 2024/25 season.</p>
+</header>
+<div class="grid grid-cols-1 gap-lg">
+<!-- Account Settings Section -->
+<section class="bg-surface-container-low border border-outline-variant/30 rounded-xl overflow-hidden shadow-lg">
+<div class="bg-surface-container-high px-lg py-md border-b border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="person">person</span>
+<h2 class="font-headline-md uppercase tracking-tight">Account Settings</h2>
+</div>
+<span class="font-label-bold text-secondary text-[10px] bg-primary-container/20 px-sm py-xs rounded">PRO MEMBER</span>
+</div>
+<div class="p-lg space-y-lg">
+<!-- Profile Photo -->
+<div class="flex flex-col md:flex-row md:items-center gap-lg">
+<div class="relative group">
+<img alt="Profile avatar" class="w-24 h-24 rounded-full border-2 border-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXuffaN6dgxLlPQ7iuWYUv7oVYzyKdc9pkPK5mmF1ROjBcBcvrxIscLqeHmgaCvOWYwSshmMm8VXOdFBtDGK4zl2Z-ofKzMledYObxnJkQmGfErDLEPpQCskra2LYHotvRdd2oT6hPzkSikmbL14Ei-Kkhaycm3kATsssmkV6kMay14XcSwmHhDobZuAfMn6-NTBBW1Vgq3kar3z71CaB7s-qU_8cxSPPrby_nrdz0AFbKTCjXp1BZKbnJV4qyMMZuwn_hxWXq1w"/>
+<button class="absolute bottom-0 right-0 bg-secondary-container text-on-secondary-container p-xs rounded-full shadow-md hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+</div>
+<div class="space-y-xs">
+<h3 class="font-label-bold text-on-surface">Profile Photo</h3>
+<p class="text-on-surface-variant text-body-md">Update your manager avatar. Visible in leagues and standings.</p>
+<div class="flex gap-sm pt-xs">
+<button class="bg-surface-container-highest px-md py-xs rounded font-label-bold text-[11px] border border-outline-variant hover:bg-outline-variant transition-colors">UPLOAD NEW</button>
+<button class="px-md py-xs rounded font-label-bold text-[11px] text-error hover:bg-error-container/20 transition-colors">REMOVE</button>
+</div>
+</div>
+</div>
+<!-- Form Fields -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg pt-md">
+<div class="space-y-xs">
+<label class="font-label-bold text-on-surface-variant uppercase text-[10px]">Manager Name</label>
+<input class="w-full bg-surface-dim border border-outline-variant focus:border-secondary-container focus:ring-1 focus:ring-secondary-container rounded p-sm text-body-md outline-none transition-all" type="text" value="Alex "/>
+</div>
+<div class="space-y-xs">
+<label class="font-label-bold text-on-surface-variant uppercase text-[10px]">Email Address</label>
+<input class="w-full bg-surface-dim border border-outline-variant focus:border-secondary-container focus:ring-1 focus:ring-secondary-container rounded p-sm text-body-md outline-none transition-all" type="email" value="alex.v@fantasypro.com"/>
+</div>
+</div>
+<div class="pt-md border-t border-outline-variant/20">
+<button class="flex items-center gap-sm text-secondary hover:underline font-label-bold transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="lock_reset">lock_reset</span>
+                                Change Password
+                            </button>
+</div>
+</div>
+</section>
+<!-- Notification Preferences Section -->
+<section class="bg-surface-container-low border border-outline-variant/30 rounded-xl overflow-hidden shadow-lg">
+<div class="bg-surface-container-high px-lg py-md border-b border-outline-variant/30 flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
+<h2 class="font-headline-md uppercase tracking-tight">Notification Preferences</h2>
+</div>
+<div class="p-lg space-y-md">
+<div class="flex items-center justify-between p-md bg-surface-dim rounded border border-outline-variant/20 hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="sports_soccer">sports_soccer</span>
+<div>
+<h4 class="font-label-bold">Goal Alerts</h4>
+<p class="text-on-surface-variant text-[12px]">Instant notification when your players score.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-md bg-surface-dim rounded border border-outline-variant/20 hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="newspaper">newspaper</span>
+<div>
+<h4 class="font-label-bold">Transfer News</h4>
+<p class="text-on-surface-variant text-[12px]">Updates on market trends and player moves.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-md bg-surface-dim rounded border border-outline-variant/20 hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="schedule">schedule</span>
+<div>
+<h4 class="font-label-bold">Lineup Reminders</h4>
+<p class="text-on-surface-variant text-[12px]">Alerts 1 hour before the transfer deadline.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- League Settings Section -->
+<section class="bg-surface-container-low border border-outline-variant/30 rounded-xl overflow-hidden shadow-lg">
+<div class="bg-surface-container-high px-lg py-md border-b border-outline-variant/30 flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="groups">groups</span>
+<h2 class="font-headline-md uppercase tracking-tight">League Settings</h2>
+</div>
+<div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="space-y-sm">
+<h4 class="font-label-bold uppercase text-[11px] text-on-surface-variant">Privacy Control</h4>
+<select class="w-full bg-surface-dim border border-outline-variant focus:border-primary rounded p-sm text-body-md outline-none transition-all">
+<option>Public League</option>
+<option>Private (Invite Only)</option>
+<option>Friends Only</option>
+</select>
+<p class="text-[11px] text-on-surface-variant italic">Control who can see your team and squad value.</p>
+</div>
+<div class="space-y-sm">
+<h4 class="font-label-bold uppercase text-[11px] text-on-surface-variant">Invite Friends</h4>
+<div class="flex gap-xs">
+<input class="flex-grow bg-surface-dim border border-outline-variant rounded p-sm text-body-md font-data-mono text-primary outline-none" readonly="" type="text" value="fntsy.pro/invite/j92ksl"/>
+<button class="bg-secondary-container text-on-secondary-container px-md rounded hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<p class="text-[11px] text-on-surface-variant italic">Share this link to invite others to your private league.</p>
+</div>
+</div>
+</section>
+<div class="flex justify-end gap-md pt-lg">
+<button class="px-xl py-md border border-outline text-on-surface font-label-bold rounded-xl hover:bg-surface-container-high transition-colors">DISCARD CHANGES</button>
+<button class="px-xl py-md bg-primary text-on-primary font-label-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg">SAVE SETTINGS</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm py-xs pb-safe bg-surface-container-highest dark:bg-surface-container-highest shadow-[0_-4px_10px_rgba(0,0,0,0.3)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-bold text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-bold text-[10px]">Team</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-label-bold text-[10px]">Market</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1" href="#">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+<span class="font-label-bold text-[10px]">Rank</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-bold text-[10px]">Settings</span>
+</a>
+</nav>
+<!-- Decorative Turf Background Element -->
+<div class="fixed top-0 right-0 -z-10 w-1/2 h-screen opacity-5 pointer-events-none overflow-hidden">
+<div class="absolute -top-20 -right-20 w-full h-full border-[100px] border-primary rounded-full blur-[120px]"></div>
+</div>
+<script>
+        // Simple micro-interaction for checkboxes/switches
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const parent = this.closest('.group');
+                if (this.checked) {
+                    parent.classList.add('border-primary/50');
+                } else {
+                    parent.classList.remove('border-primary/50');
+                }
+            });
+        });
+
+        // Copy invitation link interaction
+        const copyBtn = document.querySelector('[data-icon="content_copy"]').parentElement;
+        copyBtn.addEventListener('click', () => {
+            const input = copyBtn.previousElementSibling;
+            input.select();
+            document.execCommand('copy');
+            const originalIcon = copyBtn.querySelector('span').innerText;
+            copyBtn.querySelector('span').innerText = 'check';
+            setTimeout(() => {
+                copyBtn.querySelector('span').innerText = originalIcon;
+            }, 2000);
+        });
+    </script>
+</body></html>

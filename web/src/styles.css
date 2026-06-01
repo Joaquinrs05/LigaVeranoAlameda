@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+@theme {
+  /* ── Colores ── */
+  --color-primary: #c0552a;
+  --color-secondary: #ffd600;
+  --color-tertiary: #1a4a2e;
+  --color-background: #f5f0e8;
+  --color-on-background: #0f1923;
+  --color-surface: #ffffff;
+  --color-on-surface: #0f1923;
+  --color-outline: rgba(192, 85, 42, 0.3);
+  --color-error: #93000a;
+  --color-surface-container: #f5f0e8;
+
+  /* ── Tipografía ── */
+  --font-sans: 'Chivo', sans-serif;
+
+  --text-display-lg: 3rem;
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--letter-spacing: -0.02em;
+
+  --text-headline-lg: 2rem;
+  --text-headline-lg--line-height: 1.2;
+
+  --text-headline-lg-mobile: 1.5rem;
+  --text-headline-lg-mobile--line-height: 1.2;
+
+  --text-headline-md: 1.25rem;
+  --text-headline-md--line-height: 1.2;
+
+  --text-body-lg: 1rem;
+  --text-body-lg--line-height: 1.5;
+
+  --text-body-md: 0.875rem;
+  --text-body-md--line-height: 1.5;
+
+  --text-label-bold: 0.75rem;
+  --text-label-bold--line-height: 1;
+  --text-label-bold--letter-spacing: 0.05em;
+
+  --text-data-mono: 0.875rem;
+  --text-data-mono--line-height: 1;
+  --text-data-mono--letter-spacing: -0.01em;
+
+  /* ── Border radius ── */
+  --radius-DEFAULT: 0.25rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.25rem;
+  --radius-full: 9999px;
+
+  /* ── Espaciado custom ── */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 3rem;
+  --spacing-margin-mobile: 1rem;
+  --spacing-margin-desktop: 2rem;
+  --spacing-gutter: 1rem;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c0552a;
+  border-radius: 3px;
+}
+
+/* ── Utility reutilizable ── */
+.glow-active {
+  box-shadow: 0 4px 20px rgba(192, 85, 42, 0.1);
+}
+
+/* ── Nav link sidebar ── */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  border-radius: var(--radius-DEFAULT);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  transition: all 150ms ease;
+  color: rgba(15, 25, 35, 0.7);
+  text-decoration: none;
+}
+.nav-link:hover {
+  background-color: var(--color-background);
+  color: var(--color-primary);
+}
+.nav-link.nav-active,
+.nav-link.nav-active:hover {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+}
