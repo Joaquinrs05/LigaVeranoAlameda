@@ -113,3 +113,26 @@ body {
   background-color: var(--color-primary);
   color: var(--color-background);
 }
+
+/* ── Bottom nav (móvil) ── */
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(15, 25, 35, 0.45);
+  text-decoration: none;
+  transition: color 150ms ease;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bottom-nav-item:hover {
+  color: var(--color-primary);
+}
+.bottom-nav-item.bottom-nav-active {
+  color: var(--color-primary);
+}

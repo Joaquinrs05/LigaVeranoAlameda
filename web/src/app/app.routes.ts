@@ -10,6 +10,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/clasificacion/clasificacion.component').then(m => m.ClasificacionComponent),
   },
   {
+    path: 'equipos',
+    loadComponent: () => import('./features/equipos/equipos.component').then(m => m.EquiposComponent),
+  },
+  {
+    path: 'equipos/:id',
+    loadComponent: () => import('./features/equipos/equipo-detalle/equipo-detalle.component').then(m => m.EquipoDetalleComponent),
+  },
+  {
     path: 'fantasy',
     redirectTo: 'fantasy/dashboard',
     pathMatch: 'full',

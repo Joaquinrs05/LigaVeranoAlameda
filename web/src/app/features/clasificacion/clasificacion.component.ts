@@ -60,6 +60,16 @@ export class ClasificacionComponent implements AfterViewInit {
     });
   }
 
+  get crucesActivos(): ICruce[] {
+    switch (this.faseActiva()) {
+      case 'octavos': return this.octavos;
+      case 'cuartos': return this.cuartos;
+      case 'semis':   return this.semis;
+      case 'final':   return this.finalMatch ? [this.finalMatch] : [];
+      default:        return [];
+    }
+  }
+
   isWinner(cruce: ICruce, lado: 'local' | 'visitante'): boolean {
     if (cruce.estado !== 'finished' || cruce.golesLocal === null || cruce.golesVisitante === null) return false;
     return lado === 'local'

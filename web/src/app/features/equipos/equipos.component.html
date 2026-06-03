@@ -1,0 +1,40 @@
+<app-navbar-light />
+
+<main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
+
+  <!-- Header -->
+  <div class="mb-lg">
+    <h1 class="text-headline-lg font-bold text-primary">Equipos</h1>
+    <p class="text-body-md text-on-background/60 mt-xs">{{ equipos.length }} equipos en la liga · Temporada 2026</p>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-md">
+    @for (equipo of equipos; track equipo.id) {
+      <a
+                [routerLink]="['/equipos', equipo.id]"
+        class="bg-surface border border-outline rounded overflow-hidden flex flex-col cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+      >
+        <!-- Escudo -->
+        <div
+          class="h-36 flex items-center justify-center relative overflow-hidden"
+          [style.backgroundColor]="equipo.color"
+        >
+          <div
+            class="absolute inset-0 opacity-10 pointer-events-none"
+            style="background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px); background-size: 18px 18px;"
+          ></div>
+          <span class="text-white font-bold text-[2rem] leading-none z-10 drop-shadow">{{ equipo.abrev }}</span>
+        </div>
+
+        <!-- Nombre -->
+        <div class="p-md">
+          <span class="font-bold text-body-lg text-on-background leading-tight group-hover:text-primary transition-colors">
+            {{ equipo.nombre }}
+          </span>
+        </div>
+      </a>
+    }
+  </div>
+
+</main>

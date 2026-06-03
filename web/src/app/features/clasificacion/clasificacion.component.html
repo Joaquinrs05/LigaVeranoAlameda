@@ -1,6 +1,6 @@
 <app-navbar-light />
 
-<main class="pt-24 pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
+<main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
   <div class="flex flex-col gap-lg">
 
     <!-- ── CABECERA ── -->
@@ -90,7 +90,16 @@
 
       <!-- ════════════════ BRACKET (Octavos → Cuartos → Semis → Final) ════════════════ -->
       @else {
-        <div class="overflow-x-auto -mx-margin-mobile md:mx-0">
+
+        <!-- Vista móvil: lista de partidos de la fase activa -->
+        <div class="md:hidden flex flex-col gap-sm">
+          @for (cruce of crucesActivos; track cruce.id) {
+            <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: cruce }"></ng-container>
+          }
+        </div>
+
+        <!-- Vista escritorio: bracket completo horizontal -->
+        <div class="hidden md:block overflow-x-auto -mx-margin-mobile md:mx-0">
           <div class="px-margin-mobile md:px-0 min-w-max">
 
             <!-- Round labels row -->
@@ -241,7 +250,7 @@
 
             </div><!-- /bracket body -->
           </div>
-        </div>
+        </div><!-- /escritorio bracket -->
       }
 
     </div><!-- /contenido -->
