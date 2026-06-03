@@ -1,0 +1,73 @@
+<svg viewBox="0 0 400 590" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#154a22"/>
+      <stop offset="28%"  stop-color="#1c6430"/>
+      <stop offset="50%"  stop-color="#196028"/>
+      <stop offset="72%"  stop-color="#1c6430"/>
+      <stop offset="100%" stop-color="#154a22"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fondo verde -->
+  <rect width="400" height="590" fill="url(#g)"/>
+
+  <!-- Bandas de césped -->
+  <rect x="0" y="0"   width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="48"  width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="96"  width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="144" width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="192" width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="240" width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="288" width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="336" width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="384" width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="432" width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="480" width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+  <rect x="0" y="528" width="400" height="24" fill="rgba(0,0,0,0.05)"/>
+
+  <!-- Portería superior -->
+  <rect x="153" y="10" width="94" height="20" rx="2"
+        fill="rgba(0,0,0,0.25)" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
+
+  <!-- Línea de fondo superior -->
+  <line x1="18" y1="30" x2="382" y2="30"
+        stroke="rgba(255,255,255,0.8)" stroke-width="2.5"/>
+
+  <!-- Arco de penalti superior (abre hacia el interior) -->
+  <path d="M 108,30 A 96,96 0 0 0 292,30"
+        fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2"/>
+  <circle cx="200" cy="112" r="3.5" fill="rgba(255,255,255,0.9)"/>
+
+  <!-- Laterales -->
+  <line x1="18"  y1="30" x2="18"  y2="560" stroke="rgba(255,255,255,0.8)" stroke-width="2.5"/>
+  <line x1="382" y1="30" x2="382" y2="560" stroke="rgba(255,255,255,0.8)" stroke-width="2.5"/>
+
+  <!-- Línea central -->
+  <line x1="18" y1="295" x2="382" y2="295"
+        stroke="rgba(255,255,255,0.75)" stroke-width="2"/>
+
+  <!-- Círculo central + punto -->
+  <circle cx="200" cy="295" r="55"
+          fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2"/>
+  <circle cx="200" cy="295" r="4" fill="rgba(255,255,255,0.9)"/>
+
+  <!-- Arco de penalti inferior (abre hacia el interior) -->
+  <path d="M 108,560 A 96,96 0 0 1 292,560"
+        fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2"/>
+  <circle cx="200" cy="478" r="3.5" fill="rgba(255,255,255,0.9)"/>
+
+  <!-- Línea de fondo inferior -->
+  <line x1="18" y1="560" x2="382" y2="560"
+        stroke="rgba(255,255,255,0.8)" stroke-width="2.5"/>
+
+  <!-- Portería inferior -->
+  <rect x="153" y="560" width="94" height="20" rx="2"
+        fill="rgba(0,0,0,0.25)" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
+
+  <!-- Arcos de esquina -->
+  <path d="M 18,44    A 14,14 0 0 1 32,30"   fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+  <path d="M 368,30   A 14,14 0 0 1 382,44"  fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+  <path d="M 382,546  A 14,14 0 0 1 368,560" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+  <path d="M 32,560   A 14,14 0 0 1 18,546"  fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+</svg>

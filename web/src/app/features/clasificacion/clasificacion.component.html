@@ -36,7 +36,7 @@
             <h2 class="text-headline-md font-semibold text-tertiary">Todos contra todos</h2>
             <div class="hidden sm:flex items-center gap-md text-[10px] font-bold uppercase tracking-widest">
               <span class="flex items-center gap-1 text-primary">
-                <span class="w-2 h-2 rounded-full bg-primary inline-block"></span>Clasifica a octavos
+                <span class="w-2 h-2 rounded-full bg-primary inline-block"></span>Clasifica a cuartos
               </span>
               <span class="flex items-center gap-1 text-on-background/30">
                 <span class="w-2 h-2 rounded-full bg-outline inline-block"></span>Eliminado
@@ -103,67 +103,34 @@
           <div class="px-margin-mobile md:px-0 min-w-max">
 
             <!-- Round labels row -->
-            <!-- w-64 cards + w-8 connectors: 4×256 + 3×32 = 1120px total -->
             <div class="flex gap-0 mb-3">
-              <div class="w-64 text-[10px] font-bold uppercase tracking-widest"
-                [class.text-primary]="faseActiva() === 'octavos'"
-                [class.text-on-background/30]="faseActiva() !== 'octavos'"
-              >Octavos</div>
-              <div class="w-8"></div>
-              <div class="w-64 text-[10px] font-bold uppercase tracking-widest"
+              <div class="w-80 text-[10px] font-bold uppercase tracking-widest"
                 [class.text-primary]="faseActiva() === 'cuartos'"
                 [class.text-on-background/30]="faseActiva() !== 'cuartos'"
               >Cuartos de Final</div>
-              <div class="w-8"></div>
-              <div class="w-64 text-[10px] font-bold uppercase tracking-widest"
+              <div class="w-16"></div>
+              <div class="w-80 text-[10px] font-bold uppercase tracking-widest"
                 [class.text-primary]="faseActiva() === 'semis'"
                 [class.text-on-background/30]="faseActiva() !== 'semis'"
               >Semifinales</div>
-              <div class="w-8"></div>
-              <div class="w-64 text-[10px] font-bold uppercase tracking-widest"
+              <div class="w-16"></div>
+              <div class="w-80 text-[10px] font-bold uppercase tracking-widest"
                 [class.text-primary]="faseActiva() === 'final'"
                 [class.text-on-background/30]="faseActiva() !== 'final'"
               >La Final</div>
             </div>
 
             <!-- Bracket body -->
-            <!-- row=44px, card=89px, inner-gap=16px, pair=194px, between=32px, total=420px -->
             <div class="flex gap-0 items-start">
 
-              <!-- ── Octavos: 4 matches → 1-to-1 horizontal connectors into cuartos ── -->
-              <div class="flex flex-col w-64">
-                <div class="relative">
-                  <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: octavos[0] }"></ng-container>
-                  <div class="absolute right-0 top-11 h-px w-8 bg-outline/40 translate-x-full"></div>
-                </div>
-                <div class="h-4"></div>
-                <div class="relative">
-                  <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: octavos[1] }"></ng-container>
-                  <div class="absolute right-0 top-11 h-px w-8 bg-outline/40 translate-x-full"></div>
-                </div>
-                <div class="h-8"></div>
-                <div class="relative">
-                  <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: octavos[2] }"></ng-container>
-                  <div class="absolute right-0 top-11 h-px w-8 bg-outline/40 translate-x-full"></div>
-                </div>
-                <div class="h-4"></div>
-                <div class="relative">
-                  <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: octavos[3] }"></ng-container>
-                  <div class="absolute right-0 top-11 h-px w-8 bg-outline/40 translate-x-full"></div>
-                </div>
-              </div>
-
-              <div class="w-8"></div>
-
-              <!-- ── Cuartos: 2 pairs → bracket arms into semis ── -->
-              <!-- pair=194px: cua[0] 0-89, gap 89-105, cua[1] 105-194. arm inset-y-11 → 44-150px -->
-              <div class="flex flex-col w-64">
+              <!-- ── Cuartos ── -->
+              <div class="flex flex-col w-80">
                 <div class="relative">
                   <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: cuartos[0] }"></ng-container>
                   <div class="h-4"></div>
                   <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: cuartos[1] }"></ng-container>
                   <div class="absolute inset-y-11 right-0 w-0 border-r-2 border-outline/40"></div>
-                  <div class="absolute right-0 top-1/2 h-px w-8 bg-outline/40 translate-x-full -translate-y-px"></div>
+                  <div class="absolute right-0 top-1/2 h-px w-16 bg-outline/40 translate-x-full -translate-y-px"></div>
                 </div>
                 <div class="h-8"></div>
                 <div class="relative">
@@ -171,17 +138,14 @@
                   <div class="h-4"></div>
                   <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: cuartos[3] }"></ng-container>
                   <div class="absolute inset-y-11 right-0 w-0 border-r-2 border-outline/40"></div>
-                  <div class="absolute right-0 top-1/2 h-px w-8 bg-outline/40 translate-x-full -translate-y-px"></div>
+                  <div class="absolute right-0 top-1/2 h-px w-16 bg-outline/40 translate-x-full -translate-y-px"></div>
                 </div>
               </div>
 
-              <div class="w-8"></div>
+              <div class="w-16"></div>
 
               <!-- ── Semis ── -->
-              <!-- sem[0] top=53px (center=97 = pair1 center) -->
-              <!-- sem[1] top=279px (center=323 = pair2 center = 194+32+97) -->
-              <!-- arm: 97px → 323px, h=226px, mid=210px -->
-              <div class="relative w-64" style="height:420px">
+              <div class="relative w-80" style="height:420px">
                 <div class="absolute left-0 top-13.25">
                   <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: semis[0] }"></ng-container>
                 </div>
@@ -189,14 +153,13 @@
                   <ng-container *ngTemplateOutlet="matchCard; context: { $implicit: semis[1] }"></ng-container>
                 </div>
                 <div class="absolute right-0 top-24.25 h-56.5 w-0 border-r-2 border-outline/40"></div>
-                <div class="absolute right-0 top-52.5 h-px w-8 bg-outline/40 translate-x-full -translate-y-px"></div>
+                <div class="absolute right-0 top-52.5 h-px w-16 bg-outline/40 translate-x-full -translate-y-px"></div>
               </div>
 
-              <div class="w-8"></div>
+              <div class="w-16"></div>
 
               <!-- ── Final ── -->
-              <!-- final top=166px (center=210px = midpoint of semis) -->
-              <div class="relative w-64" style="height:420px">
+              <div class="relative w-80" style="height:420px">
                 @if (finalMatch) {
                   <div class="absolute left-0 top-41.5">
                     <div class="w-full border-2 overflow-hidden shadow-md"

@@ -10,7 +10,6 @@ import { ICruce, FaseTorneo } from '../../core/models/torneo.model';
 
 const FASES: { tipo: FaseTorneo; label: string }[] = [
   { tipo: 'liguilla', label: 'Liguilla' },
-  { tipo: 'octavos',  label: 'Octavos'  },
   { tipo: 'cuartos',  label: 'Cuartos'  },
   { tipo: 'semis',    label: 'Semis'    },
   { tipo: 'final',    label: 'Final'    },
@@ -29,7 +28,6 @@ export class ClasificacionComponent implements AfterViewInit {
   readonly clasificacion: IClasificacionEntry[] = CLASIFICACION_DATA;
   readonly faseActiva                           = signal<FaseTorneo>('liguilla');
 
-  readonly octavos:    ICruce[]      = TORNEO_DATA.find(f => f.tipo === 'octavos')?.cruces  ?? [];
   readonly cuartos:    ICruce[]      = TORNEO_DATA.find(f => f.tipo === 'cuartos')?.cruces  ?? [];
   readonly semis:      ICruce[]      = TORNEO_DATA.find(f => f.tipo === 'semis')?.cruces    ?? [];
   readonly finalMatch: ICruce | null = TORNEO_DATA.find(f => f.tipo === 'final')?.cruces?.[0] ?? null;
@@ -62,7 +60,6 @@ export class ClasificacionComponent implements AfterViewInit {
 
   get crucesActivos(): ICruce[] {
     switch (this.faseActiva()) {
-      case 'octavos': return this.octavos;
       case 'cuartos': return this.cuartos;
       case 'semis':   return this.semis;
       case 'final':   return this.finalMatch ? [this.finalMatch] : [];

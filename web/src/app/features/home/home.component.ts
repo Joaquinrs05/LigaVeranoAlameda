@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
 
@@ -24,6 +24,11 @@ export class HomeComponent implements AfterViewInit {
   readonly partidos: IPartido[]                 = [...PARTIDOS_DATA, ...PARTIDOS_DATA];
   readonly clasificacion: IClasificacionEntry[] = CLASIFICACION_DATA;
   readonly goleadores: IGoleadorJornada[]       = GOLEADORES_JORNADA;
+
+  readonly mostrarTodosClasificacion = signal(false);
+  readonly clasificacionVisible = computed(() =>
+    this.mostrarTodosClasificacion() ? this.clasificacion : this.clasificacion.slice(0, 6)
+  );
   readonly jornadaNumero                        = JORNADA_NUMERO;
   readonly partidoDestacado: IPartido           =
     PARTIDOS_DATA.find(p => p.estado === 'live') ??

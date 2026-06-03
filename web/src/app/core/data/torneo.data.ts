@@ -11,15 +11,9 @@ const tbd = (id: string) => ({
 
 export const TORNEO_DATA: IFaseTorneo[] = [
   {
-    tipo: 'octavos',
-    label: 'Octavos',
-    // Pos 5-12 de liguilla juegan 4 cruces → 4 pasan a cuartos
-    cruces: [tbd('oct-1'), tbd('oct-2'), tbd('oct-3'), tbd('oct-4')],
-  },
-  {
     tipo: 'cuartos',
-    label: 'Cuartos',
-    // Top 4 de liguilla + 4 ganadores de octavos
+    label: 'Cuartos de Final',
+    // Top 8 de la liga
     cruces: [tbd('cua-1'), tbd('cua-2'), tbd('cua-3'), tbd('cua-4')],
   },
   {

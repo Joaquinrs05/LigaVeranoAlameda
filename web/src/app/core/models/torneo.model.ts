@@ -1,4 +1,4 @@
-export type FaseTorneo = 'liguilla' | 'octavos' | 'cuartos' | 'semis' | 'final';
+export type FaseTorneo = 'liguilla' | 'cuartos' | 'semis' | 'final';
 
 export interface ICruce {
   id: string;

@@ -2,7 +2,7 @@ export interface IJugadorEquipo {
   id: string;
   nombre: string;
   dorsal: number;
-  posicion: 'Portero' | 'Cierre' | 'Ala' | 'Pivot';
+  posicion: 'POR' | 'DEF' | 'MC' | 'DEL';
   goles: number;
   asistencias: number;
 }

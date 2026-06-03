@@ -1,5 +1,40 @@
 <app-navbar-light />
 
+<!-- ── Blobs decorativos de fondo ── -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: -1">
+  <!-- Terracota grande — arriba derecha -->
+  <div style="
+    position: absolute; top: -20%; right: -15%;
+    width: 820px; height: 820px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(192,85,42,0.17) 0%, transparent 65%);
+    animation: blob-drift-1 24s ease-in-out infinite;
+  "></div>
+
+  <!-- Verde — izquierda media -->
+  <div style="
+    position: absolute; top: 28%; left: -22%;
+    width: 680px; height: 680px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,74,46,0.14) 0%, transparent 65%);
+    animation: blob-drift-2 30s ease-in-out infinite;
+  "></div>
+
+  <!-- Amarillo suave — abajo centro -->
+  <div style="
+    position: absolute; bottom: -18%; left: 22%;
+    width: 640px; height: 640px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,214,0,0.09) 0%, transparent 65%);
+    animation: blob-drift-3 21s ease-in-out infinite;
+  "></div>
+
+  <!-- Terracota secundario — abajo izquierda -->
+  <div style="
+    position: absolute; bottom: 5%; left: -12%;
+    width: 480px; height: 480px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(192,85,42,0.1) 0%, transparent 65%);
+    animation: blob-drift-4 17s ease-in-out infinite;
+  "></div>
+</div>
+
 <main
   class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto"
 >
@@ -7,13 +42,53 @@
     <!-- ── PARTIDO DESTACADO ── -->
     <section
       data-anim="match-hero"
-      class="bg-tertiary rounded relative overflow-hidden flex items-center min-h-50 md:min-h-55"
+      class="relative overflow-hidden flex items-center min-h-50 md:min-h-55 rounded"
+      style="background: linear-gradient(135deg, #1a4a2e 0%, #0e2c1a 55%, #091b10 100%)"
     >
+      <!-- Trama de puntos -->
       <div
-        class="absolute inset-0 opacity-10 pointer-events-none"
+        class="absolute inset-0 opacity-[0.08] pointer-events-none"
         style="
           background-image: radial-gradient(#ffd600 1px, transparent 1px);
           background-size: 24px 24px;
+        "
+      ></div>
+
+      <!-- Halo cálido central desde abajo — efecto focos de estadio -->
+      <div
+        class="absolute inset-0 pointer-events-none"
+        style="
+          background: radial-gradient(
+            ellipse 90% 55% at 50% 115%,
+            rgba(192, 85, 42, 0.45) 0%,
+            transparent 100%
+          );
+        "
+      ></div>
+
+      <!-- Shimmer dorado superior -->
+      <div
+        class="absolute top-0 left-0 right-0 h-px pointer-events-none"
+        style="
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 214, 0, 0.55) 50%,
+            transparent 100%
+          );
+        "
+      ></div>
+
+      <!-- Shimmer dorado inferior -->
+      <div
+        class="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
+        style="
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 214, 0, 0.2) 50%,
+            transparent 100%
+          );
         "
       ></div>
 
@@ -32,6 +107,11 @@
           <div class="flex flex-col items-center gap-sm flex-1">
             <div
               class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-background text-[13px] font-bold shrink-0"
+              style="
+                box-shadow:
+                  0 0 24px rgba(192, 85, 42, 0.6),
+                  0 0 8px rgba(192, 85, 42, 0.4);
+              "
             >
               {{ partidoDestacado.abrevLocal }}
             </div>
@@ -101,12 +181,24 @@
           >
             @for (partido of partidos; track $index) {
               <div
-                class="shrink-0 w-[85vw] md:w-[calc((100cqw-2rem)/3)] bg-surface border rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer"
+                class="shrink-0 w-[85vw] md:w-[calc((100cqw-2rem)/3)] rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+                [class.border]="true"
                 [class.border-primary]="partido.estado === 'live'"
-                [class.glow-active]="partido.estado === 'live'"
                 [class.border-outline]="partido.estado !== 'live'"
                 [class.opacity-60]="partido.estado === 'finished'"
-                [class.opacity-70]="partido.estado === 'upcoming'"
+                [class.opacity-75]="partido.estado === 'upcoming'"
+                [style.background]="
+                  partido.estado === 'live'
+                    ? 'linear-gradient(145deg, rgba(255,252,250,0.92) 0%, rgba(255,245,240,0.92) 100%)'
+                    : 'rgba(255,255,255,0.88)'
+                "
+                [style.backdrop-filter]="'blur(14px)'"
+                [style.-webkit-backdrop-filter]="'blur(14px)'"
+                [style.box-shadow]="
+                  partido.estado === 'live'
+                    ? '0 4px 24px rgba(192,85,42,0.18), 0 1px 4px rgba(0,0,0,0.06)'
+                    : '0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)'
+                "
               >
                 <div
                   class="flex justify-between items-center text-[10px] uppercase tracking-widest font-bold"
@@ -174,14 +266,36 @@
 
     <!-- ── SECCIÓN 2: Clasificación + Goleadores ── -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+      <!-- Clasificación -->
       <div
         data-anim="clasificacion"
-        class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm"
+        class="flex flex-col overflow-hidden rounded"
+        style="
+          background: rgba(255, 255, 255, 0.75);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.7);
+          box-shadow:
+            0 4px 24px rgba(26, 74, 46, 0.08),
+            0 1px 4px rgba(0, 0, 0, 0.04);
+        "
       >
         <div
-          class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20"
+          class="p-md border-b flex justify-between items-center"
+          style="
+            background: linear-gradient(90deg, rgba(26, 74, 46, 0.07) 0%, transparent 100%);
+            border-color: rgba(192, 85, 42, 0.15);
+          "
         >
-          <h3 class="text-headline-md font-semibold text-tertiary">Clasificación</h3>
+          <h3 class="text-headline-md font-semibold text-tertiary flex items-center gap-2">
+            <span
+              class="w-5 h-5 rounded flex items-center justify-center text-[13px]"
+              style="background: rgba(26, 74, 46, 0.12)"
+            >
+              <span class="material-symbols-outlined" style="font-size: 13px">trophy</span>
+            </span>
+            Clasificación
+          </h3>
           <a
             routerLink="/clasificacion"
             class="font-bold text-[11px] uppercase tracking-wider text-primary hover:underline transition-colors"
@@ -190,50 +304,123 @@
           </a>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr
-                class="border-b border-outline/40 text-[10px] font-bold text-on-background/50 uppercase tracking-widest bg-background/10"
-              >
-                <th class="p-sm pl-md w-8">#</th>
-                <th class="p-sm">Equipo</th>
-                <th class="p-sm text-center w-8">PJ</th>
-                <th class="p-sm text-center w-8">PG</th>
-                <th class="p-sm text-center w-8">PE</th>
-                <th class="p-sm text-center w-8">PP</th>
-                <th class="p-sm text-center w-10">GD</th>
-                <th class="p-sm pr-md text-right w-10">Pts</th>
-              </tr>
-            </thead>
-            <tbody class="text-data-mono">
-              @for (entry of clasificacion; track entry.posicion) {
-                <tr class="border-b border-outline/20 hover:bg-background/40 transition-colors">
-                  <td class="p-sm pl-md text-on-background/40 font-bold">{{ entry.posicion }}</td>
-                  <td class="p-sm font-semibold text-on-background text-body-md">
-                    {{ entry.equipo }}
-                  </td>
-                  <td class="p-sm text-center text-on-background/60">{{ entry.pj }}</td>
-                  <td class="p-sm text-center text-on-background/60">{{ entry.pg }}</td>
-                  <td class="p-sm text-center text-on-background/60">{{ entry.pe }}</td>
-                  <td class="p-sm text-center text-on-background/60">{{ entry.pp }}</td>
-                  <td class="p-sm text-center text-on-background/60">{{ entry.gf - entry.gc }}</td>
-                  <td class="p-sm pr-md text-right font-bold text-primary">{{ entry.puntos }}</td>
+        <div class="relative overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="text-[10px] font-bold text-on-background/50 uppercase tracking-widest"
+                  style="
+                    border-bottom: 1px solid rgba(192, 85, 42, 0.15);
+                    background: rgba(245, 240, 232, 0.4);
+                  "
+                >
+                  <th class="p-sm pl-md w-8">#</th>
+                  <th class="p-sm">Equipo</th>
+                  <th class="p-sm text-center w-8">PJ</th>
+                  <th class="p-sm text-center w-8">PG</th>
+                  <th class="p-sm text-center w-8">PE</th>
+                  <th class="p-sm text-center w-8">PP</th>
+                  <th class="p-sm text-center w-10">GD</th>
+                  <th class="p-sm pr-md text-right w-10">Pts</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody class="text-data-mono">
+                @for (entry of clasificacionVisible(); track entry.posicion) {
+                  <tr
+                    class="transition-colors hover:bg-primary/4"
+                    [style.background]="
+                      $index === 0
+                        ? 'linear-gradient(90deg, rgba(192,85,42,0.06) 0%, transparent 60%)'
+                        : ''
+                    "
+                    style="border-bottom: 1px solid rgba(192, 85, 42, 0.1)"
+                  >
+                    <td
+                      class="p-sm pl-md font-bold"
+                      [class.text-primary]="$index === 0"
+                      [class.text-on-background/40]="$index !== 0"
+                    >
+                      {{ entry.posicion }}
+                    </td>
+                    <td class="p-sm font-semibold text-on-background text-body-md">
+                      {{ entry.equipo }}
+                    </td>
+                    <td class="p-sm text-center text-on-background/60">{{ entry.pj }}</td>
+                    <td class="p-sm text-center text-on-background/60">{{ entry.pg }}</td>
+                    <td class="p-sm text-center text-on-background/60">{{ entry.pe }}</td>
+                    <td class="p-sm text-center text-on-background/60">{{ entry.pp }}</td>
+                    <td class="p-sm text-center text-on-background/60">
+                      {{ entry.gf - entry.gc }}
+                    </td>
+                    <td class="p-sm pr-md text-right font-bold text-primary">{{ entry.puntos }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Fade difuminado cuando está colapsado -->
+          @if (!mostrarTodosClasificacion()) {
+            <div
+              class="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
+              style="
+                background: linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, transparent 100%);
+              "
+            ></div>
+          }
         </div>
+
+        <!-- Botón expandir/colapsar -->
+        @if (!mostrarTodosClasificacion()) {
+          <button
+            (click)="mostrarTodosClasificacion.set(true)"
+            class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
+            style="border-top: 1px solid rgba(192, 85, 42, 0.12)"
+          >
+            <span class="material-symbols-outlined text-[16px]">expand_more</span>
+            Ver todos los equipos
+          </button>
+        } @else {
+          <button
+            (click)="mostrarTodosClasificacion.set(false)"
+            class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
+            style="border-top: 5px solid rgba(192, 85, 42, 0.12)"
+          >
+            <span class="material-symbols-outlined text-[16px]">expand_less</span>
+            Ver menos
+          </button>
+        }
       </div>
 
+      <!-- Goleadores -->
       <div
         data-anim="goleadores"
-        class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm"
+        class="flex flex-col overflow-hidden rounded"
+        style="
+          background: rgba(255, 255, 255, 0.75);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.7);
+          box-shadow:
+            0 4px 24px rgba(26, 74, 46, 0.08),
+            0 1px 4px rgba(0, 0, 0, 0.04);
+        "
       >
         <div
-          class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20"
+          class="p-md border-b flex justify-between items-center"
+          style="
+            background: linear-gradient(90deg, rgba(26, 74, 46, 0.07) 0%, transparent 100%);
+            border-color: rgba(192, 85, 42, 0.15);
+          "
         >
-          <h3 class="text-headline-md font-semibold text-tertiary">
+          <h3 class="text-headline-md font-semibold text-tertiary flex items-center gap-2">
+            <span
+              class="w-5 h-5 rounded flex items-center justify-center"
+              style="background: rgba(26, 74, 46, 0.12)"
+            >
+              <span class="material-symbols-outlined" style="font-size: 13px">sports_soccer</span>
+            </span>
             Goleadores · Jornada {{ jornadaNumero }}
           </h3>
         </div>
@@ -241,16 +428,35 @@
         <div class="p-md flex flex-col gap-sm">
           @for (jugador of goleadores; track jugador.id) {
             <div
-              class="flex items-center justify-between p-sm rounded border border-outline/30 bg-background hover:bg-background/70 transition-colors"
+              class="flex items-center justify-between p-sm rounded transition-all duration-200 cursor-default hover:-translate-y-px"
+              [style.background]="
+                $index === 0
+                  ? 'linear-gradient(90deg, rgba(255,214,0,0.12) 0%, rgba(255,214,0,0.04) 100%)'
+                  : 'rgba(245,240,232,0.6)'
+              "
+              [style.border]="
+                $index === 0 ? '1px solid rgba(255,214,0,0.35)' : '1px solid rgba(192,85,42,0.12)'
+              "
+              [style.box-shadow]="$index === 0 ? '0 2px 12px rgba(255,214,0,0.12)' : 'none'"
             >
               <div class="flex items-center gap-md">
-                <span class="text-data-mono font-bold text-on-background/30 w-4 text-center">{{
-                  $index + 1
-                }}</span>
-                <div
-                  class="w-9 h-9 rounded-full bg-tertiary/10 border border-outline/30 flex items-center justify-center shrink-0"
+                <span
+                  class="text-data-mono font-bold w-4 text-center"
+                  [class.text-secondary]="$index === 0"
+                  [class.text-on-background/30]="$index !== 0"
+                  [style.text-shadow]="$index === 0 ? '0 0 12px rgba(255,214,0,0.6)' : ''"
+                  >{{ $index + 1 }}</span
                 >
-                  <span class="material-symbols-outlined text-[20px] text-tertiary/60">person</span>
+                <div
+                  class="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+                  [style.background]="$index === 0 ? 'rgba(26,74,46,0.15)' : 'rgba(26,74,46,0.08)'"
+                  [style.border]="
+                    $index === 0
+                      ? '1px solid rgba(26,74,46,0.25)'
+                      : '1px solid rgba(192,85,42,0.15)'
+                  "
+                >
+                  <span class="material-symbols-outlined text-[20px] text-tertiary/70">person</span>
                 </div>
                 <div class="flex flex-col">
                   <span class="font-bold text-body-md text-on-background">{{
@@ -265,7 +471,11 @@
               <div class="flex items-center gap-1">
                 @if (jugador.goles > 0) {
                   <span
-                    class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[11px] font-bold"
+                    class="px-2 py-0.5 rounded text-[11px] font-bold"
+                    [style.background]="
+                      $index === 0 ? 'rgba(192,85,42,0.15)' : 'rgba(192,85,42,0.08)'
+                    "
+                    [style.color]="'#c0552a'"
                   >
                     {{ jugador.goles }}G
                   </span>

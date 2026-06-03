@@ -1,0 +1,152 @@
+<app-navbar-light />
+
+<main
+  class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto"
+>
+  @if (equipo) {
+    <!-- ── Cabecera ── -->
+    <div class="mb-lg flex flex-col gap-md">
+      <a
+        routerLink="/equipos"
+        class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-on-background/50 hover:text-primary transition-colors w-fit"
+      >
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        Todos los equipos
+      </a>
+
+      <div class="flex items-center gap-md">
+        <div
+          class="w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0"
+          [style.background]="equipo.color"
+          [style.box-shadow]="'0 8px 24px ' + equipo.color + '55'"
+        >
+          {{ equipo.abrev }}
+        </div>
+        <div>
+          <h1 class="text-headline-lg font-bold text-on-background">{{ equipo.nombre }}</h1>
+          <p class="text-body-md text-on-background/50 mt-0.5">
+            <span class="font-bold text-primary">#{{ equipo.posicion }}</span> en la clasificación
+          </p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-4 sm:grid-cols-7 gap-sm">
+        @for (stat of [
+          { label: 'PJ',  value: equipo.stats.pj,  color: 'text-on-background' },
+          { label: 'V',   value: equipo.stats.v,   color: 'text-tertiary' },
+          { label: 'E',   value: equipo.stats.e,   color: 'text-on-background' },
+          { label: 'D',   value: equipo.stats.d,   color: 'text-primary' },
+          { label: 'GF',  value: equipo.stats.gf,  color: 'text-on-background' },
+          { label: 'GC',  value: equipo.stats.gc,  color: 'text-on-background' },
+          { label: 'Pts', value: equipo.stats.pts, color: 'text-primary' }
+        ]; track stat.label) {
+          <div
+            class="rounded p-sm text-center"
+            style="
+              background: rgba(255,255,255,0.75);
+              backdrop-filter: blur(12px);
+              border: 1px solid rgba(255,255,255,0.7);
+              box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            "
+          >
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-on-background/40">
+              {{ stat.label }}
+            </span>
+            <span class="block text-headline-md font-bold mt-0.5" [class]="stat.color">
+              {{ stat.value }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ── Campo de fútbol sala ── -->
+    <!-- El container tiene aspect-ratio propio: así tiene altura aunque la img tarde en cargar.
+         La img rellena el espacio como absolute. Los jugadores también son absolute. -->
+    <div class="max-w-4xl mx-auto w-full">
+      <div
+        class="relative w-full rounded-2xl overflow-hidden"
+        style="aspect-ratio: 268/188; box-shadow: 0 20px 60px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.2)"
+      >
+        <img
+          src="/campo.jpg"
+          alt="Campo de fútbol sala"
+          class="absolute inset-0 w-full h-full object-cover"
+          draggable="false"
+        />
+
+        <!-- ── Jugadores sobre el campo ── -->
+        @for (jugador of jugadoresEnCampo; track jugador.id) {
+          <div
+            class="absolute"
+            [style.left]="jugador.x + '%'"
+            [style.top]="jugador.y + '%'"
+            style="transform: translate(-50%, -50%); z-index: 10; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.7))"
+          >
+            <!-- Carta estilo FIFA -->
+            <div style="
+              width: 80px;
+              height: 108px;
+              background:
+                linear-gradient(130deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.32) 50%, rgba(255,255,255,0) 70%),
+                linear-gradient(158deg, #a07020 0%, #d4a83c 12%, #f5df6a 28%, #e8cc50 42%, #c89030 58%, #b07020 72%, #d4aa40 86%, #f0d858 100%);
+              clip-path: polygon(10% 2%, 44% 2%, 50% 0%, 56% 2%, 90% 2%, 100% 10%, 100% 86%, 95% 100%, 5% 100%, 0% 86%, 0% 10%);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              padding: 5px 4px 5px;
+              gap: 3px;
+            ">
+              <!-- Dorsal + posición (fila superior, estilo rating FIFA) -->
+              <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start; padding: 0 3px">
+                <span style="font-size: 13px; font-weight: 900; color: rgba(60,35,0,0.75); line-height: 1">
+                  {{ jugador.dorsal }}
+                </span>
+                <span style="font-size: 9px; font-weight: 900; color: rgba(60,35,0,0.6); line-height: 1; letter-spacing: 0.03em">
+                  {{ jugador.posicion }}
+                </span>
+              </div>
+
+              <!-- Foto / inicial del jugador -->
+              <div style="
+                width: 48px; height: 48px;
+                border-radius: 50%;
+                background: rgba(0,0,0,0.15);
+                display: flex; align-items: center; justify-content: center;
+                font-size: 22px; font-weight: 900;
+                color: rgba(70,45,0,0.55);
+                flex-shrink: 0;
+              ">
+                {{ jugador.nombre[0] }}
+              </div>
+
+              <!-- Nombre -->
+              <div style="
+                font-size: 9px;
+                font-weight: 900;
+                color: rgba(50,30,0,0.85);
+                text-align: center;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                line-height: 1.1;
+                max-width: 70px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              ">
+                {{ primerNombre(jugador.nombre) }}
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+  } @else {
+    <p class="text-body-md text-on-background/60">Equipo no encontrado.</p>
+    <a routerLink="/equipos" class="text-primary underline mt-md inline-block">
+      ← Volver a equipos
+    </a>
+  }
+</main>
