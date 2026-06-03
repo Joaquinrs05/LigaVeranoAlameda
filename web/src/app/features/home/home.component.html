@@ -4,6 +4,71 @@
   class="pt-24 pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-[1440px] mx-auto"
 >
   <div class="flex flex-col gap-lg">
+    <!-- ── PARTIDO DESTACADO ── -->
+    <section
+      data-anim="match-hero"
+      class="bg-tertiary rounded relative overflow-hidden flex items-center min-h-50 md:min-h-55"
+    >
+      <div
+        class="absolute inset-0 opacity-10 pointer-events-none"
+        style="
+          background-image: radial-gradient(#ffd600 1px, transparent 1px);
+          background-size: 24px 24px;
+        "
+      ></div>
+
+      <div class="relative z-10 w-full px-lg py-lg flex flex-col gap-md">
+        <div class="flex items-center gap-2">
+          @if (partidoDestacado.estado === 'live') {
+            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+          }
+          <span class="text-background/50 text-[11px] font-bold uppercase tracking-widest">
+            {{ partidoDestacado.estado === 'live' ? 'En Vivo' : 'Partido del Día' }}
+            &nbsp;·&nbsp;Jornada {{ jornadaNumero }}
+          </span>
+        </div>
+
+        <div class="flex items-center justify-between gap-md">
+          <div class="flex flex-col items-center gap-sm flex-1">
+            <div
+              class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-background text-[13px] font-bold shrink-0"
+            >
+              {{ partidoDestacado.abrevLocal }}
+            </div>
+            <span class="text-background font-bold text-headline-md text-center leading-tight">
+              {{ partidoDestacado.equipoLocal }}
+            </span>
+          </div>
+
+          <div class="flex flex-col items-center gap-1 shrink-0">
+            @if (partidoDestacado.golesLocal !== null) {
+              <div class="flex items-center gap-3">
+                <span class="text-display-lg font-bold text-background leading-none">{{
+                  partidoDestacado.golesLocal
+                }}</span>
+                <span class="text-background/30 text-3xl font-light leading-none">—</span>
+                <span class="text-display-lg font-bold text-background leading-none">{{
+                  partidoDestacado.golesVisitante
+                }}</span>
+              </div>
+            } @else {
+              <span class="text-display-lg font-bold text-background/25 leading-none">VS</span>
+            }
+          </div>
+
+          <div class="flex flex-col items-center gap-sm flex-1">
+            <div
+              class="w-14 h-14 rounded-full bg-background/15 border border-background/20 flex items-center justify-center text-background text-[13px] font-bold shrink-0"
+            >
+              {{ partidoDestacado.abrevVisitante }}
+            </div>
+            <span class="text-background/80 font-bold text-headline-md text-center leading-tight">
+              {{ partidoDestacado.equipoVisitante }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- ── SECCIÓN 1: Partidos ── -->
     <section class="flex flex-col gap-md">
@@ -11,105 +76,111 @@
         <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
           Partidos en Directo
-          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline">| Jornada {{ jornadaNumero }}</span>
-        </h2>
-        <div class="flex items-center gap-md">
-          <div class="flex gap-1">
-            <button
-              (click)="scrollCards(-1)"
-              class="w-7 h-7 rounded border border-outline flex items-center justify-center text-on-background/40 hover:text-primary hover:border-primary transition-colors"
-            >
-              <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-            </button>
-            <button
-              (click)="scrollCards(1)"
-              class="w-7 h-7 rounded border border-outline flex items-center justify-center text-on-background/40 hover:text-primary hover:border-primary transition-colors"
-            >
-              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-            </button>
-          </div>
-          <a
-            routerLink="/clasificacion"
-            class="text-label-bold font-bold text-primary hover:underline transition-colors text-[11px] uppercase tracking-wider hidden sm:block"
+          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline"
+            >| Jornada {{ jornadaNumero }}</span
           >
-            Ver todos
-          </a>
-        </div>
+        </h2>
+        <a
+          routerLink="/clasificacion"
+          class="text-label-bold font-bold text-primary hover:underline transition-colors text-[11px] uppercase tracking-wider hidden sm:block"
+        >
+          Ver todos
+        </a>
       </div>
 
-      <div
-        #cardsScroll
-        data-anim="cards-scroll"
-        class="flex gap-md overflow-x-auto"
-        style="scrollbar-width: none; -ms-overflow-style: none"
-        (mouseenter)="pauseScroll()"
-        (mouseleave)="resumeScroll()"
-      >
-        @for (partido of partidos; track $index) {
+      <div data-anim="cards-scroll">
+        <div
+          class="@container overflow-hidden"
+          (mouseenter)="pauseScroll()"
+          (mouseleave)="resumeScroll()"
+        >
           <div
-            class="shrink-0 w-[85vw] md:w-[calc((100%-2rem)/3)] bg-surface border rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer"
-            [class.border-primary]="partido.estado === 'live'"
-            [class.glow-active]="partido.estado === 'live'"
-            [class.border-outline]="partido.estado !== 'live'"
-            [class.opacity-60]="partido.estado === 'finished'"
-            [class.opacity-70]="partido.estado === 'upcoming'"
+            #cardsTrack
+            class="flex gap-md will-change-transform"
+            style="animation: scroll-cards 15s linear infinite; animation-play-state: paused"
           >
-            <div class="flex justify-between items-center text-[10px] uppercase tracking-widest font-bold">
-              <span class="text-on-background/50">{{
-                partido.estado === 'upcoming' ? partido.horaInicio : partido.minuto
-              }}</span>
-              @if (partido.estado === 'live') {
-                <span class="text-primary flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
-                  EN VIVO
-                </span>
-              } @else if (partido.estado === 'finished') {
-                <span class="text-on-background/30">FINAL</span>
-              } @else {
-                <span class="text-on-background/40">PRÓXIMO</span>
-              }
-            </div>
-
-            <div class="flex justify-between items-center text-data-mono font-semibold">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-background text-[10px] font-bold shrink-0">
-                  {{ partido.abrevLocal }}
+            @for (partido of partidos; track $index) {
+              <div
+                class="shrink-0 w-[85vw] md:w-[calc((100cqw-2rem)/3)] bg-surface border rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer"
+                [class.border-primary]="partido.estado === 'live'"
+                [class.glow-active]="partido.estado === 'live'"
+                [class.border-outline]="partido.estado !== 'live'"
+                [class.opacity-60]="partido.estado === 'finished'"
+                [class.opacity-70]="partido.estado === 'upcoming'"
+              >
+                <div
+                  class="flex justify-between items-center text-[10px] uppercase tracking-widest font-bold"
+                >
+                  <span class="text-on-background/50">{{
+                    partido.estado === 'upcoming' ? partido.horaInicio : partido.minuto
+                  }}</span>
+                  @if (partido.estado === 'live') {
+                    <span class="text-primary flex items-center gap-1">
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"
+                      ></span>
+                      EN VIVO
+                    </span>
+                  } @else if (partido.estado === 'finished') {
+                    <span class="text-on-background/30">FINAL</span>
+                  } @else {
+                    <span class="text-on-background/40">PRÓXIMO</span>
+                  }
                 </div>
-                <span>{{ partido.equipoLocal }}</span>
-              </div>
-              @if (partido.golesLocal !== null) {
-                <span class="text-lg font-bold">{{ partido.golesLocal }}</span>
-              } @else {
-                <span class="text-on-background/30 font-normal">—</span>
-              }
-            </div>
 
-            <div class="flex justify-between items-center text-data-mono">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-background text-[10px] font-bold shrink-0">
-                  {{ partido.abrevVisitante }}
+                <div class="flex justify-between items-center text-data-mono font-semibold">
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-background text-[10px] font-bold shrink-0"
+                    >
+                      {{ partido.abrevLocal }}
+                    </div>
+                    <span>{{ partido.equipoLocal }}</span>
+                  </div>
+                  @if (partido.golesLocal !== null) {
+                    <span class="text-lg font-bold">{{ partido.golesLocal }}</span>
+                  } @else {
+                    <span class="text-on-background/30 font-normal">—</span>
+                  }
                 </div>
-                <span class="text-on-background/70">{{ partido.equipoVisitante }}</span>
+
+                <div class="flex justify-between items-center text-data-mono">
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-background text-[10px] font-bold shrink-0"
+                    >
+                      {{ partido.abrevVisitante }}
+                    </div>
+                    <span class="text-on-background/70">{{ partido.equipoVisitante }}</span>
+                  </div>
+                  @if (partido.golesVisitante !== null) {
+                    <span
+                      class="text-lg"
+                      [class.font-bold]="partido.estado === 'live'"
+                      [class.text-on-background/40]="partido.estado !== 'live'"
+                    >
+                      {{ partido.golesVisitante }}
+                    </span>
+                  } @else {
+                    <span class="text-on-background/30">—</span>
+                  }
+                </div>
               </div>
-              @if (partido.golesVisitante !== null) {
-                <span class="text-lg" [class.font-bold]="partido.estado === 'live'" [class.text-on-background/40]="partido.estado !== 'live'">
-                  {{ partido.golesVisitante }}
-                </span>
-              } @else {
-                <span class="text-on-background/30">—</span>
-              }
-            </div>
+            }
           </div>
-        }
+        </div>
       </div>
     </section>
 
     <!-- ── SECCIÓN 2: Clasificación + Goleadores ── -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
-
-      <!-- Clasificación real -->
-      <div data-anim="clasificacion" class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm">
-        <div class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20">
+      <div
+        data-anim="clasificacion"
+        class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm"
+      >
+        <div
+          class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20"
+        >
           <h3 class="text-headline-md font-semibold text-tertiary">Clasificación</h3>
           <a
             routerLink="/clasificacion"
@@ -122,7 +193,9 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b border-outline/40 text-[10px] font-bold text-on-background/50 uppercase tracking-widest bg-background/10">
+              <tr
+                class="border-b border-outline/40 text-[10px] font-bold text-on-background/50 uppercase tracking-widest bg-background/10"
+              >
                 <th class="p-sm pl-md w-8">#</th>
                 <th class="p-sm">Equipo</th>
                 <th class="p-sm text-center w-8">PJ</th>
@@ -137,7 +210,9 @@
               @for (entry of clasificacion; track entry.posicion) {
                 <tr class="border-b border-outline/20 hover:bg-background/40 transition-colors">
                   <td class="p-sm pl-md text-on-background/40 font-bold">{{ entry.posicion }}</td>
-                  <td class="p-sm font-semibold text-on-background text-body-md">{{ entry.equipo }}</td>
+                  <td class="p-sm font-semibold text-on-background text-body-md">
+                    {{ entry.equipo }}
+                  </td>
                   <td class="p-sm text-center text-on-background/60">{{ entry.pj }}</td>
                   <td class="p-sm text-center text-on-background/60">{{ entry.pg }}</td>
                   <td class="p-sm text-center text-on-background/60">{{ entry.pe }}</td>
@@ -151,34 +226,54 @@
         </div>
       </div>
 
-      <!-- Goleadores de la jornada -->
-      <div data-anim="goleadores" class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm">
-        <div class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20">
-          <h3 class="text-headline-md font-semibold text-tertiary">Goleadores · Jornada {{ jornadaNumero }}</h3>
+      <div
+        data-anim="goleadores"
+        class="bg-surface border border-outline rounded flex flex-col overflow-hidden shadow-sm"
+      >
+        <div
+          class="p-md border-b border-outline/50 flex justify-between items-center bg-background/20"
+        >
+          <h3 class="text-headline-md font-semibold text-tertiary">
+            Goleadores · Jornada {{ jornadaNumero }}
+          </h3>
         </div>
 
         <div class="p-md flex flex-col gap-sm">
           @for (jugador of goleadores; track jugador.id) {
-            <div class="flex items-center justify-between p-sm rounded border border-outline/30 bg-background hover:bg-background/70 transition-colors">
+            <div
+              class="flex items-center justify-between p-sm rounded border border-outline/30 bg-background hover:bg-background/70 transition-colors"
+            >
               <div class="flex items-center gap-md">
-                <span class="text-data-mono font-bold text-on-background/30 w-4 text-center">{{ $index + 1 }}</span>
-                <div class="w-9 h-9 rounded-full bg-tertiary/10 border border-outline/30 flex items-center justify-center shrink-0">
+                <span class="text-data-mono font-bold text-on-background/30 w-4 text-center">{{
+                  $index + 1
+                }}</span>
+                <div
+                  class="w-9 h-9 rounded-full bg-tertiary/10 border border-outline/30 flex items-center justify-center shrink-0"
+                >
                   <span class="material-symbols-outlined text-[20px] text-tertiary/60">person</span>
                 </div>
                 <div class="flex flex-col">
-                  <span class="font-bold text-body-md text-on-background">{{ jugador.nombre }}</span>
-                  <span class="text-[11px] text-on-background/50">{{ jugador.posicion }} · {{ jugador.equipo }}</span>
+                  <span class="font-bold text-body-md text-on-background">{{
+                    jugador.nombre
+                  }}</span>
+                  <span class="text-[11px] text-on-background/50"
+                    >{{ jugador.posicion }} · {{ jugador.equipo }}</span
+                  >
                 </div>
               </div>
 
               <div class="flex items-center gap-1">
                 @if (jugador.goles > 0) {
-                  <span class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[11px] font-bold">
+                  <span
+                    class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[11px] font-bold"
+                  >
                     {{ jugador.goles }}G
                   </span>
                 }
                 @if (jugador.asistencias > 0) {
-                  <span class="px-2 py-0.5 rounded bg-tertiary/10 text-tertiary text-[11px] font-bold">
+                  <span
+                    class="px-2 py-0.5 rounded bg-tertiary/10 text-tertiary text-[11px] font-bold"
+                  >
                     {{ jugador.asistencias }}A
                   </span>
                 }
@@ -187,8 +282,6 @@
           }
         </div>
       </div>
-
     </section>
-
   </div>
 </main>

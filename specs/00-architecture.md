@@ -24,13 +24,15 @@ El cambio de tema lo gestiona el `AppComponent` en función de la ruta activa. T
 ### 2. Routing — estructura lazy
 
 ```
-/                         → HomeComponent          (lazy)
-/clasificacion            → ClasificacionComponent (lazy)
+/                         → HomeComponent              (lazy)
+/clasificacion            → ClasificacionComponent     (lazy)
+/equipos                  → EquiposComponent           (lazy)
+/equipos/:id              → EquipoDetalleComponent     (lazy)
 /fantasy                  → redirect → /fantasy/dashboard
-/fantasy/dashboard        → FantasyDashboardComponent (lazy)
-/fantasy/mercado          → MercadoComponent       (lazy)
-/fantasy/mi-equipo        → MiEquipoComponent      (lazy)
-/ajustes                  → AjustesComponent       (lazy)
+/fantasy/dashboard        → FantasyDashboardComponent  (lazy)
+/fantasy/mercado          → MercadoComponent           (lazy)
+/fantasy/mi-equipo        → MiEquipoComponent          (lazy)
+/ajustes                  → AjustesComponent           (lazy)
 ```
 
 Cada ruta usa `loadComponent` (no `loadChildren` ya que todos son standalone).
@@ -65,6 +67,8 @@ web/src/
 │   ├── features/
 │   │   ├── home/
 │   │   ├── clasificacion/
+│   │   ├── equipos/
+│   │   │   └── equipo-detalle/
 │   │   ├── fantasy/
 │   │   │   ├── dashboard/
 │   │   │   ├── mercado/
