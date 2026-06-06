@@ -3,6 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { gsap } from 'gsap';
 
 import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
+import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { CLASIFICACION_DATA } from '../../core/data/clasificacion.data';
 import { TORNEO_DATA } from '../../core/data/torneo.data';
 import { IClasificacionEntry } from '../../core/models/clasificacion.model';
@@ -18,7 +19,7 @@ const FASES: { tipo: FaseTorneo; label: string }[] = [
 @Component({
   selector: 'app-clasificacion',
   standalone: true,
-  imports: [NavbarLightComponent, NgTemplateOutlet],
+  imports: [NavbarLightComponent, FooterComponent, NgTemplateOutlet],
   templateUrl: './clasificacion.component.html',
 })
 export class ClasificacionComponent implements AfterViewInit {

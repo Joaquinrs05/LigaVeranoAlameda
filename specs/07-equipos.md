@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `07-equipos` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Módulo** | `web-informativa` |
 | **Prioridad** | `alta` |
 | **Mockup** | Sin mockup — diseñar siguiendo `DESIGN.md` y el patrón visual de `02-clasificacion` |

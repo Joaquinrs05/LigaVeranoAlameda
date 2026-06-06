@@ -1,0 +1,177 @@
+<app-navbar-light />
+
+<!-- Blobs decorativos -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index:-1">
+  <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(192,85,42,0.14) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
+  <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(26,74,46,0.11) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
+</div>
+
+<main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
+  <div class="flex flex-col gap-lg">
+
+    <!-- ── CABECERA ── -->
+    <div class="flex flex-col gap-md">
+      <div class="flex items-start justify-between">
+        <div>
+          <h1 class="text-display-lg font-bold text-primary leading-tight">{{ equipo.nombre }}</h1>
+          <span class="text-body-md text-on-background/50">{{ equipo.propietario }} · Jornada 12</span>
+        </div>
+        <a routerLink="/fantasy/mercado"
+          class="hidden md:flex items-center gap-1 bg-primary text-background font-bold text-label-bold px-md py-sm rounded hover:bg-primary/90 transition-colors">
+          <span class="material-symbols-outlined text-[16px]">shopping_cart</span>
+          Mercado
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-3 gap-sm">
+        <div class="rounded p-sm flex flex-col gap-xs" style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.15)">
+          <span class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">Puntos jornada</span>
+          <span class="text-headline-md font-bold text-primary">{{ equipo.puntuacionJornada }}</span>
+        </div>
+        <div class="rounded p-sm flex flex-col gap-xs" style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.15)">
+          <span class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">Valor equipo</span>
+          <span class="text-headline-md font-bold text-on-background">{{ valorTotal() | number:'1.1-1' }}M</span>
+        </div>
+        <div class="rounded p-sm flex flex-col gap-xs" style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.15)">
+          <span class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">Presupuesto</span>
+          <span class="text-headline-md font-bold text-tertiary">{{ equipo.presupuesto }}M</span>
+        </div>
+      </div>
+
+      @if (seleccionado()) {
+        <div class="rounded p-sm flex items-center gap-2 border border-secondary/40" style="background:rgba(255,214,0,0.08)">
+          <span class="material-symbols-outlined text-[18px] text-on-background/60">swap_horiz</span>
+          <span class="text-body-md text-on-background/70">Selecciona otro jugador para hacer el cambio</span>
+          <button (click)="seleccionar(seleccionado()!)" class="ml-auto text-[11px] font-bold text-on-background/40 hover:text-on-background transition-colors uppercase tracking-wider">Cancelar</button>
+        </div>
+      }
+    </div>
+
+    <!-- ── CAMPO ── -->
+    <div class="flex flex-col gap-lg">
+      <div
+        class="relative w-full rounded-lg overflow-hidden"
+        style="background:linear-gradient(180deg,#0e2c1a 0%,#1a4a2e 35%,#1a4a2e 65%,#0e2c1a 100%);min-height:580px"
+      >
+        <!-- Líneas del campo -->
+        <div class="absolute left-4 right-4 pointer-events-none" style="top:50%;height:1px;background:rgba(255,255,255,0.15)"></div>
+        <div class="absolute pointer-events-none" style="top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;border:1px solid rgba(255,255,255,0.15)"></div>
+        <div class="absolute pointer-events-none" style="top:50%;left:50%;transform:translate(-50%,-50%);width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.3)"></div>
+        <div class="absolute left-1/2 pointer-events-none" style="top:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-top:none"></div>
+        <div class="absolute left-1/2 pointer-events-none" style="bottom:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-bottom:none"></div>
+        <div class="absolute top-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(255,214,0,0.3),transparent)"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(255,214,0,0.2),transparent)"></div>
+
+        <!-- Filas de jugadores -->
+        <div class="relative z-10 flex flex-col justify-around py-xl" style="min-height:580px">
+
+          <!-- Delanteros -->
+          <div class="flex justify-center gap-lg">
+            @for (j of delanteros(); track j.id) {
+              <button (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card
+                  [nombre]="j.nombre"
+                  [posicion]="posicionAbrev(j.posicion)"
+                  [estado]="j.estado"
+                  [seleccionado]="seleccionado() === j.id"
+                  size="md"
+                />
+              </button>
+            }
+          </div>
+
+          <!-- Centrocampistas -->
+          <div class="flex justify-center gap-md md:gap-lg">
+            @for (j of centrocampistas(); track j.id) {
+              <button (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card
+                  [nombre]="j.nombre"
+                  [posicion]="posicionAbrev(j.posicion)"
+                  [estado]="j.estado"
+                  [seleccionado]="seleccionado() === j.id"
+                  size="md"
+                />
+              </button>
+            }
+          </div>
+
+          <!-- Defensas -->
+          <div class="flex justify-center gap-xl md:gap-2xl">
+            @for (j of defensas(); track j.id) {
+              <button (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card
+                  [nombre]="j.nombre"
+                  [posicion]="posicionAbrev(j.posicion)"
+                  [estado]="j.estado"
+                  [seleccionado]="seleccionado() === j.id"
+                  size="md"
+                />
+              </button>
+            }
+          </div>
+
+          <!-- Portero -->
+          <div class="flex justify-center">
+            @for (j of portero(); track j.id) {
+              <button (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card
+                  [nombre]="j.nombre"
+                  [posicion]="posicionAbrev(j.posicion)"
+                  [estado]="j.estado"
+                  [seleccionado]="seleccionado() === j.id"
+                  size="md"
+                />
+              </button>
+            }
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── RESERVAS ── -->
+      <div class="flex flex-col gap-sm">
+        <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">people_outline</span>
+          Reservas
+        </h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-sm">
+          @for (j of reservas(); track j.id) {
+            <button
+              (click)="seleccionar(j.id)"
+              class="flex items-center gap-sm p-sm rounded border transition-all duration-200 text-left outline-none"
+              [style.background]="seleccionado() === j.id ? 'rgba(255,214,0,0.08)' : 'rgba(255,255,255,0.75)'"
+              [style.border-color]="seleccionado() === j.id ? 'rgba(255,214,0,0.5)' : 'rgba(192,85,42,0.15)'"
+              [style.box-shadow]="seleccionado() === j.id ? '0 0 0 2px rgba(255,214,0,0.3)' : '0 2px 8px rgba(0,0,0,0.05)'"
+              [class.opacity-60]="j.estado !== 'disponible'"
+            >
+              <app-player-card
+                [nombre]="j.nombre"
+                [posicion]="posicionAbrev(j.posicion)"
+                [puntuacion]="j.puntuacionJornada"
+                [estado]="j.estado"
+                [seleccionado]="seleccionado() === j.id"
+                size="sm"
+              />
+              <div class="flex flex-col min-w-0">
+                <span class="font-bold text-body-md text-on-background truncate">{{ j.nombre.split(' ')[0] }}</span>
+                <div class="flex items-center gap-1">
+                  @if (j.estado === 'lesionado') {
+                    <span class="text-[9px] font-bold text-red-500">LES</span>
+                  } @else if (j.estado === 'sancionado') {
+                    <span class="text-[9px] font-bold text-yellow-600">SAN</span>
+                  }
+                  <span class="text-[11px] text-on-background/40">{{ j.puntuacionJornada }} pts</span>
+                </div>
+              </div>
+            </button>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<app-footer />

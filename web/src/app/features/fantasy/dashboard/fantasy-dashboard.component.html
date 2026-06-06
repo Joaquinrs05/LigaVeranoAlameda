@@ -1,0 +1,337 @@
+<app-navbar-light />
+
+<!-- Blobs decorativos (mismos que home) -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: -1">
+  <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(192,85,42,0.14) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
+  <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(26,74,46,0.11) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
+  <div style="position:absolute;bottom:-18%;left:22%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,0,0.07) 0%,transparent 65%);animation:blob-drift-3 21s ease-in-out infinite"></div>
+</div>
+
+<main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
+  <div class="flex flex-col gap-lg">
+
+    <!-- ── HERO: Mi Equipo Fantasy ── -->
+    <section
+      data-anim="hero"
+      class="relative overflow-hidden rounded"
+      style="background: linear-gradient(135deg, #1a4a2e 0%, #0e2c1a 55%, #091b10 100%)"
+    >
+      <!-- Trama de puntos -->
+      <div class="absolute inset-0 opacity-[0.07] pointer-events-none" style="background-image:radial-gradient(#ffd600 1px,transparent 1px);background-size:24px 24px"></div>
+      <!-- Halo central -->
+      <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 90% 55% at 50% 115%,rgba(192,85,42,0.4) 0%,transparent 100%)"></div>
+      <!-- Shimmer superior -->
+      <div class="absolute top-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent 0%,rgba(255,214,0,0.5) 50%,transparent 100%)"></div>
+
+      <div class="relative z-10 w-full px-lg py-lg flex flex-col md:flex-row md:items-center md:justify-between gap-lg">
+
+        <!-- Nombre + jornada -->
+        <div class="flex flex-col gap-sm">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary text-[18px]">bolt</span>
+            <span class="text-background/50 text-[11px] font-bold uppercase tracking-widest">Fantasy · Jornada 12</span>
+          </div>
+          <h1 class="text-display-lg font-bold text-background leading-tight">{{ equipo.nombre }}</h1>
+          <span class="text-background/60 text-body-md">{{ posicionLabel }} en la liga fantasy</span>
+        </div>
+
+        <!-- Stats -->
+        <div class="flex gap-md md:gap-lg">
+          <!-- Puntos jornada -->
+          <div class="flex flex-col items-center bg-on-background/30 rounded px-lg py-md border border-background/10">
+            <span class="text-background/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Esta jornada</span>
+            <span class="font-bold leading-none text-secondary" style="font-size:3rem;text-shadow:0 0 24px rgba(255,214,0,0.5)">{{ equipo.puntuacionJornada }}</span>
+            <span class="text-background/40 text-[11px] mt-xs">puntos</span>
+          </div>
+          <!-- Puntos totales -->
+          <div class="flex flex-col items-center bg-on-background/20 rounded px-lg py-md border border-background/10">
+            <span class="text-background/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Total</span>
+            <span class="font-bold text-background leading-none" style="font-size:3rem">{{ equipo.puntuacionTotal }}</span>
+            <span class="text-background/40 text-[11px] mt-xs">puntos</span>
+          </div>
+          <!-- Presupuesto -->
+          <div class="hidden md:flex flex-col items-center bg-on-background/20 rounded px-lg py-md border border-background/10">
+            <span class="text-background/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Presupuesto</span>
+            <span class="font-bold text-background leading-none" style="font-size:2rem">{{ equipo.presupuesto }}M</span>
+            <span class="text-background/40 text-[11px] mt-xs">disponible</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PARTIDOS EN DIRECTO (reutilizado de home) ── -->
+    <section data-anim="partidos" class="flex flex-col gap-md">
+      <div class="flex items-center justify-between">
+        <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+          Partidos en Directo
+          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline">| Jornada 12</span>
+        </h2>
+        <a routerLink="/clasificacion" class="text-label-bold font-bold text-primary hover:underline text-[11px] uppercase tracking-wider hidden sm:block">
+          Ver todos
+        </a>
+      </div>
+
+      <div class="@container overflow-hidden" (mouseenter)="pauseScroll()" (mouseleave)="resumeScroll()">
+        <div
+          #cardsTrack
+          class="flex gap-md will-change-transform"
+          style="animation: scroll-cards 15s linear infinite; animation-play-state: paused"
+        >
+          @for (partido of partidos; track $index) {
+            <div
+              class="shrink-0 w-[85vw] md:w-[calc((100cqw-2rem)/3)] rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+              [class.border]="true"
+              [class.border-primary]="partido.estado === 'live'"
+              [class.border-outline]="partido.estado !== 'live'"
+              [class.opacity-60]="partido.estado === 'finished'"
+              [class.opacity-75]="partido.estado === 'upcoming'"
+              [style.background]="partido.estado === 'live' ? 'linear-gradient(145deg,rgba(255,252,250,0.92) 0%,rgba(255,245,240,0.92) 100%)' : 'rgba(255,255,255,0.88)'"
+              [style.backdrop-filter]="'blur(14px)'"
+              [style.box-shadow]="partido.estado === 'live' ? '0 4px 24px rgba(192,85,42,0.18),0 1px 4px rgba(0,0,0,0.06)' : '0 2px 12px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04)'"
+            >
+              <div class="flex justify-between items-center text-[10px] uppercase tracking-widest font-bold">
+                <span class="text-on-background/50">{{ partido.estado === 'upcoming' ? partido.horaInicio : partido.minuto }}</span>
+                @if (partido.estado === 'live') {
+                  <span class="text-primary flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
+                    EN VIVO
+                  </span>
+                } @else if (partido.estado === 'finished') {
+                  <span class="text-on-background/30">FINAL</span>
+                } @else {
+                  <span class="text-on-background/40">PRÓXIMO</span>
+                }
+              </div>
+              <div class="flex justify-between items-center text-data-mono font-semibold">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-background text-[10px] font-bold shrink-0">{{ partido.abrevLocal }}</div>
+                  <span>{{ partido.equipoLocal }}</span>
+                </div>
+                @if (partido.golesLocal !== null) {
+                  <span class="text-lg font-bold">{{ partido.golesLocal }}</span>
+                } @else {
+                  <span class="text-on-background/30 font-normal">—</span>
+                }
+              </div>
+              <div class="flex justify-between items-center text-data-mono">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-background text-[10px] font-bold shrink-0">{{ partido.abrevVisitante }}</div>
+                  <span class="text-on-background/70">{{ partido.equipoVisitante }}</span>
+                </div>
+                @if (partido.golesVisitante !== null) {
+                  <span class="text-lg" [class.font-bold]="partido.estado === 'live'" [class.text-on-background/40]="partido.estado !== 'live'">{{ partido.golesVisitante }}</span>
+                } @else {
+                  <span class="text-on-background/30">—</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CLASIFICACIÓN FANTASY + MIS JUGADORES ── -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-lg" data-anim="jugadores">
+
+      <!-- Clasificación Fantasy (2/3) -->
+      <div class="lg:col-span-2 flex flex-col gap-md" data-anim="clasificacion">
+        <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">leaderboard</span>
+          Liga Fantasy
+        </h2>
+
+        <div
+          class="rounded overflow-hidden"
+          style="background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 4px 24px rgba(26,74,46,0.08),0 1px 4px rgba(0,0,0,0.04)"
+        >
+          <!-- Cabecera tabla -->
+          <div class="px-md py-sm border-b" style="border-color:rgba(192,85,42,0.15);background:linear-gradient(90deg,rgba(26,74,46,0.07) 0%,transparent 100%)">
+            <div class="flex items-center text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
+              <span class="w-8">#</span>
+              <span class="flex-1">Equipo</span>
+              <span class="w-10 text-center">PJ</span>
+              <span class="w-14 text-right">Pts</span>
+            </div>
+          </div>
+
+          <div class="relative overflow-hidden">
+            <div class="divide-y" style="divide-color:rgba(192,85,42,0.08)">
+              @for (entry of clasificacionVisible(); track entry.posicion) {
+                <div
+                  class="flex items-center px-md py-md transition-colors hover:bg-primary/3"
+                  [class.bg-tertiary/5]="entry.esUsuario"
+                  [style.background]="entry.posicion === 1 ? 'linear-gradient(90deg,rgba(192,85,42,0.06) 0%,transparent 60%)' : entry.esUsuario ? 'rgba(26,74,46,0.04)' : ''"
+                >
+                  <!-- Posición -->
+                  <div class="w-8 shrink-0">
+                    @if (entry.posicion === 1) {
+                      <span class="material-symbols-outlined text-secondary text-[18px]" style="filter:drop-shadow(0 0 6px rgba(255,214,0,0.5))">military_tech</span>
+                    } @else {
+                      <span class="font-bold text-data-mono text-on-background/40">{{ entry.posicion }}</span>
+                    }
+                  </div>
+
+                  <!-- Equipo + propietario -->
+                  <div class="flex-1 min-w-0 flex flex-col">
+                    <span
+                      class="font-bold text-body-md truncate"
+                      [class.text-tertiary]="entry.esUsuario"
+                      [class.text-on-background]="!entry.esUsuario"
+                    >{{ entry.equipo }}</span>
+                    <span class="text-[11px] text-on-background/40">{{ entry.propietario }}</span>
+                  </div>
+
+                  <!-- PJ -->
+                  <span class="w-10 text-center text-data-mono text-on-background/50 shrink-0">{{ entry.pj }}</span>
+
+                  <!-- Puntos -->
+                  <div class="w-14 flex items-center justify-end gap-xs shrink-0">
+                    @if (entry.esUsuario) {
+                      <span class="w-1.5 h-1.5 rounded-full bg-tertiary shrink-0"></span>
+                    }
+                    <span
+                      class="font-bold text-data-mono text-[16px]"
+                      [class.text-primary]="!entry.esUsuario"
+                      [class.text-tertiary]="entry.esUsuario"
+                    >{{ entry.puntos }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+
+            @if (!mostrarTodaClasificacion()) {
+              <div class="absolute bottom-0 left-0 right-0 h-16 pointer-events-none" style="background:linear-gradient(to top,rgba(255,255,255,0.95) 0%,transparent 100%)"></div>
+            }
+          </div>
+
+          @if (!mostrarTodaClasificacion()) {
+            <button
+              (click)="mostrarTodaClasificacion.set(true)"
+              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
+              style="border-top: 1px solid rgba(192,85,42,0.12)"
+            >
+              <span class="material-symbols-outlined text-[16px]">expand_more</span>
+              Ver todos los equipos
+            </button>
+          } @else {
+            <button
+              (click)="mostrarTodaClasificacion.set(false)"
+              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
+              style="border-top: 1px solid rgba(192,85,42,0.12)"
+            >
+              <span class="material-symbols-outlined text-[16px]">expand_less</span>
+              Ver menos
+            </button>
+          }
+        </div>
+
+        <!-- Accesos rápidos -->
+        <div class="flex gap-sm">
+          <a
+            routerLink="/fantasy/mercado"
+            class="flex-1 flex items-center gap-sm px-md py-sm rounded border border-outline hover:border-primary hover:bg-primary/5 transition-all"
+            style="background:rgba(255,255,255,0.7)"
+          >
+            <span class="material-symbols-outlined text-primary text-[20px]">shopping_cart</span>
+            <span class="font-bold text-body-md text-on-background">Mercado</span>
+            <span class="ml-auto material-symbols-outlined text-on-background/30 text-[18px]">chevron_right</span>
+          </a>
+          <a
+            routerLink="/fantasy/mi-equipo"
+            class="flex-1 flex items-center gap-sm px-md py-sm rounded border border-outline hover:border-primary hover:bg-primary/5 transition-all"
+            style="background:rgba(255,255,255,0.7)"
+          >
+            <span class="material-symbols-outlined text-primary text-[20px]">edit_square</span>
+            <span class="font-bold text-body-md text-on-background">Mi Equipo</span>
+            <span class="ml-auto material-symbols-outlined text-on-background/30 text-[18px]">chevron_right</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Mis Jugadores (1/3) -->
+      <div class="flex flex-col gap-md">
+        <div class="flex items-center justify-between">
+          <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px]">group</span>
+            Mis Jugadores
+          </h2>
+          <a routerLink="/fantasy/mi-equipo" class="text-[11px] font-bold uppercase tracking-wider text-primary hover:underline">
+            Ver todos
+          </a>
+        </div>
+
+        <div
+          class="rounded overflow-hidden"
+          style="background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 4px 24px rgba(26,74,46,0.08),0 1px 4px rgba(0,0,0,0.04)"
+        >
+          <div class="px-md py-sm border-b flex items-center gap-2" style="border-color:rgba(192,85,42,0.15);background:linear-gradient(90deg,rgba(26,74,46,0.07) 0%,transparent 100%)">
+            <span class="material-symbols-outlined text-tertiary text-[16px]">star</span>
+            <span class="text-label-bold font-bold text-tertiary">Titulares</span>
+          </div>
+          <div class="relative overflow-hidden">
+            <div class="divide-y" style="divide-color:rgba(192,85,42,0.08)">
+              @for (jugador of jugadoresVisibles(); track jugador.id) {
+                <div
+                  class="flex items-center justify-between px-md py-sm hover:bg-primary/3 transition-colors"
+                  [class.opacity-60]="jugador.estado !== 'disponible'"
+                >
+                  <div class="flex items-center gap-sm min-w-0">
+                    <div
+                      class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold text-background"
+                      [style.background]="jugador.posicion === 'portero' ? '#1a4a2e' : jugador.posicion === 'defensa' ? '#c0552a' : jugador.posicion === 'centrocampista' ? '#0f5a8a' : '#7b2d8b'"
+                    >{{ posicionAbrev(jugador.posicion) }}</div>
+                    <div class="flex flex-col min-w-0">
+                      <span class="font-bold text-body-md text-on-background truncate">{{ jugador.nombre }}</span>
+                      <div class="flex items-center gap-1">
+                        @if (jugador.estado === 'lesionado') {
+                          <span class="text-[9px] font-bold text-red-500">LES</span>
+                        } @else if (jugador.estado === 'sancionado') {
+                          <span class="text-[9px] font-bold text-yellow-600">SAN</span>
+                        }
+                        <span class="text-[11px] text-on-background/40 truncate">{{ jugador.equipo }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="w-9 h-9 rounded flex items-center justify-center font-bold text-body-md shrink-0"
+                    [style.background]="jugador.puntuacionJornada >= 10 ? '#1a4a2e' : jugador.puntuacionJornada >= 6 ? 'rgba(26,74,46,0.12)' : 'rgba(192,85,42,0.08)'"
+                    [style.color]="jugador.puntuacionJornada >= 10 ? '#FFD600' : jugador.puntuacionJornada >= 6 ? '#1a4a2e' : '#c0552a'"
+                  >{{ jugador.puntuacionJornada }}</div>
+                </div>
+              }
+            </div>
+
+            @if (!mostrarTodosJugadores()) {
+              <div class="absolute bottom-0 left-0 right-0 h-16 pointer-events-none" style="background:linear-gradient(to top,rgba(255,255,255,0.95) 0%,transparent 100%)"></div>
+            }
+          </div>
+
+          @if (!mostrarTodosJugadores()) {
+            <button
+              (click)="mostrarTodosJugadores.set(true)"
+              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
+              style="border-top: 1px solid rgba(192,85,42,0.12)"
+            >
+              <span class="material-symbols-outlined text-[16px]">expand_more</span>
+              Ver todos
+            </button>
+          } @else {
+            <button
+              (click)="mostrarTodosJugadores.set(false)"
+              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
+              style="border-top: 1px solid rgba(192,85,42,0.12)"
+            >
+              <span class="material-symbols-outlined text-[16px]">expand_less</span>
+              Ver menos
+            </button>
+          }
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+</main>
+
+<app-footer />

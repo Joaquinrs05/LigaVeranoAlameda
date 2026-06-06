@@ -84,60 +84,12 @@
             [style.top]="jugador.y + '%'"
             style="transform: translate(-50%, -50%); z-index: 10; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.7))"
           >
-            <!-- Carta estilo FIFA -->
-            <div style="
-              width: 80px;
-              height: 108px;
-              background:
-                linear-gradient(130deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.32) 50%, rgba(255,255,255,0) 70%),
-                linear-gradient(158deg, #a07020 0%, #d4a83c 12%, #f5df6a 28%, #e8cc50 42%, #c89030 58%, #b07020 72%, #d4aa40 86%, #f0d858 100%);
-              clip-path: polygon(10% 2%, 44% 2%, 50% 0%, 56% 2%, 90% 2%, 100% 10%, 100% 86%, 95% 100%, 5% 100%, 0% 86%, 0% 10%);
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              padding: 5px 4px 5px;
-              gap: 3px;
-            ">
-              <!-- Dorsal + posición (fila superior, estilo rating FIFA) -->
-              <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start; padding: 0 3px">
-                <span style="font-size: 13px; font-weight: 900; color: rgba(60,35,0,0.75); line-height: 1">
-                  {{ jugador.dorsal }}
-                </span>
-                <span style="font-size: 9px; font-weight: 900; color: rgba(60,35,0,0.6); line-height: 1; letter-spacing: 0.03em">
-                  {{ jugador.posicion }}
-                </span>
-              </div>
-
-              <!-- Foto / inicial del jugador -->
-              <div style="
-                width: 48px; height: 48px;
-                border-radius: 50%;
-                background: rgba(0,0,0,0.15);
-                display: flex; align-items: center; justify-content: center;
-                font-size: 22px; font-weight: 900;
-                color: rgba(70,45,0,0.55);
-                flex-shrink: 0;
-              ">
-                {{ jugador.nombre[0] }}
-              </div>
-
-              <!-- Nombre -->
-              <div style="
-                font-size: 9px;
-                font-weight: 900;
-                color: rgba(50,30,0,0.85);
-                text-align: center;
-                text-transform: uppercase;
-                letter-spacing: 0.04em;
-                line-height: 1.1;
-                max-width: 70px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-              ">
-                {{ primerNombre(jugador.nombre) }}
-              </div>
-            </div>
+            <app-player-card
+              [nombre]="jugador.nombre"
+              [dorsal]="jugador.dorsal"
+              [posicion]="jugador.posicion"
+              size="sm"
+            />
           </div>
         }
       </div>
@@ -150,3 +102,5 @@
     </a>
   }
 </main>
+
+<app-footer />

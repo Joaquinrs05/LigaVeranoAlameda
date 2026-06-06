@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `01-home-dashboard` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Módulo** | `web-informativa` |
 | **Prioridad** | `alta` |
 | **Mockup** | `screens/dashboard-escritorio-nueva.html`, `screens/dashboard-escritorio-2.html`, `screens/dashboard-movil.html` |

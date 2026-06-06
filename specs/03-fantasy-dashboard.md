@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `03-fantasy-dashboard` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Módulo** | `fantasy` |
 | **Prioridad** | `alta` |
 | **Mockup** | `screens/dashboard-fantasy-league-escritorio.html`, `screens/dashboard-movil.html` |

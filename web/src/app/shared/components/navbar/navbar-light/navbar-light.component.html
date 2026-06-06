@@ -1,67 +1,68 @@
 <!-- ── Top bar ── -->
-<nav data-anim="navbar"
-  class="bg-tertiary fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 shadow-lg">
-
+<nav
+  data-anim="navbar"
+  class="bg-tertiary fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 shadow-lg"
+>
   <div class="flex items-center gap-md">
     <span class="material-symbols-outlined text-secondary text-[22px]">sports_soccer</span>
-    <span class="text-headline-md font-bold text-background tracking-tight">Liga Verano Alameda</span>
+    <span class="text-headline-md font-bold text-background tracking-tight"
+      >Liga Verano Alameda</span
+    >
   </div>
 
   <div class="flex items-center gap-md">
-    <div class="hidden md:flex items-center bg-white/10 rounded px-4 py-2 border border-background/20 focus-within:border-secondary transition-colors">
-      <span class="material-symbols-outlined text-background text-[18px] mr-2">search</span>
-      <input
-        class="bg-transparent border-none focus:ring-0 text-body-md text-background placeholder:text-background/50 w-44 outline-none"
-        placeholder="Buscar jugadores, equipos…"
-        type="text"
-      />
-    </div>
-
-    <a routerLink="/fantasy/dashboard"
-      class="hidden md:flex items-center gap-1 bg-secondary text-on-background font-bold text-label-bold px-md py-sm rounded hover:bg-secondary/90 transition-colors">
+    <a
+      routerLink="/fantasy/dashboard"
+      class="hidden md:flex items-center gap-1 bg-secondary text-on-background font-bold text-label-bold px-md py-sm rounded hover:bg-secondary/90 transition-colors"
+    >
       <span class="material-symbols-outlined text-[16px]">bolt</span>
       Entrar al Fantasy
     </a>
 
-    <div class="w-8 h-8 rounded-full bg-white/20 border border-background/50 flex items-center justify-center cursor-pointer hover:border-secondary transition-colors">
+    <div
+      class="w-8 h-8 rounded-full bg-white/20 border border-background/50 flex items-center justify-center cursor-pointer hover:border-secondary transition-colors"
+    >
       <span class="material-symbols-outlined text-background text-[18px]">person</span>
     </div>
   </div>
 </nav>
 
 <!-- ── Bottom nav (móvil) ── -->
-<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-outline flex items-stretch h-16">
-  <a routerLink="/" routerLinkActive="bottom-nav-active" [routerLinkActiveOptions]="{exact:true}"
-    class="bottom-nav-item">
+<nav
+  class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-outline flex items-stretch h-16"
+>
+  <a
+    routerLink="/"
+    routerLinkActive="bottom-nav-active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="bottom-nav-item"
+  >
     <span class="material-symbols-outlined text-[22px]">home</span>
     <span>Inicio</span>
   </a>
-  <a routerLink="/clasificacion" routerLinkActive="bottom-nav-active"
-    class="bottom-nav-item">
+  <a routerLink="/clasificacion" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
     <span class="material-symbols-outlined text-[22px]">leaderboard</span>
     <span>Clasificación</span>
   </a>
-  <a routerLink="/equipos" routerLinkActive="bottom-nav-active"
-    class="bottom-nav-item">
+  <a routerLink="/equipos" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
     <span class="material-symbols-outlined text-[22px]">shield</span>
     <span>Equipos</span>
   </a>
-  <a routerLink="/fantasy/dashboard" routerLinkActive="bottom-nav-active"
-    class="bottom-nav-item">
+  <a routerLink="/fantasy/dashboard" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
     <span class="material-symbols-outlined text-[22px]">bolt</span>
     <span>Fantasy</span>
   </a>
-  <a routerLink="/ajustes" routerLinkActive="bottom-nav-active"
-    class="bottom-nav-item">
+  <a routerLink="/ajustes" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
     <span class="material-symbols-outlined text-[22px]">settings</span>
     <span>Ajustes</span>
   </a>
 </nav>
 
 <!-- ── Sidebar ── -->
-<aside data-anim="sidebar"
-  class="bg-surface hidden md:flex flex-col fixed left-0 top-0 h-full p-md border-r border-outline w-64 pt-24 z-40">
-
+<aside
+  data-anim="sidebar"
+  class="bg-surface hidden md:flex flex-col fixed left-0 top-0 h-full p-md border-r border-outline w-64 pt-24 z-40"
+>
   <!-- Liga info -->
   <div class="flex items-center gap-md mb-xl p-sm rounded bg-background border border-outline">
     <div class="w-10 h-10 rounded bg-tertiary flex items-center justify-center shrink-0">
@@ -75,44 +76,42 @@
 
   <!-- Nav links -->
   <nav class="flex flex-col gap-sm flex-1">
-    <a routerLink="/" routerLinkActive="nav-active" [routerLinkActiveOptions]="{exact:true}"
-      class="nav-link">
+    <a
+      routerLink="/"
+      routerLinkActive="nav-active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-link"
+    >
       <span class="material-symbols-outlined text-[20px]">home</span>
       Inicio
     </a>
-    <a routerLink="/clasificacion" routerLinkActive="nav-active"
-      class="nav-link">
+    <a routerLink="/clasificacion" routerLinkActive="nav-active" class="nav-link">
       <span class="material-symbols-outlined text-[20px]">leaderboard</span>
       Clasificación
     </a>
-    <a routerLink="/equipos" routerLinkActive="nav-active"
-      class="nav-link">
+    <a routerLink="/equipos" routerLinkActive="nav-active" class="nav-link">
       <span class="material-symbols-outlined text-[20px]">shield</span>
       Equipos
     </a>
 
     <div class="border-t border-outline my-sm"></div>
 
-    <a routerLink="/fantasy/dashboard" routerLinkActive="nav-active"
-      class="nav-link">
+    <a routerLink="/fantasy/dashboard" routerLinkActive="nav-active" class="nav-link">
       <span class="material-symbols-outlined text-[20px]">bolt</span>
       Fantasy
     </a>
-    <a routerLink="/fantasy/mi-equipo" routerLinkActive="nav-active"
-      class="nav-link">
+    <a routerLink="/fantasy/mi-equipo" routerLinkActive="nav-active" class="nav-link">
       <span class="material-symbols-outlined text-[20px]">group</span>
       Mi Equipo
     </a>
-    <a routerLink="/fantasy/mercado" routerLinkActive="nav-active"
-      class="nav-link">
+    <a routerLink="/fantasy/mercado" routerLinkActive="nav-active" class="nav-link">
       <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
       Mercado
     </a>
 
     <div class="border-t border-outline my-sm"></div>
 
-    <a routerLink="/ajustes" routerLinkActive="nav-active"
-      class="nav-link">
+    <a routerLink="/ajustes" routerLinkActive="nav-active" class="nav-link">
       <span class="material-symbols-outlined text-[20px]">settings</span>
       Ajustes
     </a>
@@ -120,8 +119,10 @@
 
   <!-- CTA bottom -->
   <div class="mt-auto pt-lg">
-    <a routerLink="/fantasy/dashboard"
-      class="w-full bg-tertiary text-background font-bold text-label-bold py-sm rounded border border-white/10 hover:bg-primary transition-colors flex justify-center items-center gap-2">
+    <a
+      routerLink="/fantasy/dashboard"
+      class="w-full bg-tertiary text-background font-bold text-label-bold py-sm rounded border border-white/10 hover:bg-primary transition-colors flex justify-center items-center gap-2"
+    >
       <span class="material-symbols-outlined text-[16px] text-secondary">add</span>
       Unirse a la Liga Fantasy
     </a>

@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { NavbarLightComponent } from '../../../shared/components/navbar/navbar-light/navbar-light.component';
+import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { PlayerCardComponent } from '../../../shared/components/player-card/player-card.component';
 import { EQUIPOS_DATA } from '../../../core/data/equipos.data';
 import { IEquipo, IJugadorEquipo } from '../../../core/models/equipo.model';
 
@@ -13,7 +15,7 @@ interface IJugadorPosicionado extends IJugadorEquipo {
 @Component({
   selector: 'app-equipo-detalle',
   standalone: true,
-  imports: [NavbarLightComponent, RouterLink],
+  imports: [NavbarLightComponent, FooterComponent, RouterLink, PlayerCardComponent],
   templateUrl: './equipo-detalle.component.html',
 })
 export class EquipoDetalleComponent {

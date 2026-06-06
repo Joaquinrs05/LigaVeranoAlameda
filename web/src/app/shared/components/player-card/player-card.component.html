@@ -1,0 +1,53 @@
+<div
+  [style.width.px]="w"
+  [style.height.px]="h"
+  [style.background]="seleccionado
+    ? 'linear-gradient(130deg,rgba(255,255,255,0) 30%,rgba(255,255,255,0.32) 50%,rgba(255,255,255,0) 70%), linear-gradient(158deg,#c8a030 0%,#ffe878 20%,#f5df6a 40%,#e8cc50 55%,#d4aa40 75%,#f0d858 100%)'
+    : 'linear-gradient(130deg,rgba(255,255,255,0) 30%,rgba(255,255,255,0.32) 50%,rgba(255,255,255,0) 70%), linear-gradient(158deg,#a07020 0%,#d4a83c 12%,#f5df6a 28%,#e8cc50 42%,#c89030 58%,#b07020 72%,#d4aa40 86%,#f0d858 100%)'"
+  [style.clip-path]="'polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%)'"
+  [style.box-shadow]="seleccionado ? '0 0 0 3px #FFD600, 0 0 20px rgba(255,214,0,0.6)' : 'none'"
+  [style.filter]="estado !== 'disponible' ? 'grayscale(0.5) brightness(0.85)' : 'none'"
+  style="display:flex;flex-direction:column;align-items:center;padding:5px 4px;gap:3px;position:relative;transition:box-shadow 0.2s,filter 0.2s"
+>
+  <!-- Dorsal + posición -->
+  <div style="width:100%;display:flex;justify-content:space-between;align-items:flex-start;padding:0 3px">
+    @if (dorsal !== undefined) {
+      <span [style.font-size.px]="dorsalSize" style="font-weight:900;color:rgba(60,35,0,0.75);line-height:1">{{ dorsal }}</span>
+    } @else {
+      <span></span>
+    }
+    <span [style.font-size.px]="posSize" style="font-weight:900;color:rgba(60,35,0,0.6);line-height:1;letter-spacing:0.03em">{{ posicion }}</span>
+  </div>
+
+  <!-- Avatar -->
+  <div
+    [style.width.px]="avatarSize"
+    [style.height.px]="avatarSize"
+    style="border-radius:50%;background:rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative"
+  >
+    @if (fotoUrl) {
+      <img [src]="fotoUrl" [alt]="nombre" style="width:100%;height:100%;object-fit:cover">
+    } @else {
+      <span [style.font-size.px]="avatarSize * 0.45" style="font-weight:900;color:rgba(70,45,0,0.55);user-select:none">{{ iniciales }}</span>
+    }
+
+    <!-- Badge estado -->
+    @if (estado === 'lesionado') {
+      <div style="position:absolute;bottom:0;right:0;width:14px;height:14px;border-radius:50%;background:#ef4444;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;color:#fff">L</div>
+    } @else if (estado === 'sancionado') {
+      <div style="position:absolute;bottom:0;right:0;width:14px;height:14px;border-radius:50%;background:#facc15;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;color:#713f12">S</div>
+    }
+  </div>
+
+  <!-- Nombre -->
+  <div
+    [style.font-size.px]="nameSize"
+    [style.max-width.px]="w - 8"
+    style="font-weight:900;color:rgba(50,30,0,0.85);text-align:center;text-transform:uppercase;letter-spacing:0.04em;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+  >{{ primerNombre }}</div>
+
+  <!-- Puntuación (modo fantasy) -->
+  @if (puntuacion !== undefined) {
+    <div style="font-size:8px;font-weight:900;color:rgba(60,35,0,0.6);letter-spacing:0.03em">{{ puntuacion }} pts</div>
+  }
+</div>

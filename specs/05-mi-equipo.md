@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `05-mi-equipo` |
-| **Status** | `draft` |
+| **Status** | `revision` |
 | **Módulo** | `fantasy` |
 | **Prioridad** | `alta` |
 | **Mockup** | `screens/mi-equipo-escritorio.html`, `screens/mi-equipo-movil.html` |

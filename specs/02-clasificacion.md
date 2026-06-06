@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `02-clasificacion` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Módulo** | `web-informativa` |
 | **Prioridad** | `alta` |
 | **Mockup** | `screens/clasificacion-escritorio.html`, `screens/clasificacion-movil.html` |

@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
 
 import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
+import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { PARTIDOS_DATA } from '../../core/data/partidos.data';
 import { CLASIFICACION_DATA } from '../../core/data/clasificacion.data';
 import { GOLEADORES_JORNADA } from '../../core/data/jornada.data';
@@ -15,7 +16,7 @@ const JORNADA_NUMERO = 12;
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NavbarLightComponent, RouterLink],
+  imports: [NavbarLightComponent, FooterComponent, RouterLink],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements AfterViewInit {
