@@ -21,6 +21,13 @@ export interface IEquipoFantasy {
   jugadores: IJugadorFantasy[];
 }
 
+export interface IFiltrosMercado {
+  posicion: 'todos' | 'portero' | 'defensa' | 'centrocampista' | 'delantero';
+  equipo: string | null;
+  precioMax: number | null;
+  busqueda: string;
+}
+
 export interface IClasificacionFantasy {
   posicion: number;
   equipo: string;

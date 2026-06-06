@@ -119,6 +119,10 @@ body::after {
   border-radius: 3px;
 }
 
+/* ── No-scrollbar utility ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* ── Carousel infinito ── */
 @keyframes scroll-cards {
   to { transform: translateX(-50%); }

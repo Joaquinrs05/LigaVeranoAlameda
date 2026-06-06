@@ -1,11 +1,102 @@
-import { Component } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
+
+import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
+import { FooterComponent } from '../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-ajustes',
-  template: `
-    <div class="min-h-screen bg-background flex items-center justify-center">
-      <p class="text-headline-md font-semibold text-primary">Ajustes — pendiente implementar (spec 06)</p>
-    </div>
-  `,
+  standalone: true,
+  imports: [NavbarLightComponent, FooterComponent],
+  templateUrl: './ajustes.component.html',
 })
-export class AjustesComponent {}
+export class AjustesComponent {
+  readonly nombre        = signal('');
+  readonly email         = signal('');
+  readonly nombreEquipo  = signal('');
+
+  readonly notifJornada    = signal(true);
+  readonly notifMercado    = signal(true);
+  readonly notifAlineacion = signal(false);
+
+  readonly privacidad = signal('publica');
+
+  readonly guardando = signal(false);
+  readonly guardado  = signal(false);
+  readonly copiado   = signal(false);
+
+  readonly iniciales = computed(() => {
+    const n = this.nombre().trim();
+    if (!n) return '?';
+    return n.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase();
+  });
+
+  readonly nombreValido     = computed(() => this.nombre().trim().length >= 2);
+  readonly emailValido      = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email()));
+  readonly formularioValido = computed(() => this.nombreValido() && this.emailValido());
+
+  constructor() {
+    this.cargar();
+  }
+
+  private cargar(): void {
+    try {
+      const raw = localStorage.getItem('ajustes-liga-verano');
+      if (raw) {
+        const d = JSON.parse(raw);
+        this.nombre.set(d.nombre             ?? 'Jugador Fantasy');
+        this.email.set(d.email              ?? 'jugador@liga-verano.es');
+        this.nombreEquipo.set(d.nombreEquipo ?? 'Los Cañoneros');
+        this.notifJornada.set(d.notifJornada    ?? true);
+        this.notifMercado.set(d.notifMercado    ?? true);
+        this.notifAlineacion.set(d.notifAlineacion ?? false);
+        this.privacidad.set(d.privacidad     ?? 'publica');
+      } else {
+        this.nombre.set('Jugador Fantasy');
+        this.email.set('jugador@liga-verano.es');
+        this.nombreEquipo.set('Los Cañoneros');
+      }
+    } catch {
+      this.nombre.set('Jugador Fantasy');
+      this.email.set('jugador@liga-verano.es');
+      this.nombreEquipo.set('Los Cañoneros');
+    }
+  }
+
+  guardar(): void {
+    if (!this.formularioValido()) return;
+    this.guardando.set(true);
+    localStorage.setItem('ajustes-liga-verano', JSON.stringify({
+      nombre:          this.nombre(),
+      email:           this.email(),
+      nombreEquipo:    this.nombreEquipo(),
+      notifJornada:    this.notifJornada(),
+      notifMercado:    this.notifMercado(),
+      notifAlineacion: this.notifAlineacion(),
+      privacidad:      this.privacidad(),
+    }));
+    setTimeout(() => {
+      this.guardando.set(false);
+      this.guardado.set(true);
+      setTimeout(() => this.guardado.set(false), 2000);
+    }, 600);
+  }
+
+  descartar(): void {
+    this.cargar();
+  }
+
+  copiarEnlace(): void {
+    navigator.clipboard.writeText('liga-alameda.es/invite/alameda26').catch(() => {});
+    this.copiado.set(true);
+    setTimeout(() => this.copiado.set(false), 2000);
+  }
+
+  toggleJornada(): void    { this.notifJornada.update(v => !v); }
+  toggleMercado(): void    { this.notifMercado.update(v => !v); }
+  toggleAlineacion(): void { this.notifAlineacion.update(v => !v); }
+
+  onNombre(e: Event): void       { this.nombre.set((e.target as HTMLInputElement).value); }
+  onEmail(e: Event): void        { this.email.set((e.target as HTMLInputElement).value); }
+  onNombreEquipo(e: Event): void { this.nombreEquipo.set((e.target as HTMLInputElement).value); }
+  onPrivacidad(e: Event): void   { this.privacidad.set((e.target as HTMLSelectElement).value); }
+}

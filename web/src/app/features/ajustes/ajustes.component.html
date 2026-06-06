@@ -1,0 +1,252 @@
+<app-navbar-light />
+
+<main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen">
+
+  <!-- Cabecera -->
+  <div class="pb-lg max-w-3xl mx-auto">
+    <h1 class="text-headline-lg font-bold text-primary">Ajustes</h1>
+    <p class="text-body-md text-on-background/50">Gestiona tu perfil y preferencias de la liga</p>
+  </div>
+
+  <div class="flex flex-col gap-lg max-w-3xl mx-auto">
+
+    <!-- ── PERFIL ── -->
+    <section class="bg-surface border border-outline rounded-lg overflow-hidden">
+      <div class="px-lg py-md border-b border-outline flex items-center gap-sm">
+        <span class="material-symbols-outlined text-primary text-[20px]">person</span>
+        <h2 class="font-bold text-headline-md text-on-background">Perfil</h2>
+      </div>
+
+      <div class="p-lg space-y-lg">
+
+        <!-- Avatar + nombre de equipo -->
+        <div class="flex items-center gap-lg">
+          <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center font-bold text-background text-headline-md shrink-0 select-none">
+            {{ iniciales() }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-bold text-body-md text-on-background">{{ nombre() || 'Tu nombre' }}</p>
+            <p class="text-[12px] text-on-background/40">{{ email() || 'tu@email.es' }}</p>
+            <p class="text-[11px] text-primary font-bold mt-xs">{{ nombreEquipo() || 'Nombre de equipo' }}</p>
+          </div>
+        </div>
+
+        <!-- Campos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+
+          <div class="flex flex-col gap-xs">
+            <label class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
+              Nombre del manager
+            </label>
+            <input
+              type="text"
+              [value]="nombre()"
+              (input)="onNombre($event)"
+              placeholder="Tu nombre"
+              class="w-full bg-surface border border-outline rounded px-sm py-sm text-body-md text-on-background placeholder:text-on-background/30 focus:border-primary focus:outline-none transition-colors"
+              [class.border-red-400]="nombre().length > 0 && !nombreValido()"
+            />
+            @if (nombre().length > 0 && !nombreValido()) {
+              <span class="text-[11px] text-red-500">Mínimo 2 caracteres</span>
+            }
+          </div>
+
+          <div class="flex flex-col gap-xs">
+            <label class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
+              Email
+            </label>
+            <input
+              type="email"
+              [value]="email()"
+              (input)="onEmail($event)"
+              placeholder="tu@email.es"
+              class="w-full bg-surface border border-outline rounded px-sm py-sm text-body-md text-on-background placeholder:text-on-background/30 focus:border-primary focus:outline-none transition-colors"
+              [class.border-red-400]="email().length > 0 && !emailValido()"
+            />
+            @if (email().length > 0 && !emailValido()) {
+              <span class="text-[11px] text-red-500">Email no válido</span>
+            }
+          </div>
+
+          <div class="flex flex-col gap-xs md:col-span-2">
+            <label class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
+              Nombre del equipo fantasy
+            </label>
+            <input
+              type="text"
+              [value]="nombreEquipo()"
+              (input)="onNombreEquipo($event)"
+              placeholder="Los Cañoneros"
+              class="w-full bg-surface border border-outline rounded px-sm py-sm text-body-md text-on-background placeholder:text-on-background/30 focus:border-primary focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="pt-sm border-t border-outline">
+          <button class="flex items-center gap-xs text-primary font-bold text-body-md hover:underline transition-all">
+            <span class="material-symbols-outlined text-[18px]">lock_reset</span>
+            Cambiar contraseña
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── NOTIFICACIONES ── -->
+    <section class="bg-surface border border-outline rounded-lg overflow-hidden">
+      <div class="px-lg py-md border-b border-outline flex items-center gap-sm">
+        <span class="material-symbols-outlined text-primary text-[20px]">notifications</span>
+        <h2 class="font-bold text-headline-md text-on-background">Notificaciones</h2>
+      </div>
+
+      <div class="p-lg space-y-sm">
+
+        <!-- Resultados de jornada -->
+        <div class="flex items-center justify-between p-md border border-outline rounded-lg hover:border-primary/40 transition-colors group">
+          <div class="flex items-center gap-md">
+            <span class="material-symbols-outlined text-on-background/40 group-hover:text-primary transition-colors text-[22px]">sports_soccer</span>
+            <div>
+              <p class="font-bold text-body-md text-on-background">Resultados de jornada</p>
+              <p class="text-[12px] text-on-background/40">Recibe el resumen al finalizar cada jornada</p>
+            </div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer shrink-0">
+            <input type="checkbox" class="sr-only peer" [checked]="notifJornada()" (change)="toggleJornada()">
+            <div class="w-10 h-6 rounded-full bg-outline peer-checked:bg-primary transition-colors relative
+                        after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                        after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow
+                        after:transition-all peer-checked:after:translate-x-4"></div>
+          </label>
+        </div>
+
+        <!-- Novedades del mercado -->
+        <div class="flex items-center justify-between p-md border border-outline rounded-lg hover:border-primary/40 transition-colors group">
+          <div class="flex items-center gap-md">
+            <span class="material-symbols-outlined text-on-background/40 group-hover:text-primary transition-colors text-[22px]">shopping_cart</span>
+            <div>
+              <p class="font-bold text-body-md text-on-background">Novedades del mercado</p>
+              <p class="text-[12px] text-on-background/40">Alertas cuando cambia el valor de tus jugadores</p>
+            </div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer shrink-0">
+            <input type="checkbox" class="sr-only peer" [checked]="notifMercado()" (change)="toggleMercado()">
+            <div class="w-10 h-6 rounded-full bg-outline peer-checked:bg-primary transition-colors relative
+                        after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                        after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow
+                        after:transition-all peer-checked:after:translate-x-4"></div>
+          </label>
+        </div>
+
+        <!-- Recordatorio de alineación -->
+        <div class="flex items-center justify-between p-md border border-outline rounded-lg hover:border-primary/40 transition-colors group">
+          <div class="flex items-center gap-md">
+            <span class="material-symbols-outlined text-on-background/40 group-hover:text-primary transition-colors text-[22px]">schedule</span>
+            <div>
+              <p class="font-bold text-body-md text-on-background">Recordatorio de alineación</p>
+              <p class="text-[12px] text-on-background/40">Aviso 1 hora antes del cierre de la jornada</p>
+            </div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer shrink-0">
+            <input type="checkbox" class="sr-only peer" [checked]="notifAlineacion()" (change)="toggleAlineacion()">
+            <div class="w-10 h-6 rounded-full bg-outline peer-checked:bg-primary transition-colors relative
+                        after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                        after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow
+                        after:transition-all peer-checked:after:translate-x-4"></div>
+          </label>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── LIGA ── -->
+    <section class="bg-surface border border-outline rounded-lg overflow-hidden">
+      <div class="px-lg py-md border-b border-outline flex items-center gap-sm">
+        <span class="material-symbols-outlined text-primary text-[20px]">groups</span>
+        <h2 class="font-bold text-headline-md text-on-background">Liga</h2>
+      </div>
+
+      <div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+
+        <!-- Privacidad -->
+        <div class="flex flex-col gap-xs">
+          <label class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
+            Privacidad del equipo
+          </label>
+          <div class="relative">
+            <select
+              [value]="privacidad()"
+              (change)="onPrivacidad($event)"
+              class="w-full appearance-none bg-surface border border-outline rounded px-sm py-sm text-body-md text-on-background focus:border-primary focus:outline-none transition-colors cursor-pointer pr-xl"
+            >
+              <option value="publica">Liga pública</option>
+              <option value="privada">Solo invitados</option>
+              <option value="amigos">Solo amigos</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-background/40 pointer-events-none text-[20px]">expand_more</span>
+          </div>
+          <p class="text-[11px] text-on-background/40 italic">Controla quién puede ver tu equipo y su valor</p>
+        </div>
+
+        <!-- Enlace de invitación -->
+        <div class="flex flex-col gap-xs">
+          <label class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
+            Enlace de invitación
+          </label>
+          <div class="flex gap-xs">
+            <input
+              type="text"
+              readonly
+              value="liga-alameda.es/invite/alameda26"
+              class="flex-1 min-w-0 bg-background border border-outline rounded px-sm py-sm text-body-md text-primary font-bold focus:outline-none cursor-default"
+            />
+            <button
+              (click)="copiarEnlace()"
+              class="shrink-0 px-sm py-sm border border-outline rounded hover:border-primary transition-colors flex items-center gap-xs font-bold text-label-bold"
+              [class]="copiado() ? 'bg-tertiary/10 border-tertiary text-tertiary' : 'text-on-background/60 hover:text-primary'"
+            >
+              <span class="material-symbols-outlined text-[18px]">{{ copiado() ? 'check' : 'content_copy' }}</span>
+              {{ copiado() ? 'Copiado' : 'Copiar' }}
+            </button>
+          </div>
+          <p class="text-[11px] text-on-background/40 italic">Comparte este enlace para invitar a amigos</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── ACCIONES ── -->
+    <div class="flex justify-end gap-md pb-lg">
+      <button
+        (click)="descartar()"
+        class="px-lg py-sm border border-outline rounded text-on-background font-bold text-label-bold hover:border-primary transition-colors"
+      >
+        Descartar
+      </button>
+
+      @if (guardando()) {
+        <button disabled class="px-lg py-sm bg-primary/60 text-background font-bold text-label-bold rounded cursor-not-allowed flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[16px] animate-spin">refresh</span>
+          Guardando…
+        </button>
+      } @else if (guardado()) {
+        <button disabled class="px-lg py-sm bg-tertiary text-background font-bold text-label-bold rounded flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[16px]">check</span>
+          Guardado
+        </button>
+      } @else {
+        <button
+          (click)="guardar()"
+          [disabled]="!formularioValido()"
+          class="px-lg py-sm bg-primary text-background font-bold text-label-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Guardar cambios
+        </button>
+      }
+    </div>
+
+  </div>
+
+</main>
+
+<app-footer />
