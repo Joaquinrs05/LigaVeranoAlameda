@@ -1,0 +1,42 @@
+<div class="min-h-screen bg-on-background flex flex-col items-center justify-center px-margin-mobile relative overflow-hidden">
+
+  <!-- Patrón de fondo -->
+  <div class="absolute inset-0 pointer-events-none"
+       style="background-image: repeating-linear-gradient(-45deg, rgba(192,85,42,0.07) 0px, rgba(192,85,42,0.07) 1px, transparent 1px, transparent 14px)">
+  </div>
+
+  <div class="relative z-10 flex flex-col items-center gap-lg text-center">
+
+    @if (!error()) {
+      <!-- Estado: procesando -->
+      <span class="material-symbols-outlined text-secondary" style="font-size:48px">sports_soccer</span>
+
+      <svg class="animate-spin w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+
+      <div class="flex flex-col gap-xs">
+        <p class="text-headline-md font-bold text-background">Autenticando con Google</p>
+        <p class="text-background/50 text-body-md">Un momento...</p>
+      </div>
+
+    } @else {
+      <!-- Estado: error -->
+      <span class="material-symbols-outlined text-red-400" style="font-size:48px">error</span>
+
+      <div class="flex flex-col gap-sm">
+        <p class="text-headline-md font-bold text-background">Error de autenticación</p>
+        <p class="text-background/50 text-body-md max-w-xs">{{ error() }}</p>
+      </div>
+
+      <a
+        routerLink="/auth/login"
+        class="bg-primary text-background font-bold text-label-bold px-lg py-sm rounded hover:bg-primary/90 transition-colors"
+      >
+        Volver al login
+      </a>
+    }
+
+  </div>
+</div>
