@@ -4,6 +4,7 @@ export interface IUsuario {
   email: string;
   fotoPerfil: string | null;
   proveedor: 'email' | 'google';
+  nombreEquipoFantasy: string | null;
 }
 
 export interface ICredencialesLogin {

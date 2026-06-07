@@ -1,6 +1,6 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Session } from '@supabase/supabase-js';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { ICredencialesLogin, ICredencialesRegistro, IUsuario } from '../models/auth.model';
 import { SupabaseService } from './supabase.service';
 
@@ -10,6 +10,8 @@ const ERRORES: Record<string, string> = {
   'User already registered': 'Ya existe una cuenta con ese email',
   'Password should be at least 6 characters': 'La contraseña debe tener al menos 6 caracteres',
   'Unable to validate email address: invalid format': 'Formato de email no válido',
+  'email rate limit exceeded': 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
+  'over_email_send_rate_limit': 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
 };
 
 @Injectable({ providedIn: 'root' })
@@ -23,13 +25,26 @@ export class AuthService {
   readonly autenticado = computed(() => this.usuario() !== null);
 
   constructor() {
-    this.supabase.auth.getSession().then(({ data }) => {
-      this.actualizarUsuario(data.session);
+    this.supabase.auth.getSession().then(async ({ data }) => {
+      if (data.session) {
+        // Validar contra el servidor que el usuario sigue existiendo
+        const { error } = await this.supabase.auth.getUser();
+        if (error) {
+          // Usuario borrado de Supabase — limpiar sesión local
+          await this.supabase.auth.signOut();
+        } else {
+          this.actualizarUsuario(data.session);
+          this.fetchPerfil(data.session.user.id);
+        }
+      }
       this.cargando.set(false);
     });
 
-    this.supabase.auth.onAuthStateChange((_event, session) => {
+    this.supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
       this.actualizarUsuario(session);
+      if (event === 'SIGNED_IN' && session?.user) {
+        this.fetchPerfil(session.user.id);
+      }
     });
   }
 
@@ -41,7 +56,7 @@ export class AuthService {
       password: creds.contrasena,
     });
     this.cargando.set(false);
-    if (error) this.error.set(this.traducirError(error.message));
+    if (error) this.error.set(this.traducirError(error.message, error.code));
   }
 
   async registrarConEmail(creds: ICredencialesRegistro): Promise<void> {
@@ -53,7 +68,7 @@ export class AuthService {
       options: { data: { nombre: creds.nombre } },
     });
     this.cargando.set(false);
-    if (error) this.error.set(this.traducirError(error.message));
+    if (error) this.error.set(this.traducirError(error.message, error.code));
   }
 
   async loginConGoogle(returnUrl: string): Promise<void> {
@@ -76,23 +91,57 @@ export class AuthService {
     return data.session?.access_token ?? null;
   }
 
+  async actualizarPerfil(cambios: { nombre?: string; nombreEquipoFantasy?: string }): Promise<void> {
+    const uid = this.usuario()?.uid;
+    if (!uid) return;
+
+    const { error } = await this.supabase
+      .from('perfiles')
+      .update({
+        ...(cambios.nombre !== undefined && { nombre: cambios.nombre }),
+        ...(cambios.nombreEquipoFantasy !== undefined && { nombre_equipo_fantasy: cambios.nombreEquipoFantasy }),
+      })
+      .eq('id', uid);
+
+    if (!error) {
+      this.usuario.update(u => u ? { ...u, ...cambios } : null);
+    }
+  }
+
+  private async fetchPerfil(uid: string): Promise<void> {
+    const { data } = await this.supabase
+      .from('perfiles')
+      .select('nombre, foto_perfil, nombre_equipo_fantasy')
+      .eq('id', uid)
+      .single();
+
+    if (data) {
+      this.usuario.update(u => u ? {
+        ...u,
+        nombre: data['nombre'] || u.nombre,
+        fotoPerfil: data['foto_perfil'] ?? u.fotoPerfil,
+        nombreEquipoFantasy: data['nombre_equipo_fantasy'] ?? null,
+      } : null);
+    }
+  }
+
   private actualizarUsuario(session: Session | null): void {
     if (!session?.user) {
       this.usuario.set(null);
       return;
     }
     const u = session.user;
-    const proveedor = u.app_metadata['provider'] === 'google' ? 'google' : 'email';
     this.usuario.set({
       uid: u.id,
       nombre: u.user_metadata['nombre'] ?? u.user_metadata['full_name'] ?? u.email ?? '',
       email: u.email ?? '',
       fotoPerfil: u.user_metadata['avatar_url'] ?? null,
-      proveedor,
+      proveedor: u.app_metadata['provider'] === 'google' ? 'google' : 'email',
+      nombreEquipoFantasy: null,
     });
   }
 
-  private traducirError(mensaje: string): string {
-    return ERRORES[mensaje] ?? 'Ha ocurrido un error. Inténtalo de nuevo.';
+  private traducirError(mensaje: string, code?: string): string {
+    return ERRORES[code ?? ''] ?? ERRORES[mensaje] ?? 'Ha ocurrido un error. Inténtalo de nuevo.';
   }
 }

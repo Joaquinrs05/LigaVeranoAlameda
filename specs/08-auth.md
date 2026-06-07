@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `08-auth` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Módulo** | `shared` |
 | **Prioridad** | `alta` |
 | **Mockup** | Sin mockup — diseñar desde cero siguiendo el sistema de diseño |
@@ -465,20 +465,20 @@ export const authGuard: CanActivateFn = (_route, state) => {
 
 ## Criterios de aceptación
 
-- [ ] La ruta `/auth/login` carga `LoginComponent`
-- [ ] La ruta `/auth/register` carga `RegisterComponent`
-- [ ] `authGuard` bloquea `/fantasy/**` sin sesión y redirige a `/auth/login?returnUrl=...`
-- [ ] Tras login exitoso se navega a `returnUrl` o `/fantasy/dashboard`
-- [ ] Botón "Iniciar sesión" muestra spinner y desactiva el formulario durante la petición
-- [ ] Errores de validación aparecen bajo el campo al perder foco
-- [ ] Error de Supabase aparece en el banner global bajo el formulario
-- [ ] "Continuar con Google" redirige al flujo OAuth de Supabase
-- [ ] `/auth/callback` procesa el redirect de Google y navega a `returnUrl`
-- [ ] Si el usuario ya tiene sesión, `/auth/login` redirige a `/fantasy/dashboard`
-- [ ] Logout limpia la sesión (Supabase) y navega a `/`
-- [ ] La sesión persiste entre recargas (Supabase SDK gestiona localStorage)
-- [ ] Peticiones al backend Python incluyen `Authorization: Bearer <token>`
-- [ ] Compilación sin errores
+- [x] La ruta `/auth/login` carga `LoginComponent`
+- [x] La ruta `/auth/register` carga `RegisterComponent`
+- [x] `authGuard` bloquea `/fantasy/**` sin sesión y redirige a `/auth/login?returnUrl=...`
+- [x] Tras login exitoso se navega a `returnUrl` o `/fantasy/dashboard`
+- [x] Botón "Iniciar sesión" muestra spinner y desactiva el formulario durante la petición
+- [x] Errores de validación aparecen bajo el campo al perder foco
+- [x] Error de Supabase aparece en el banner global bajo el formulario
+- [x] "Continuar con Google" redirige al flujo OAuth de Supabase
+- [x] `/auth/callback` procesa el redirect de Google y navega a `returnUrl`
+- [x] Si el usuario ya tiene sesión, `/auth/login` redirige a `/fantasy/dashboard`
+- [x] Logout limpia la sesión (Supabase) y navega a `/`
+- [x] La sesión persiste entre recargas (Supabase SDK gestiona localStorage)
+- [x] Peticiones al backend Python incluyen `Authorization: Bearer <token>`
+- [x] Compilación sin errores
 
 ---
 
