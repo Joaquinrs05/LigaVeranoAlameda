@@ -1,13 +1,13 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, signal, computed } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit, signal, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { gsap } from 'gsap';
 
 import { NavbarLightComponent } from '../../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
-import { MI_EQUIPO_FANTASY, CLASIFICACION_FANTASY } from '../../../core/data/fantasy.data';
-import { PARTIDOS_DATA } from '../../../core/data/partidos.data';
-import { IEquipoFantasy, IJugadorFantasy, IClasificacionFantasy } from '../../../core/models/fantasy.model';
+import { FantasyService } from '../../../core/services/fantasy.service';
+import { LigaRealService } from '../../../core/services/liga-real.service';
+import { IJugadorFantasy } from '../../../core/models/fantasy.model';
 import { IPartido } from '../../../core/models/partido.model';
 
 @Component({
@@ -16,51 +16,67 @@ import { IPartido } from '../../../core/models/partido.model';
   imports: [NavbarLightComponent, FooterComponent, RouterLink, FormsModule],
   templateUrl: './fantasy-dashboard.component.html',
 })
-export class FantasyDashboardComponent implements AfterViewInit {
+export class FantasyDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('cardsTrack') private cardsTrackRef!: ElementRef<HTMLElement>;
 
-  readonly enLiga = signal(false);
+  readonly fantasy   = inject(FantasyService);
+  private readonly ligaReal = inject(LigaRealService);
 
-  readonly equipo: IEquipoFantasy                      = MI_EQUIPO_FANTASY;
-  readonly clasificacion: IClasificacionFantasy[]      = CLASIFICACION_FANTASY;
-  readonly partidos: IPartido[]                        = [...PARTIDOS_DATA, ...PARTIDOS_DATA];
+  readonly enLiga        = this.fantasy.enLiga;
+  readonly cargando      = this.fantasy.cargando;
+  readonly clasificacion = this.fantasy.clasificacion;
+  readonly miembro       = this.fantasy.miembro;
 
-  readonly titulares: IJugadorFantasy[]  = this.equipo.jugadores.filter(j => j.titular);
-  readonly reservas: IJugadorFantasy[]   = this.equipo.jugadores.filter(j => !j.titular);
+  // Getters: Angular rastrea lecturas de signals en templates sin necesitar ()
+  get partidos(): IPartido[] {
+    const lista = this.ligaReal.partidos();
+    return [...lista, ...lista];
+  }
+
+  get equipo(): { nombre: string; puntuacionJornada: number; puntuacionTotal: number; presupuesto: number } {
+    const m = this.fantasy.miembro();
+    return {
+      nombre:            m?.nombre_equipo ?? 'Mi Equipo',
+      puntuacionJornada: 0,
+      puntuacionTotal:   m?.puntos_total  ?? 0,
+      presupuesto:       m?.presupuesto   ?? 100,
+    };
+  }
+
+  get posicionLabel(): string {
+    const pos = this.fantasy.clasificacion().find(c => c.esUsuario)?.posicion ?? 0;
+    return pos ? `${pos}º` : '—';
+  }
+
+  readonly titulares = computed<IJugadorFantasy[]>(() =>
+    this.fantasy.miEquipo().filter(j => j.titular)
+  );
+  readonly reservas = computed<IJugadorFantasy[]>(() =>
+    this.fantasy.miEquipo().filter(j => !j.titular)
+  );
 
   readonly mostrarTodaClasificacion = signal(false);
-  readonly clasificacionVisible     = computed(() =>
-    this.mostrarTodaClasificacion() ? this.clasificacion : this.clasificacion.slice(0, 5)
+  readonly clasificacionVisible = computed(() =>
+    this.mostrarTodaClasificacion() ? this.clasificacion() : this.clasificacion().slice(0, 5)
   );
 
   readonly mostrarTodosJugadores = signal(false);
-  readonly jugadoresVisibles     = computed(() =>
-    this.mostrarTodosJugadores() ? this.titulares : this.titulares.slice(0, 5)
+  readonly jugadoresVisibles = computed(() =>
+    this.mostrarTodosJugadores() ? this.titulares() : this.titulares().slice(0, 5)
   );
-
-  readonly posicionLabel: string = (() => {
-    const pos = this.equipo.posicionLiga;
-    if (pos === 1) return '1º';
-    if (pos === 2) return '2º';
-    if (pos === 3) return '3º';
-    return `${pos}º`;
-  })();
 
   // Empty-state: crear / unirse
   readonly modoOnboarding = signal<'idle' | 'crear' | 'unirse'>('idle');
-  nombreLigaNueva = '';
+  readonly codigoGenerado  = signal<string | null>(null);
+  readonly errorMsg        = signal<string | null>(null);
+  nombreLigaNueva  = '';
+  nombreEquipoNuevo = '';
   codigoInvitacion = '';
+  nombreEquipo     = '';
 
-  crearLiga(): void {
-    if (!this.nombreLigaNueva.trim()) return;
-    // Mock: la liga queda creada y el usuario entra
-    this.enLiga.set(true);
-  }
-
-  unirseALiga(): void {
-    if (!this.codigoInvitacion.trim()) return;
-    // Mock: se valida el código y el usuario entra
-    this.enLiga.set(true);
+  ngOnInit(): void {
+    this.ligaReal.cargarPartidos();
+    this.fantasy.inicializar();
   }
 
   ngAfterViewInit(): void {
@@ -69,6 +85,32 @@ export class FantasyDashboardComponent implements AfterViewInit {
       .from('[data-anim="partidos"]',      { y: 24,  opacity: 0, duration: 0.45 }, '-=0.2')
       .from('[data-anim="jugadores"]',     { y: 28,  opacity: 0, duration: 0.45 }, '-=0.15')
       .from('[data-anim="clasificacion"]', { y: 28,  opacity: 0, duration: 0.4  }, '<0.08');
+  }
+
+  async crearLiga(): Promise<void> {
+    if (!this.nombreLigaNueva.trim() || !this.nombreEquipoNuevo.trim()) return;
+    this.errorMsg.set(null);
+    try {
+      const codigo = await this.fantasy.crearLiga(
+        this.nombreLigaNueva.trim(),
+        this.nombreEquipoNuevo.trim()
+      );
+      this.codigoGenerado.set(codigo);
+      this.fantasy.inicializar();
+    } catch {
+      this.errorMsg.set('Error al crear la liga. Inténtalo de nuevo.');
+    }
+  }
+
+  async unirseALiga(): Promise<void> {
+    if (!this.codigoInvitacion.trim() || !this.nombreEquipo.trim()) return;
+    this.errorMsg.set(null);
+    try {
+      await this.fantasy.unirseALiga(this.codigoInvitacion.trim(), this.nombreEquipo.trim());
+      this.fantasy.inicializar();
+    } catch {
+      this.errorMsg.set('Código inválido o ya eres miembro de esta liga.');
+    }
   }
 
   pauseScroll(): void  { this.cardsTrackRef.nativeElement.style.animationPlayState = 'paused'; }

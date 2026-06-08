@@ -1,7 +1,7 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, effect, untracked } from '@angular/core';
 import { NavbarLightComponent } from '../../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
-import { MI_EQUIPO_FANTASY, CATALOGO_MERCADO } from '../../../core/data/fantasy.data';
+import { FantasyService } from '../../../core/services/fantasy.service';
 import { IJugadorFantasy } from '../../../core/models/fantasy.model';
 
 type PosicionFiltro = 'todos' | IJugadorFantasy['posicion'];
@@ -12,7 +12,16 @@ type PosicionFiltro = 'todos' | IJugadorFantasy['posicion'];
   imports: [NavbarLightComponent, FooterComponent],
   templateUrl: './mercado.component.html',
 })
-export class MercadoComponent {
+export class MercadoComponent implements OnInit {
+  constructor() {
+    // Carga el mercado cuando ligaId esté disponible (maneja navegación directa a /mercado)
+    effect(() => {
+      if (this.fantasy.ligaId()) {
+        untracked(() => this.fantasy.cargarMercado());
+      }
+    });
+  }
+
   readonly filtrosPosicion: Array<{ valor: PosicionFiltro; etiqueta: string }> = [
     { valor: 'todos',          etiqueta: 'Todos' },
     { valor: 'portero',        etiqueta: 'POR'   },
@@ -21,22 +30,29 @@ export class MercadoComponent {
     { valor: 'delantero',      etiqueta: 'DEL'   },
   ];
 
-  readonly posicion    = signal<PosicionFiltro>('todos');
-  readonly busqueda    = signal('');
-  readonly presupuesto = signal(MI_EQUIPO_FANTASY.presupuesto);
+  readonly fantasy    = inject(FantasyService);
+  readonly posicion   = signal<PosicionFiltro>('todos');
+  readonly busqueda   = signal('');
+  readonly presupuesto = this.fantasy.presupuesto;
 
-  private readonly equipoJugadores = signal([...MI_EQUIPO_FANTASY.jugadores]);
+  readonly idsEnEquipo = computed(() =>
+    new Set(this.fantasy.miEquipo().map(j => j.id))
+  );
 
-  readonly idsEnEquipo = computed(() => new Set(this.equipoJugadores().map(j => j.id)));
-
-  readonly jugadoresFiltrados = computed(() => {
+  readonly jugadoresFiltrados = computed<IJugadorFantasy[]>(() => {
     const pos = this.posicion();
     const q   = this.busqueda().trim().toLowerCase();
-    return CATALOGO_MERCADO.filter(j =>
+    return this.fantasy.mercado().filter(j =>
       (pos === 'todos' || j.posicion === pos) &&
       (q === '' || j.nombre.toLowerCase().includes(q) || j.equipo.toLowerCase().includes(q))
     );
   });
+
+  ngOnInit(): void {
+    if (!this.fantasy.enLiga()) {
+      this.fantasy.inicializar();
+    }
+  }
 
   filtrarPosicion(pos: PosicionFiltro): void {
     this.posicion.set(pos);
@@ -46,12 +62,11 @@ export class MercadoComponent {
     this.busqueda.set((event.target as HTMLInputElement).value);
   }
 
-  fichar(jugador: IJugadorFantasy): void {
+  async fichar(jugador: IJugadorFantasy): Promise<void> {
     if (this.idsEnEquipo().has(jugador.id)) return;
     if (jugador.estado !== 'disponible') return;
     if (this.presupuesto() < jugador.precio) return;
-    this.equipoJugadores.update(lista => [...lista, { ...jugador, titular: false }]);
-    this.presupuesto.update(p => Math.round((p - jugador.precio) * 10) / 10);
+    await this.fantasy.ficharJugador(jugador.id);
   }
 
   posicionAbrev(pos: IJugadorFantasy['posicion']): string {

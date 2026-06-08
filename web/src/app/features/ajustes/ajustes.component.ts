@@ -1,7 +1,9 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { FantasyService } from '../../core/services/fantasy.service';
 
 @Component({
   selector: 'app-ajustes',
@@ -10,6 +12,8 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
   templateUrl: './ajustes.component.html',
 })
 export class AjustesComponent {
+  private readonly fantasy = inject(FantasyService);
+  private readonly router  = inject(Router);
   readonly nombre        = signal('');
   readonly email         = signal('');
   readonly nombreEquipo  = signal('');
@@ -23,6 +27,11 @@ export class AjustesComponent {
   readonly guardando = signal(false);
   readonly guardado  = signal(false);
   readonly copiado   = signal(false);
+
+  readonly enLiga            = this.fantasy.enLiga;
+  readonly nombreLiga        = this.fantasy.ligaActiva;
+  readonly confirmandoSalir  = signal(false);
+  readonly saliendoDeLiga    = signal(false);
 
   readonly iniciales = computed(() => {
     const n = this.nombre().trim();
@@ -99,4 +108,15 @@ export class AjustesComponent {
   onEmail(e: Event): void        { this.email.set((e.target as HTMLInputElement).value); }
   onNombreEquipo(e: Event): void { this.nombreEquipo.set((e.target as HTMLInputElement).value); }
   onPrivacidad(e: Event): void   { this.privacidad.set((e.target as HTMLSelectElement).value); }
+
+  async confirmarSalirDeLiga(): Promise<void> {
+    this.saliendoDeLiga.set(true);
+    try {
+      await this.fantasy.salirDeLiga();
+      this.router.navigate(['/fantasy']);
+    } finally {
+      this.saliendoDeLiga.set(false);
+      this.confirmandoSalir.set(false);
+    }
+  }
 }

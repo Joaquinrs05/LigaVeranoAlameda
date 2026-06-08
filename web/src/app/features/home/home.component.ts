@@ -1,17 +1,13 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, signal, computed } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit, signal, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
 
 import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
-import { PARTIDOS_DATA } from '../../core/data/partidos.data';
-import { CLASIFICACION_DATA } from '../../core/data/clasificacion.data';
-import { GOLEADORES_JORNADA } from '../../core/data/jornada.data';
+import { LigaRealService } from '../../core/services/liga-real.service';
 import { IPartido } from '../../core/models/partido.model';
 import { IClasificacionEntry } from '../../core/models/clasificacion.model';
 import { IGoleadorJornada } from '../../core/models/jugador.model';
-
-const JORNADA_NUMERO = 12;
 
 @Component({
   selector: 'app-home',
@@ -19,34 +15,55 @@ const JORNADA_NUMERO = 12;
   imports: [NavbarLightComponent, FooterComponent, RouterLink],
   templateUrl: './home.component.html',
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('cardsTrack') private cardsTrackRef!: ElementRef<HTMLElement>;
 
-  readonly partidos: IPartido[]                 = [...PARTIDOS_DATA, ...PARTIDOS_DATA];
-  readonly clasificacion: IClasificacionEntry[] = CLASIFICACION_DATA;
-  readonly goleadores: IGoleadorJornada[]       = GOLEADORES_JORNADA;
+  private readonly ligaReal = inject(LigaRealService);
+
+  // Getters: leen signals — Angular los rastrea para change detection
+  get partidos(): IPartido[] {
+    const lista = this.ligaReal.partidos();
+    return [...lista, ...lista];
+  }
+
+  get goleadores(): IGoleadorJornada[] {
+    return this.ligaReal.goleadores();
+  }
+
+  get partidoDestacado(): IPartido {
+    const lista = this.ligaReal.partidos();
+    return lista.find(p => p.estado === 'live')
+        ?? lista.find(p => p.estado === 'upcoming')
+        ?? lista[0]
+        ?? { id: '', equipoLocal: '—', abrevLocal: '—', equipoVisitante: '—', abrevVisitante: '—', golesLocal: null, golesVisitante: null, minuto: null, estado: 'upcoming', horaInicio: null };
+  }
+
+  // Jornada número desde la primera jornada activa
+  get jornadaNumero(): number {
+    return this.ligaReal.jornadaActual();
+  }
 
   readonly mostrarTodosClasificacion = signal(false);
-  readonly clasificacionVisible = computed(() =>
-    this.mostrarTodosClasificacion() ? this.clasificacion : this.clasificacion.slice(0, 6)
+
+  // clasificacionVisible sí usa () en el template → computed signal
+  readonly clasificacionVisible = computed<IClasificacionEntry[]>(() =>
+    this.mostrarTodosClasificacion()
+      ? this.ligaReal.clasificacion()
+      : this.ligaReal.clasificacion().slice(0, 6)
   );
-  readonly jornadaNumero                        = JORNADA_NUMERO;
-  readonly partidoDestacado: IPartido           =
-    PARTIDOS_DATA.find(p => p.estado === 'live') ??
-    PARTIDOS_DATA.find(p => p.estado === 'upcoming') ??
-    PARTIDOS_DATA[0];
+
+  ngOnInit(): void {
+    this.ligaReal.cargarClasificacion();
+    this.ligaReal.cargarPartidos();
+    this.ligaReal.cargarGoleadores();
+  }
 
   ngAfterViewInit(): void {
     this.runEntryAnimation();
   }
 
-  pauseScroll(): void {
-    this.cardsTrackRef.nativeElement.style.animationPlayState = 'paused';
-  }
-
-  resumeScroll(): void {
-    this.cardsTrackRef.nativeElement.style.animationPlayState = 'running';
-  }
+  pauseScroll(): void  { this.cardsTrackRef.nativeElement.style.animationPlayState = 'paused'; }
+  resumeScroll(): void { this.cardsTrackRef.nativeElement.style.animationPlayState = 'running'; }
 
   private runEntryAnimation(): void {
     gsap

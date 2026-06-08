@@ -58,6 +58,12 @@
               class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors"
               style="border-color:rgba(192,85,42,0.25);background:rgba(255,255,255,0.9)"
             />
+            <input
+              [(ngModel)]="nombreEquipoNuevo"
+              placeholder="Nombre de tu equipo…"
+              class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors"
+              style="border-color:rgba(192,85,42,0.25);background:rgba(255,255,255,0.9)"
+            />
             <div class="flex gap-sm">
               <button
                 (click)="modoOnboarding.set('idle')"
@@ -67,7 +73,7 @@
               </button>
               <button
                 (click)="crearLiga()"
-                [disabled]="!nombreLigaNueva.trim()"
+                [disabled]="!nombreLigaNueva.trim() || !nombreEquipoNuevo.trim()"
                 class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                 style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%)"
               >

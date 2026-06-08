@@ -1,11 +1,10 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, signal } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit, signal, inject } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { gsap } from 'gsap';
 
 import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
-import { CLASIFICACION_DATA } from '../../core/data/clasificacion.data';
-import { TORNEO_DATA } from '../../core/data/torneo.data';
+import { LigaRealService } from '../../core/services/liga-real.service';
 import { IClasificacionEntry } from '../../core/models/clasificacion.model';
 import { ICruce, FaseTorneo } from '../../core/models/torneo.model';
 
@@ -22,16 +21,24 @@ const FASES: { tipo: FaseTorneo; label: string }[] = [
   imports: [NavbarLightComponent, FooterComponent, NgTemplateOutlet],
   templateUrl: './clasificacion.component.html',
 })
-export class ClasificacionComponent implements AfterViewInit {
+export class ClasificacionComponent implements OnInit, AfterViewInit {
   @ViewChild('contenido') private contenidoRef!: ElementRef<HTMLElement>;
 
-  readonly fases                                = FASES;
-  readonly clasificacion: IClasificacionEntry[] = CLASIFICACION_DATA;
-  readonly faseActiva                           = signal<FaseTorneo>('liguilla');
+  private readonly ligaReal = inject(LigaRealService);
 
-  readonly cuartos:    ICruce[]      = TORNEO_DATA.find(f => f.tipo === 'cuartos')?.cruces  ?? [];
-  readonly semis:      ICruce[]      = TORNEO_DATA.find(f => f.tipo === 'semis')?.cruces    ?? [];
-  readonly finalMatch: ICruce | null = TORNEO_DATA.find(f => f.tipo === 'final')?.cruces?.[0] ?? null;
+  readonly fases      = FASES;
+  readonly faseActiva = signal<FaseTorneo>('liguilla');
+
+  // Getters: Angular rastrea lecturas de signals dentro de getters en templates
+  get clasificacion(): IClasificacionEntry[] { return this.ligaReal.clasificacion(); }
+  get cuartos(): ICruce[]      { return this.ligaReal.cruces().cuartos; }
+  get semis(): ICruce[]        { return this.ligaReal.cruces().semis; }
+  get finalMatch(): ICruce | null { return this.ligaReal.cruces().final; }
+
+  ngOnInit(): void {
+    this.ligaReal.cargarClasificacion();
+    this.ligaReal.cargarCruces();
+  }
 
   ngAfterViewInit(): void {
     gsap.timeline({ defaults: { ease: 'power3.out' } })
@@ -63,7 +70,7 @@ export class ClasificacionComponent implements AfterViewInit {
     switch (this.faseActiva()) {
       case 'cuartos': return this.cuartos;
       case 'semis':   return this.semis;
-      case 'final':   return this.finalMatch ? [this.finalMatch] : [];
+      case 'final':   { const f = this.finalMatch; return f ? [f] : []; }
       default:        return [];
     }
   }

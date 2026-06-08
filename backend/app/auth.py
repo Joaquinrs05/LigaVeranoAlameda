@@ -29,8 +29,27 @@ def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token expirado",
         )
-    except jwt.InvalidTokenError as e:
+    except jwt.InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token inválido",
         )
+
+
+def get_admin_user(user: dict = Depends(get_current_user)) -> dict:
+    from app.database import supabase_admin
+
+    uid = user.get("sub", "")
+    result = (
+        supabase_admin.table("perfiles")
+        .select("es_admin")
+        .eq("uid", uid)
+        .maybe_single()
+        .execute()
+    )
+    if not result.data or not result.data.get("es_admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Se requieren permisos de administrador",
+        )
+    return user

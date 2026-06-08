@@ -39,11 +39,20 @@
         </div>
       </div>
 
-      @if (seleccionado()) {
+      @if (errorSlot()) {
+        <div class="rounded p-sm flex items-center gap-2 border border-red-300 text-red-600" style="background:rgba(220,38,38,0.06)">
+          <span class="material-symbols-outlined text-[18px]">block</span>
+          <span class="text-body-md font-bold">{{ errorSlot() }}</span>
+        </div>
+      } @else if (seleccionado() || slotPendiente()) {
         <div class="rounded p-sm flex items-center gap-2 border border-secondary/40" style="background:rgba(255,214,0,0.08)">
-          <span class="material-symbols-outlined text-[18px] text-on-background/60">swap_horiz</span>
-          <span class="text-body-md text-on-background/70">Selecciona otro jugador para hacer el cambio</span>
-          <button (click)="seleccionar(seleccionado()!)" class="ml-auto text-[11px] font-bold text-on-background/40 hover:text-on-background transition-colors uppercase tracking-wider">Cancelar</button>
+          <span class="material-symbols-outlined text-[18px] text-on-background/60">{{ slotPendiente() && !seleccionado() ? 'person_add' : 'swap_horiz' }}</span>
+          @if (slotPendiente() && !seleccionado()) {
+            <span class="text-body-md text-on-background/70">Selecciona un <strong>{{ posicionAbrev(slotPendiente()!) }}</strong> para ocupar el hueco</span>
+          } @else {
+            <span class="text-body-md text-on-background/70">Selecciona otro jugador para hacer el cambio</span>
+          }
+          <button (click)="cancelar()" class="ml-auto text-[11px] font-bold text-on-background/40 hover:text-on-background transition-colors uppercase tracking-wider">Cancelar</button>
         </div>
       }
     </div>
@@ -68,61 +77,89 @@
 
           <!-- Delanteros -->
           <div class="flex justify-center gap-lg">
-            @for (j of delanteros(); track j.id) {
-              <button (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card
-                  [nombre]="j.nombre"
-                  [posicion]="posicionAbrev(j.posicion)"
-                  [estado]="j.estado"
-                  [seleccionado]="seleccionado() === j.id"
-                  size="md"
-                />
-              </button>
+            @for (slot of slotsDelanteros(); track $index) {
+              @if (slot.jugador) {
+                <button (click)="seleccionar(slot.jugador.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                  <app-player-card
+                    [nombre]="slot.jugador.nombre"
+                    [posicion]="posicionAbrev(slot.jugador.posicion)"
+                    [estado]="slot.jugador.estado"
+                    [seleccionado]="seleccionado() === slot.jugador.id"
+                    size="md"
+                  />
+                </button>
+              } @else {
+                <div (click)="seleccionarSlot(slot.posicion)" class="flex flex-col items-center justify-center cursor-pointer transition-all duration-200" [style.background]="slotPendiente() === slot.posicion ? 'rgba(255,214,0,0.18)' : 'rgba(255,255,255,0.08)'" [style.opacity]="slotPendiente() === slot.posicion ? '1' : (slotPendiente() ? '0.3' : '0.6')" style="width:90px;height:122px;clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%)"  >
+                  <span class="material-symbols-outlined text-white/30 text-[28px]">person_add</span>
+                  <span class="text-[9px] font-bold text-white/30 mt-xs uppercase tracking-wider">{{ posicionAbrev(slot.posicion) }}</span>
+                </div>
+              }
             }
           </div>
 
           <!-- Centrocampistas -->
           <div class="flex justify-center gap-md md:gap-lg">
-            @for (j of centrocampistas(); track j.id) {
-              <button (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card
-                  [nombre]="j.nombre"
-                  [posicion]="posicionAbrev(j.posicion)"
-                  [estado]="j.estado"
-                  [seleccionado]="seleccionado() === j.id"
-                  size="md"
-                />
-              </button>
+            @for (slot of slotsCentrocampistas(); track $index) {
+              @if (slot.jugador) {
+                <button (click)="seleccionar(slot.jugador.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                  <app-player-card
+                    [nombre]="slot.jugador.nombre"
+                    [posicion]="posicionAbrev(slot.jugador.posicion)"
+                    [estado]="slot.jugador.estado"
+                    [seleccionado]="seleccionado() === slot.jugador.id"
+                    size="md"
+                  />
+                </button>
+              } @else {
+                <div (click)="seleccionarSlot(slot.posicion)" class="flex flex-col items-center justify-center cursor-pointer transition-all duration-200" [style.background]="slotPendiente() === slot.posicion ? 'rgba(255,214,0,0.18)' : 'rgba(255,255,255,0.08)'" [style.opacity]="slotPendiente() === slot.posicion ? '1' : (slotPendiente() ? '0.3' : '0.6')" style="width:90px;height:122px;clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%)"  >
+                  <span class="material-symbols-outlined text-white/30 text-[28px]">person_add</span>
+                  <span class="text-[9px] font-bold text-white/30 mt-xs uppercase tracking-wider">{{ posicionAbrev(slot.posicion) }}</span>
+                </div>
+              }
             }
           </div>
 
           <!-- Defensas -->
           <div class="flex justify-center gap-xl md:gap-2xl">
-            @for (j of defensas(); track j.id) {
-              <button (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card
-                  [nombre]="j.nombre"
-                  [posicion]="posicionAbrev(j.posicion)"
-                  [estado]="j.estado"
-                  [seleccionado]="seleccionado() === j.id"
-                  size="md"
-                />
-              </button>
+            @for (slot of slotsDefensas(); track $index) {
+              @if (slot.jugador) {
+                <button (click)="seleccionar(slot.jugador.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                  <app-player-card
+                    [nombre]="slot.jugador.nombre"
+                    [posicion]="posicionAbrev(slot.jugador.posicion)"
+                    [estado]="slot.jugador.estado"
+                    [seleccionado]="seleccionado() === slot.jugador.id"
+                    size="md"
+                  />
+                </button>
+              } @else {
+                <div (click)="seleccionarSlot(slot.posicion)" class="flex flex-col items-center justify-center cursor-pointer transition-all duration-200" [style.background]="slotPendiente() === slot.posicion ? 'rgba(255,214,0,0.18)' : 'rgba(255,255,255,0.08)'" [style.opacity]="slotPendiente() === slot.posicion ? '1' : (slotPendiente() ? '0.3' : '0.6')" style="width:90px;height:122px;clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%)"  >
+                  <span class="material-symbols-outlined text-white/30 text-[28px]">person_add</span>
+                  <span class="text-[9px] font-bold text-white/30 mt-xs uppercase tracking-wider">{{ posicionAbrev(slot.posicion) }}</span>
+                </div>
+              }
             }
           </div>
 
           <!-- Portero -->
           <div class="flex justify-center">
-            @for (j of portero(); track j.id) {
-              <button (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card
-                  [nombre]="j.nombre"
-                  [posicion]="posicionAbrev(j.posicion)"
-                  [estado]="j.estado"
-                  [seleccionado]="seleccionado() === j.id"
-                  size="md"
-                />
-              </button>
+            @for (slot of slotsPortero(); track $index) {
+              @if (slot.jugador) {
+                <button (click)="seleccionar(slot.jugador.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                  <app-player-card
+                    [nombre]="slot.jugador.nombre"
+                    [posicion]="posicionAbrev(slot.jugador.posicion)"
+                    [estado]="slot.jugador.estado"
+                    [seleccionado]="seleccionado() === slot.jugador.id"
+                    size="md"
+                  />
+                </button>
+              } @else {
+                <div (click)="seleccionarSlot(slot.posicion)" class="flex flex-col items-center justify-center cursor-pointer transition-all duration-200" [style.background]="slotPendiente() === slot.posicion ? 'rgba(255,214,0,0.18)' : 'rgba(255,255,255,0.08)'" [style.opacity]="slotPendiente() === slot.posicion ? '1' : (slotPendiente() ? '0.3' : '0.6')" style="width:90px;height:122px;clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%)"  >
+                  <span class="material-symbols-outlined text-white/30 text-[28px]">person_add</span>
+                  <span class="text-[9px] font-bold text-white/30 mt-xs uppercase tracking-wider">{{ posicionAbrev(slot.posicion) }}</span>
+                </div>
+              }
             }
           </div>
 
