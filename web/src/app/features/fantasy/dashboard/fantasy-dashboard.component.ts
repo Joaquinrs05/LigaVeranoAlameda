@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { gsap } from 'gsap';
 
 import { NavbarLightComponent } from '../../../shared/components/navbar/navbar-light/navbar-light.component';
@@ -12,11 +13,13 @@ import { IPartido } from '../../../core/models/partido.model';
 @Component({
   selector: 'app-fantasy-dashboard',
   standalone: true,
-  imports: [NavbarLightComponent, FooterComponent, RouterLink],
+  imports: [NavbarLightComponent, FooterComponent, RouterLink, FormsModule],
   templateUrl: './fantasy-dashboard.component.html',
 })
 export class FantasyDashboardComponent implements AfterViewInit {
   @ViewChild('cardsTrack') private cardsTrackRef!: ElementRef<HTMLElement>;
+
+  readonly enLiga = signal(false);
 
   readonly equipo: IEquipoFantasy                      = MI_EQUIPO_FANTASY;
   readonly clasificacion: IClasificacionFantasy[]      = CLASIFICACION_FANTASY;
@@ -42,6 +45,23 @@ export class FantasyDashboardComponent implements AfterViewInit {
     if (pos === 3) return '3º';
     return `${pos}º`;
   })();
+
+  // Empty-state: crear / unirse
+  readonly modoOnboarding = signal<'idle' | 'crear' | 'unirse'>('idle');
+  nombreLigaNueva = '';
+  codigoInvitacion = '';
+
+  crearLiga(): void {
+    if (!this.nombreLigaNueva.trim()) return;
+    // Mock: la liga queda creada y el usuario entra
+    this.enLiga.set(true);
+  }
+
+  unirseALiga(): void {
+    if (!this.codigoInvitacion.trim()) return;
+    // Mock: se valida el código y el usuario entra
+    this.enLiga.set(true);
+  }
 
   ngAfterViewInit(): void {
     gsap.timeline({ defaults: { ease: 'power3.out' } })

@@ -1,5 +1,139 @@
 <app-navbar-light />
 
+@if (!enLiga()) {
+  <!-- ══ EMPTY STATE: sin liga ══ -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: -1">
+    <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(192,85,42,0.14) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
+    <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(26,74,46,0.11) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
+    <div style="position:absolute;bottom:-18%;left:22%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,0,0.07) 0%,transparent 65%);animation:blob-drift-3 21s ease-in-out infinite"></div>
+  </div>
+
+  <main class="pt-24 pb-24 px-margin-mobile md:px-margin-desktop min-h-screen flex flex-col items-center justify-center max-w-2xl mx-auto">
+
+    <!-- Icono + título -->
+    <div class="flex flex-col items-center text-center gap-md mb-xl">
+      <div
+        class="w-20 h-20 rounded-full flex items-center justify-center"
+        style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%);box-shadow:0 8px 32px rgba(26,74,46,0.25)"
+      >
+        <span class="material-symbols-outlined text-secondary text-[40px]">shield</span>
+      </div>
+      <div>
+        <h1 class="text-display-lg font-bold text-on-background leading-tight">Bienvenido al Fantasy</h1>
+        <p class="text-body-lg text-on-background/50 mt-sm">Todavía no perteneces a ninguna liga. Crea la tuya o únete con un código.</p>
+      </div>
+    </div>
+
+    <!-- Tarjetas de opción -->
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-md">
+
+      <!-- Crear liga -->
+      <div
+        class="rounded-xl p-lg flex flex-col gap-md transition-shadow"
+        style="background:rgba(255,255,255,0.82);backdrop-filter:blur(14px);border:1px solid rgba(192,85,42,0.18);box-shadow:0 4px 24px rgba(192,85,42,0.08)"
+      >
+        <div class="flex items-center gap-sm">
+          <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-[22px]">add_circle</span>
+          </div>
+          <div>
+            <p class="font-bold text-body-lg text-on-background">Crear una liga</p>
+            <p class="text-[12px] text-on-background/40">Invita a tus amigos con un código</p>
+          </div>
+        </div>
+
+        @if (modoOnboarding() !== 'crear') {
+          <button
+            (click)="modoOnboarding.set('crear')"
+            class="w-full py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 active:scale-[0.98]"
+            style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%);box-shadow:0 4px 16px rgba(192,85,42,0.3)"
+          >
+            Crear liga
+          </button>
+        } @else {
+          <div class="flex flex-col gap-sm">
+            <input
+              [(ngModel)]="nombreLigaNueva"
+              placeholder="Nombre de la liga…"
+              class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors"
+              style="border-color:rgba(192,85,42,0.25);background:rgba(255,255,255,0.9)"
+            />
+            <div class="flex gap-sm">
+              <button
+                (click)="modoOnboarding.set('idle')"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-on-background/50 border border-outline hover:bg-outline/10 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                (click)="crearLiga()"
+                [disabled]="!nombreLigaNueva.trim()"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%)"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Unirse a una liga -->
+      <div
+        class="rounded-xl p-lg flex flex-col gap-md transition-shadow"
+        style="background:rgba(255,255,255,0.82);backdrop-filter:blur(14px);border:1px solid rgba(26,74,46,0.18);box-shadow:0 4px 24px rgba(26,74,46,0.08)"
+      >
+        <div class="flex items-center gap-sm">
+          <div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-tertiary text-[22px]">group_add</span>
+          </div>
+          <div>
+            <p class="font-bold text-body-lg text-on-background">Unirse a una liga</p>
+            <p class="text-[12px] text-on-background/40">Introduce el código de invitación</p>
+          </div>
+        </div>
+
+        @if (modoOnboarding() !== 'unirse') {
+          <button
+            (click)="modoOnboarding.set('unirse')"
+            class="w-full py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 active:scale-[0.98]"
+            style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%);box-shadow:0 4px 16px rgba(26,74,46,0.25)"
+          >
+            Unirse
+          </button>
+        } @else {
+          <div class="flex flex-col gap-sm">
+            <input
+              [(ngModel)]="codigoInvitacion"
+              placeholder="Código de invitación…"
+              class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors font-mono tracking-wider uppercase"
+              style="border-color:rgba(26,74,46,0.25);background:rgba(255,255,255,0.9)"
+            />
+            <div class="flex gap-sm">
+              <button
+                (click)="modoOnboarding.set('idle')"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-on-background/50 border border-outline hover:bg-outline/10 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                (click)="unirseALiga()"
+                [disabled]="!codigoInvitacion.trim()"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%)"
+              >
+                Entrar
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+  </main>
+
+} @else {
+
 <!-- Blobs decorativos (mismos que home) -->
 <div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: -1">
   <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(192,85,42,0.14) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
@@ -335,3 +469,5 @@
 </main>
 
 <app-footer />
+
+} <!-- @else enLiga -->

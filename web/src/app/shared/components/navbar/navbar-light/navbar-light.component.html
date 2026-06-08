@@ -11,19 +11,39 @@
   </div>
 
   <div class="flex items-center gap-md">
-    <a
-      routerLink="/fantasy/dashboard"
-      class="hidden md:flex items-center gap-1 bg-secondary text-on-background font-bold text-label-bold px-md py-sm rounded hover:bg-secondary/90 transition-colors"
-    >
-      <span class="material-symbols-outlined text-[16px]">bolt</span>
-      Entrar al Fantasy
-    </a>
+    @if (!auth.autenticado()) {
+      <a
+        routerLink="/fantasy/dashboard"
+        class="hidden md:flex items-center gap-1 bg-secondary text-on-background font-bold text-label-bold px-md py-sm rounded hover:bg-secondary/90 transition-colors"
+      >
+        <span class="material-symbols-outlined text-[16px]">bolt</span>
+        Entrar al Fantasy
+      </a>
+    } @else {
+      <button
+        (click)="auth.logout()"
+        class="hidden md:flex items-center gap-1 text-background/70 font-bold text-label-bold px-md py-sm rounded hover:text-background hover:bg-white/10 transition-colors"
+      >
+        <span class="material-symbols-outlined text-[16px]">logout</span>
+        Cerrar sesión
+      </button>
+    }
 
-    <div
-      class="w-8 h-8 rounded-full bg-white/20 border border-background/50 flex items-center justify-center cursor-pointer hover:border-secondary transition-colors"
-    >
-      <span class="material-symbols-outlined text-background text-[18px]">person</span>
-    </div>
+    @if (auth.autenticado() && auth.usuario()?.fotoPerfil) {
+      <a routerLink="/ajustes">
+        <img
+          [src]="auth.usuario()!.fotoPerfil!"
+          class="w-8 h-8 rounded-full object-cover border border-background/50 hover:border-secondary transition-colors cursor-pointer"
+        />
+      </a>
+    } @else {
+      <a
+        [routerLink]="auth.autenticado() ? '/ajustes' : '/auth/login'"
+        class="w-8 h-8 rounded-full bg-white/20 border border-background/50 flex items-center justify-center hover:border-secondary transition-colors"
+      >
+        <span class="material-symbols-outlined text-background text-[18px]">person</span>
+      </a>
+    }
   </div>
 </nav>
 
@@ -94,22 +114,24 @@
       Equipos
     </a>
 
-    <div class="border-t border-outline my-sm"></div>
+    @if (auth.autenticado()) {
+      <div class="border-t border-outline my-sm"></div>
 
-    <a routerLink="/fantasy/dashboard" routerLinkActive="nav-active" class="nav-link">
-      <span class="material-symbols-outlined text-[20px]">bolt</span>
-      Fantasy
-    </a>
-    <a routerLink="/fantasy/mi-equipo" routerLinkActive="nav-active" class="nav-link">
-      <span class="material-symbols-outlined text-[20px]">group</span>
-      Mi Equipo
-    </a>
-    <a routerLink="/fantasy/mercado" routerLinkActive="nav-active" class="nav-link">
-      <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
-      Mercado
-    </a>
+      <a routerLink="/fantasy/dashboard" routerLinkActive="nav-active" class="nav-link">
+        <span class="material-symbols-outlined text-[20px]">bolt</span>
+        Fantasy
+      </a>
+      <a routerLink="/fantasy/mi-equipo" routerLinkActive="nav-active" class="nav-link">
+        <span class="material-symbols-outlined text-[20px]">group</span>
+        Mi Equipo
+      </a>
+      <a routerLink="/fantasy/mercado" routerLinkActive="nav-active" class="nav-link">
+        <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+        Mercado
+      </a>
 
-    <div class="border-t border-outline my-sm"></div>
+      <div class="border-t border-outline my-sm"></div>
+    }
 
     <a routerLink="/ajustes" routerLinkActive="nav-active" class="nav-link">
       <span class="material-symbols-outlined text-[20px]">settings</span>
@@ -119,12 +141,31 @@
 
   <!-- CTA bottom -->
   <div class="mt-auto pt-lg">
-    <a
-      routerLink="/fantasy/dashboard"
-      class="w-full bg-tertiary text-background font-bold text-label-bold py-sm rounded border border-white/10 hover:bg-primary transition-colors flex justify-center items-center gap-2"
-    >
-      <span class="material-symbols-outlined text-[16px] text-secondary">add</span>
-      Unirse a la Liga Fantasy
-    </a>
+    @if (auth.autenticado()) {
+      <div class="flex items-center gap-sm p-sm rounded bg-background border border-outline">
+        <div class="w-8 h-8 rounded-full bg-tertiary flex items-center justify-center shrink-0 overflow-hidden">
+          @if (auth.usuario()?.fotoPerfil) {
+            <img [src]="auth.usuario()!.fotoPerfil!" class="w-full h-full object-cover" />
+          } @else {
+            <span class="material-symbols-outlined text-secondary text-[16px]">person</span>
+          }
+        </div>
+        <div class="flex flex-col min-w-0 flex-1">
+          <span class="font-bold text-label-bold text-on-background truncate">{{ auth.usuario()?.nombre }}</span>
+          <span class="text-[11px] text-on-background/50 truncate">{{ auth.usuario()?.email }}</span>
+        </div>
+        <button (click)="auth.logout()" class="text-on-background/40 hover:text-primary transition-colors" title="Cerrar sesión">
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+        </button>
+      </div>
+    } @else {
+      <a
+        routerLink="/auth/login"
+        class="w-full bg-tertiary text-background font-bold text-label-bold py-sm rounded border border-white/10 hover:bg-primary transition-colors flex justify-center items-center gap-2"
+      >
+        <span class="material-symbols-outlined text-[16px] text-secondary">add</span>
+        Unirse a la Liga Fantasy
+      </a>
+    }
   </div>
 </aside>
