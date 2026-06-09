@@ -1,13 +1,15 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.auth import get_admin_user
 from app.database import supabase_admin
 from app.schemas.admin import (
+    ActualizarEquipoIn,
     ActualizarJornadaIn,
     ActualizarJugadorIn,
     ActualizarPartidoIn,
+    CrearEquipoIn,
     CrearJornadaIn,
     CrearJugadorIn,
     CrearPartidoIn,
@@ -21,9 +23,15 @@ router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(get_ad
 
 # ---- Jornadas ----
 
+@router.get("/jornadas", response_model=ApiResponse[list[dict]])
+def listar_jornadas() -> dict:
+    result = supabase_admin.table("jornadas").select("*").order("numero").execute()
+    return {"data": result.data}
+
+
 @router.post("/jornadas", response_model=ApiResponse[dict], status_code=201)
 def crear_jornada(body: CrearJornadaIn) -> dict:
-    result = supabase_admin.table("jornadas").insert(body.model_dump()).execute()
+    result = supabase_admin.table("jornadas").insert(body.model_dump(mode="json")).execute()
     return {"data": result.data[0] if result.data else None}
 
 
@@ -39,6 +47,17 @@ def actualizar_jornada(jornada_id: UUID, body: ActualizarJornadaIn) -> dict:
 
 
 # ---- Partidos ----
+
+@router.get("/partidos", response_model=ApiResponse[list[dict]])
+def listar_partidos_admin(jornada_id: UUID | None = Query(default=None)) -> dict:
+    q = supabase_admin.table("partidos").select(
+        "*, equipo_local:equipos!equipo_local_id(id, nombre), equipo_visitante:equipos!equipo_visitante_id(id, nombre)"
+    )
+    if jornada_id is not None:
+        q = q.eq("jornada_id", str(jornada_id))
+    result = q.order("hora_inicio").execute()
+    return {"data": result.data}
+
 
 @router.post("/partidos", response_model=ApiResponse[dict], status_code=201)
 def crear_partido(body: CrearPartidoIn) -> dict:
@@ -104,6 +123,15 @@ def put_estadisticas(partido_id: UUID, body: PutEstadisticasIn) -> dict:
 
 # ---- Jugadores ----
 
+@router.get("/jugadores", response_model=ApiResponse[list[dict]])
+def listar_jugadores_admin(equipo_id: UUID | None = Query(default=None)) -> dict:
+    q = supabase_admin.table("jugadores").select("*, equipo:equipos(id, nombre)")
+    if equipo_id is not None:
+        q = q.eq("equipo_id", str(equipo_id))
+    result = q.order("nombre").execute()
+    return {"data": result.data}
+
+
 @router.post("/jugadores", response_model=ApiResponse[dict], status_code=201)
 def crear_jugador(body: CrearJugadorIn) -> dict:
     result = supabase_admin.table("jugadores").insert(
@@ -121,6 +149,70 @@ def actualizar_jugador(jugador_id: UUID, body: ActualizarJugadorIn) -> dict:
     if not result.data:
         raise HTTPException(status_code=404, detail="Jugador no encontrado")
     return {"data": result.data[0]}
+
+
+@router.delete("/jugadores/{jugador_id}", response_model=ApiResponse[dict])
+def baja_jugador(jugador_id: UUID) -> dict:
+    result = supabase_admin.table("jugadores").update({"activo": False}).eq("id", str(jugador_id)).execute()
+    if not result.data:
+        raise HTTPException(status_code=404, detail="Jugador no encontrado")
+    return {"data": result.data[0]}
+
+
+# ---- Equipos ----
+
+@router.get("/equipos", response_model=ApiResponse[list[dict]])
+def listar_equipos_admin() -> dict:
+    result = supabase_admin.table("equipos").select("*").order("nombre").execute()
+    return {"data": result.data}
+
+
+@router.post("/equipos", response_model=ApiResponse[dict], status_code=201)
+def crear_equipo(body: CrearEquipoIn) -> dict:
+    result = supabase_admin.table("equipos").insert(body.model_dump(mode="json", exclude_none=True)).execute()
+    return {"data": result.data[0] if result.data else None}
+
+
+@router.patch("/equipos/{equipo_id}", response_model=ApiResponse[dict])
+def actualizar_equipo(equipo_id: UUID, body: ActualizarEquipoIn) -> dict:
+    cambios = body.model_dump(mode="json", exclude_unset=True)
+    if not cambios:
+        raise HTTPException(status_code=400, detail="No se proporcionaron campos a actualizar")
+    result = supabase_admin.table("equipos").update(cambios).eq("id", str(equipo_id)).execute()
+    if not result.data:
+        raise HTTPException(status_code=404, detail="Equipo no encontrado")
+    return {"data": result.data[0]}
+
+
+# ---- Ligas fantasy (para participantes) ----
+
+@router.get("/ligas", response_model=ApiResponse[list[dict]])
+def listar_ligas_admin() -> dict:
+    result = supabase_admin.table("ligas_fantasy").select("id, nombre, codigo_invitacion").order("nombre").execute()
+    return {"data": result.data}
+
+
+@router.get("/ligas/{liga_id}/participantes", response_model=ApiResponse[list[dict]])
+def listar_participantes(liga_id: UUID) -> dict:
+    result = (
+        supabase_admin.table("miembros_liga_fantasy")
+        .select("id, nombre_equipo, puntos_total, presupuesto, perfil:perfiles!usuario_id(nombre)")
+        .eq("liga_id", str(liga_id))
+        .order("puntos_total", desc=True)
+        .execute()
+    )
+    rows = [
+        {
+            "posicion": i + 1,
+            "miembro_id": m["id"],
+            "nombre_equipo": m["nombre_equipo"],
+            "manager": (m.get("perfil") or {}).get("nombre", ""),
+            "puntos_total": m["puntos_total"],
+            "presupuesto": m["presupuesto"],
+        }
+        for i, m in enumerate(result.data)
+    ]
+    return {"data": rows}
 
 
 # ---- Puntuaciones ----

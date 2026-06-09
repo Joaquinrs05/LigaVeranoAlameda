@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { superadminGuard } from './core/guards/superadmin.guard';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -64,6 +65,11 @@ export const routes: Routes = [
     ],
   },
 
+  {
+    path: 'superadmin',
+    canActivate: [superadminGuard],
+    loadComponent: () => import('./features/superadmin/superadmin.component').then(m => m.SuperadminComponent),
+  },
   {
     path: 'ajustes',
     loadComponent: () => import('./features/ajustes/ajustes.component').then(m => m.AjustesComponent),

@@ -1,0 +1,144 @@
+<div class="space-y-md">
+
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 text-red-700 px-md py-sm rounded-lg text-body-md">{{ error() }}</div>
+  }
+  @if (exito()) {
+    <div class="bg-green-50 border border-green-200 text-green-700 px-md py-sm rounded-lg text-body-md">{{ exito() }}</div>
+  }
+
+  <!-- Cabecera -->
+  <div class="flex items-center justify-between">
+    <h2 class="text-headline-md text-on-background">Jugadores</h2>
+    <button type="button" (click)="mostrarFormulario.set(!mostrarFormulario())"
+      class="bg-primary text-white px-md py-sm rounded-lg text-label-bold hover:opacity-90 transition-opacity">
+      + Nuevo jugador
+    </button>
+  </div>
+
+  <!-- Formulario nuevo jugador -->
+  @if (mostrarFormulario()) {
+    <div class="bg-surface border border-outline rounded-xl p-md space-y-sm">
+      <p class="text-label-bold text-on-background">Nuevo jugador</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-sm">
+        <div>
+          <label class="text-label-bold block mb-1">Equipo</label>
+          <select [(ngModel)]="nuevoJugador.equipo_id"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md">
+            <option value="">Selecciona equipo</option>
+            @for (e of equipos(); track e.id) {
+              <option [value]="e.id">{{ e.nombre }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="text-label-bold block mb-1">Nombre</label>
+          <input type="text" [(ngModel)]="nuevoJugador.nombre"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md" />
+        </div>
+        <div>
+          <label class="text-label-bold block mb-1">Dorsal</label>
+          <input type="number" [(ngModel)]="nuevoJugador.dorsal" min="1"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md" />
+        </div>
+        <div>
+          <label class="text-label-bold block mb-1">Posición</label>
+          <select [(ngModel)]="nuevoJugador.posicion"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md">
+            @for (p of posiciones; track p) {
+              <option [value]="p">{{ p }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="text-label-bold block mb-1">Precio fantasy</label>
+          <input type="number" [(ngModel)]="nuevoJugador.precio_fantasy" min="0.5" step="0.5"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md" />
+        </div>
+      </div>
+      <div class="flex gap-sm">
+        <button type="button" (click)="crear()"
+          class="bg-primary text-white px-md py-sm rounded-lg text-label-bold hover:opacity-90">Crear</button>
+        <button type="button" (click)="mostrarFormulario.set(false)"
+          class="border border-outline px-md py-sm rounded-lg text-body-md hover:bg-background">Cancelar</button>
+      </div>
+    </div>
+  }
+
+  <!-- Filtros -->
+  <div class="flex gap-sm flex-wrap">
+    <input type="text" placeholder="Buscar por nombre..." [ngModel]="busqueda()" (ngModelChange)="busqueda.set($event)"
+      class="border border-outline rounded-lg px-sm py-1 text-body-md w-56" />
+    <select [ngModel]="filtroEquipo()" (ngModelChange)="filtroEquipo.set($event)"
+      class="border border-outline rounded-lg px-sm py-1 text-body-md">
+      <option value="">Todos los equipos</option>
+      @for (e of equipos(); track e.id) {
+        <option [value]="e.id">{{ e.nombre }}</option>
+      }
+    </select>
+    <select [ngModel]="filtroPosicion()" (ngModelChange)="filtroPosicion.set($event)"
+      class="border border-outline rounded-lg px-sm py-1 text-body-md">
+      <option value="">Todas las posiciones</option>
+      @for (p of posiciones; track p) {
+        <option [value]="p">{{ p }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Tabla -->
+  @if (cargando()) {
+    <p class="text-body-md opacity-60">Cargando...</p>
+  } @else {
+    <div class="bg-surface rounded-xl border border-outline overflow-x-auto">
+      <table class="w-full text-body-md">
+        <thead class="bg-background">
+          <tr>
+            <th class="text-left px-md py-sm text-label-bold">#</th>
+            <th class="text-left px-md py-sm text-label-bold">Nombre</th>
+            <th class="text-left px-md py-sm text-label-bold">Equipo</th>
+            <th class="text-left px-md py-sm text-label-bold">Posición</th>
+            <th class="text-left px-md py-sm text-label-bold">Estado</th>
+            <th class="text-left px-md py-sm text-label-bold">Precio</th>
+            <th class="px-md py-sm text-label-bold">Baja</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (j of jugadoresFiltrados(); track j.id) {
+            <tr class="border-t border-outline" [class.opacity-40]="!j.activo">
+              <td class="px-md py-sm text-on-background opacity-60">{{ j.dorsal ?? '—' }}</td>
+              <td class="px-md py-sm font-medium">{{ j.nombre }}</td>
+              <td class="px-md py-sm opacity-70">{{ j.equipo?.nombre ?? '—' }}</td>
+              <td class="px-md py-sm opacity-70">{{ j.posicion }}</td>
+              <td class="px-md py-sm">
+                <select [ngModel]="j.estado_fantasy" (ngModelChange)="cambiarEstado(j, $event)"
+                  class="border border-outline rounded px-xs py-0.5 text-xs"
+                  [disabled]="!j.activo">
+                  @for (e of estados; track e) {
+                    <option [value]="e">{{ e }}</option>
+                  }
+                </select>
+              </td>
+              <td class="px-md py-sm">
+                <input type="number" [ngModel]="j.precio_fantasy" (ngModelChange)="cambiarPrecio(j, $event)"
+                  min="0.5" step="0.5"
+                  class="w-20 border border-outline rounded px-xs py-0.5 text-xs"
+                  [disabled]="!j.activo" />
+              </td>
+              <td class="px-md py-sm text-center">
+                @if (j.activo) {
+                  <button type="button" (click)="darDeBaja(j)"
+                    class="text-red-500 hover:text-red-700 text-xs underline">Baja</button>
+                } @else {
+                  <span class="text-xs text-on-background opacity-40">Inactivo</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="px-md py-lg text-center opacity-50">Sin resultados</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

@@ -111,7 +111,7 @@ export class AuthService {
   private async fetchPerfil(uid: string): Promise<void> {
     const { data } = await this.supabase
       .from('perfiles')
-      .select('nombre, foto_perfil, nombre_equipo_fantasy')
+      .select('nombre, foto_perfil, nombre_equipo_fantasy, is_superadmin')
       .eq('id', uid)
       .single();
 
@@ -121,6 +121,7 @@ export class AuthService {
         nombre: data['nombre'] || u.nombre,
         fotoPerfil: data['foto_perfil'] ?? u.fotoPerfil,
         nombreEquipoFantasy: data['nombre_equipo_fantasy'] ?? null,
+        esAdmin: data['is_superadmin'] === true,
       } : null);
     }
   }
@@ -138,6 +139,7 @@ export class AuthService {
       fotoPerfil: u.user_metadata['avatar_url'] ?? null,
       proveedor: u.app_metadata['provider'] === 'google' ? 'google' : 'email',
       nombreEquipoFantasy: null,
+      esAdmin: false,
     });
   }
 

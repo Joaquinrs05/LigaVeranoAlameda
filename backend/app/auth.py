@@ -42,12 +42,12 @@ def get_admin_user(user: dict = Depends(get_current_user)) -> dict:
     uid = user.get("sub", "")
     result = (
         supabase_admin.table("perfiles")
-        .select("es_admin")
-        .eq("uid", uid)
+        .select("is_superadmin")
+        .eq("id", uid)
         .maybe_single()
         .execute()
     )
-    if not result.data or not result.data.get("es_admin"):
+    if not result.data or not result.data.get("is_superadmin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Se requieren permisos de administrador",

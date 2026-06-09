@@ -76,6 +76,12 @@
     <span class="material-symbols-outlined text-[22px]">settings</span>
     <span>Ajustes</span>
   </a>
+  @if (auth.usuario()?.esAdmin) {
+    <a routerLink="/superadmin" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
+      <span class="material-symbols-outlined text-[22px]">admin_panel_settings</span>
+      <span>Admin</span>
+    </a>
+  }
 </nav>
 
 <!-- ── Sidebar ── -->
@@ -137,6 +143,14 @@
       <span class="material-symbols-outlined text-[20px]">settings</span>
       Ajustes
     </a>
+
+    @if (auth.usuario()?.esAdmin) {
+      <div class="border-t border-outline my-sm"></div>
+      <a routerLink="/superadmin" routerLinkActive="nav-active" class="nav-link">
+        <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+        Superadmin
+      </a>
+    }
   </nav>
 
   <!-- CTA bottom -->

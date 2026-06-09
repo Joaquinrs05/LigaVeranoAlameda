@@ -1,0 +1,41 @@
+<app-navbar-light />
+
+<div class="min-h-screen bg-background pt-16 md:ml-64">
+  <!-- Header admin -->
+  <div class="bg-tertiary px-margin-desktop py-md">
+    <p class="text-label-bold text-secondary uppercase tracking-widest">Panel Superadmin</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="border-b border-outline bg-surface">
+    <div class="px-margin-desktop flex gap-xs overflow-x-auto">
+      @for (tab of tabs; track tab.id) {
+        <button
+          type="button"
+          (click)="setTab(tab.id)"
+          class="px-md py-sm text-body-md whitespace-nowrap border-b-2 transition-colors"
+          [class.border-primary]="tabActiva() === tab.id"
+          [class.text-primary]="tabActiva() === tab.id"
+          [class.font-semibold]="tabActiva() === tab.id"
+          [class.border-transparent]="tabActiva() !== tab.id"
+          [class.text-on-background]="tabActiva() !== tab.id"
+          [class.opacity-60]="tabActiva() !== tab.id"
+        >
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Contenido del tab activo -->
+  <div class="px-margin-desktop py-lg">
+    @switch (tabActiva()) {
+      @case ('jornadas')      { <app-superadmin-jornadas /> }
+      @case ('resultados')    { <app-superadmin-resultados /> }
+      @case ('jugadores')     { <app-superadmin-jugadores /> }
+      @case ('equipos')       { <app-superadmin-equipos /> }
+      @case ('puntuaciones')  { <app-superadmin-puntuaciones /> }
+      @case ('participantes') { <app-superadmin-participantes /> }
+    }
+  </div>
+</div>

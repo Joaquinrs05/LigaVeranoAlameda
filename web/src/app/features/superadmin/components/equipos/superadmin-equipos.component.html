@@ -1,0 +1,97 @@
+<div class="space-y-md">
+
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 text-red-700 px-md py-sm rounded-lg text-body-md">{{ error() }}</div>
+  }
+  @if (exito()) {
+    <div class="bg-green-50 border border-green-200 text-green-700 px-md py-sm rounded-lg text-body-md">{{ exito() }}</div>
+  }
+
+  <div class="flex items-center justify-between">
+    <h2 class="text-headline-md text-on-background">Equipos</h2>
+    <button type="button" (click)="mostrarFormulario.set(!mostrarFormulario())"
+      class="bg-primary text-white px-md py-sm rounded-lg text-label-bold hover:opacity-90 transition-opacity">
+      + Nuevo equipo
+    </button>
+  </div>
+
+  @if (mostrarFormulario()) {
+    <div class="bg-surface border border-outline rounded-xl p-md space-y-sm">
+      <p class="text-label-bold text-on-background">Nuevo equipo</p>
+      <div class="grid grid-cols-2 gap-sm">
+        <div>
+          <label class="text-label-bold block mb-1">Nombre</label>
+          <input type="text" [(ngModel)]="nuevoEquipo.nombre"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md" />
+        </div>
+        <div>
+          <label class="text-label-bold block mb-1">URL escudo <span class="opacity-50 font-normal">(opcional)</span></label>
+          <input type="url" [(ngModel)]="nuevoEquipo.escudo_url"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md" />
+        </div>
+      </div>
+      <div class="flex gap-sm">
+        <button type="button" (click)="crear()"
+          class="bg-primary text-white px-md py-sm rounded-lg text-label-bold hover:opacity-90">Crear</button>
+        <button type="button" (click)="mostrarFormulario.set(false)"
+          class="border border-outline px-md py-sm rounded-lg text-body-md hover:bg-background">Cancelar</button>
+      </div>
+    </div>
+  }
+
+  @if (cargando()) {
+    <p class="text-body-md opacity-60">Cargando...</p>
+  } @else {
+    <div class="bg-surface rounded-xl border border-outline overflow-hidden">
+      <table class="w-full text-body-md">
+        <thead class="bg-background">
+          <tr>
+            <th class="text-left px-md py-sm text-label-bold">Nombre</th>
+            <th class="text-left px-md py-sm text-label-bold">Escudo URL</th>
+            <th class="text-left px-md py-sm text-label-bold">Entrenador ID</th>
+            <th class="px-md py-sm text-label-bold">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (e of equipos(); track e.id) {
+            <tr class="border-t border-outline">
+              @if (e.editando) {
+                <td class="px-md py-sm">
+                  <input type="text" [(ngModel)]="e.nombreEdit"
+                    class="w-full border border-outline rounded px-xs py-0.5 text-body-md" />
+                </td>
+                <td class="px-md py-sm">
+                  <input type="url" [(ngModel)]="e.escudoEdit" placeholder="https://..."
+                    class="w-full border border-outline rounded px-xs py-0.5 text-body-md" />
+                </td>
+                <td class="px-md py-sm">
+                  <input type="text" [(ngModel)]="e.entrenadorEdit" placeholder="UUID del entrenador"
+                    class="w-full border border-outline rounded px-xs py-0.5 text-body-md font-mono text-xs" />
+                </td>
+                <td class="px-md py-sm">
+                  <div class="flex gap-xs justify-end">
+                    <button type="button" (click)="guardar(e)"
+                      class="px-sm py-0.5 rounded text-xs bg-primary text-white hover:opacity-90">Guardar</button>
+                    <button type="button" (click)="cancelar(e)"
+                      class="px-sm py-0.5 rounded text-xs border border-outline hover:bg-background">Cancelar</button>
+                  </div>
+                </td>
+              } @else {
+                <td class="px-md py-sm font-medium">{{ e.nombre }}</td>
+                <td class="px-md py-sm opacity-50 text-xs truncate max-w-48">{{ e.escudo_url ?? '—' }}</td>
+                <td class="px-md py-sm opacity-50 text-xs font-mono truncate max-w-48">{{ e.entrenador_id ?? '—' }}</td>
+                <td class="px-md py-sm text-right">
+                  <button type="button" (click)="editar(e)"
+                    class="px-sm py-0.5 rounded text-xs border border-outline hover:bg-background">Editar</button>
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="px-md py-lg text-center opacity-50">Sin equipos</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

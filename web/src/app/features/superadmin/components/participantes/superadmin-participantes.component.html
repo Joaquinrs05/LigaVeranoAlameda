@@ -1,0 +1,57 @@
+<div class="space-y-md">
+
+  <h2 class="text-headline-md text-on-background">Participantes</h2>
+
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 text-red-700 px-md py-sm rounded-lg text-body-md">{{ error() }}</div>
+  }
+
+  <!-- Selector de liga -->
+  <div class="flex gap-xs flex-wrap">
+    @for (l of ligas(); track l.id) {
+      <button type="button" (click)="seleccionar(l)"
+        class="px-sm py-0.5 rounded-full text-xs font-semibold border transition-colors"
+        [class.bg-primary]="ligaSeleccionada()?.id === l.id"
+        [class.text-white]="ligaSeleccionada()?.id === l.id"
+        [class.border-primary]="ligaSeleccionada()?.id === l.id"
+        [class.border-outline]="ligaSeleccionada()?.id !== l.id"
+        [class.text-on-background]="ligaSeleccionada()?.id !== l.id">
+        {{ l.nombre }}
+      </button>
+    } @empty {
+      <p class="text-body-md opacity-50">No hay ligas fantasy.</p>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="text-body-md opacity-60">Cargando...</p>
+  } @else if (ligaSeleccionada() && participantes().length > 0) {
+    <div class="bg-surface rounded-xl border border-outline overflow-hidden">
+      <table class="w-full text-body-md">
+        <thead class="bg-background">
+          <tr>
+            <th class="text-left px-md py-sm text-label-bold">#</th>
+            <th class="text-left px-md py-sm text-label-bold">Equipo</th>
+            <th class="text-left px-md py-sm text-label-bold">Manager</th>
+            <th class="text-right px-md py-sm text-label-bold">Puntos</th>
+            <th class="text-right px-md py-sm text-label-bold">Presupuesto</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of participantes(); track p.miembro_id) {
+            <tr class="border-t border-outline">
+              <td class="px-md py-sm font-semibold text-on-background opacity-60">{{ p.posicion }}</td>
+              <td class="px-md py-sm font-medium">{{ p.nombre_equipo }}</td>
+              <td class="px-md py-sm opacity-70">{{ p.manager || '—' }}</td>
+              <td class="px-md py-sm text-right font-semibold text-primary">{{ p.puntos_total }}</td>
+              <td class="px-md py-sm text-right opacity-70">{{ p.presupuesto | number:'1.0-0' }}M</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (ligaSeleccionada()) {
+    <p class="text-body-md opacity-50">Sin participantes en esta liga.</p>
+  }
+
+</div>

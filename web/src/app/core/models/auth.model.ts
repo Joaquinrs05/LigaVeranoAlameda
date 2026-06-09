@@ -5,6 +5,7 @@ export interface IUsuario {
   fotoPerfil: string | null;
   proveedor: 'email' | 'google';
   nombreEquipoFantasy: string | null;
+  esAdmin: boolean;
 }
 
 export interface ICredencialesLogin {

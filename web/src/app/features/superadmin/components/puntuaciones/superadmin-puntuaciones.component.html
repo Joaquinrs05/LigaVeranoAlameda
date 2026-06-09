@@ -1,0 +1,51 @@
+<div class="space-y-md max-w-lg">
+
+  <h2 class="text-headline-md text-on-background">Puntuaciones</h2>
+
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 text-red-700 px-md py-sm rounded-lg text-body-md">{{ error() }}</div>
+  }
+
+  <p class="text-body-md text-on-background opacity-70">
+    Selecciona una jornada finalizada para calcular y publicar las puntuaciones fantasy de todos los miembros.
+  </p>
+
+  <!-- Jornadas finalizadas -->
+  <div class="flex gap-xs flex-wrap">
+    @for (j of finalizadas(); track j.id) {
+      <button type="button" (click)="seleccionar(j)"
+        class="px-sm py-0.5 rounded-full text-xs font-semibold border transition-colors"
+        [class.bg-primary]="jornadaSeleccionada()?.id === j.id"
+        [class.text-white]="jornadaSeleccionada()?.id === j.id"
+        [class.border-primary]="jornadaSeleccionada()?.id === j.id"
+        [class.border-outline]="jornadaSeleccionada()?.id !== j.id"
+        [class.text-on-background]="jornadaSeleccionada()?.id !== j.id">
+        J{{ j.numero }}
+      </button>
+    } @empty {
+      <p class="text-body-md opacity-50">No hay jornadas finalizadas.</p>
+    }
+  </div>
+
+  @if (jornadaSeleccionada()) {
+    <div class="bg-surface border border-outline rounded-xl p-md space-y-sm">
+      <p class="text-body-md">
+        Jornada seleccionada: <span class="font-semibold">J{{ jornadaSeleccionada()!.numero }}</span>
+      </p>
+      <button type="button" (click)="calcular()" [disabled]="calculando()"
+        class="bg-primary text-white px-md py-sm rounded-lg text-label-bold hover:opacity-90 disabled:opacity-50 transition-opacity">
+        {{ calculando() ? 'Calculando...' : 'Calcular y publicar' }}
+      </button>
+    </div>
+  }
+
+  @if (resultado()) {
+    <div class="bg-green-50 border border-green-200 rounded-xl p-md">
+      <p class="text-label-bold text-green-700">Puntuaciones publicadas</p>
+      <p class="text-body-md text-green-700 mt-1">
+        {{ resultado()!.miembros_calculados }} equipos actualizados — Jornada {{ resultado()!.jornada }}
+      </p>
+    </div>
+  }
+
+</div>

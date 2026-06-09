@@ -63,3 +63,15 @@ class ActualizarJugadorIn(BaseModel):
     precio_fantasy: float | None = None
     estado_fantasy: str | None = None
     activo: bool | None = None
+
+
+class CrearEquipoIn(BaseModel):
+    nombre: str = Field(min_length=2, max_length=60)
+    escudo_url: str | None = None
+    entrenador_id: UUID | None = None
+
+
+class ActualizarEquipoIn(BaseModel):
+    nombre: str | None = None
+    escudo_url: str | None = None
+    entrenador_id: UUID | None = None

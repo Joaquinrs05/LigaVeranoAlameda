@@ -1,0 +1,70 @@
+<div class="space-y-md">
+
+  <h2 class="text-headline-md text-on-background">Resultados</h2>
+
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 text-red-700 px-md py-sm rounded-lg text-body-md">{{ error() }}</div>
+  }
+
+  <!-- Selector de jornada -->
+  <div class="flex gap-xs flex-wrap">
+    @for (j of jornadas(); track j.id) {
+      <button type="button" (click)="seleccionarJornada(j)"
+        class="px-sm py-0.5 rounded-full text-xs font-semibold border transition-colors"
+        [class.bg-primary]="jornadaSeleccionada()?.id === j.id"
+        [class.text-white]="jornadaSeleccionada()?.id === j.id"
+        [class.border-primary]="jornadaSeleccionada()?.id === j.id"
+        [class.border-outline]="jornadaSeleccionada()?.id !== j.id"
+        [class.text-on-background]="jornadaSeleccionada()?.id !== j.id">
+        J{{ j.numero }}
+      </button>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="text-body-md opacity-60">Cargando partidos...</p>
+  } @else if (partidos().length === 0) {
+    <p class="text-body-md opacity-50">Sin partidos en esta jornada.</p>
+  } @else {
+    <div class="bg-surface rounded-xl border border-outline overflow-hidden">
+      <table class="w-full text-body-md">
+        <thead class="bg-background">
+          <tr>
+            <th class="text-left px-md py-sm text-label-bold">Local</th>
+            <th class="text-center px-md py-sm text-label-bold">Goles</th>
+            <th class="text-left px-md py-sm text-label-bold">Visitante</th>
+            <th class="px-md py-sm"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of partidos(); track p.id) {
+            <tr class="border-t border-outline">
+              <td class="px-md py-sm">{{ p.equipo_local?.nombre ?? '—' }}</td>
+              <td class="px-md py-sm">
+                <div class="flex items-center gap-sm justify-center">
+                  <input type="number" [(ngModel)]="p.golesLocalEdit" min="0"
+                    class="w-14 border border-outline rounded-lg px-sm py-1 text-center text-body-md" />
+                  <span class="text-on-background opacity-40 font-bold">—</span>
+                  <input type="number" [(ngModel)]="p.golesVisitanteEdit" min="0"
+                    class="w-14 border border-outline rounded-lg px-sm py-1 text-center text-body-md" />
+                </div>
+              </td>
+              <td class="px-md py-sm">{{ p.equipo_visitante?.nombre ?? '—' }}</td>
+              <td class="px-md py-sm text-right">
+                <button type="button" (click)="guardarPartido(p)"
+                  class="px-sm py-0.5 rounded text-xs transition-colors"
+                  [class.bg-green-100]="p.guardado"
+                  [class.text-green-700]="p.guardado"
+                  [class.bg-primary]="!p.guardado"
+                  [class.text-white]="!p.guardado">
+                  {{ p.guardado ? '✓ Guardado' : 'Guardar' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
