@@ -25,9 +25,19 @@
             class="w-full border border-outline rounded-lg px-sm py-1 text-body-md" />
         </div>
         <div>
-          <label class="text-label-bold block mb-1">URL escudo <span class="opacity-50 font-normal">(opcional)</span></label>
-          <input type="url" [(ngModel)]="nuevoEquipo.escudo_url"
-            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md" />
+          <label class="text-label-bold block mb-1">Escudo <span class="opacity-50 font-normal">(opcional)</span></label>
+          <div class="flex items-center gap-sm">
+            @if (nuevoEquipo.foto_url) {
+              <img [src]="nuevoEquipo.foto_url" alt="Escudo" class="w-10 h-10 object-contain rounded" />
+            }
+            <label class="cursor-pointer flex-1">
+              <span class="block w-full border border-outline rounded-lg px-sm py-1 text-body-md text-center hover:bg-background transition-colors"
+                [class.opacity-50]="subiendoNuevoEscudo()">
+                {{ subiendoNuevoEscudo() ? 'Subiendo...' : (nuevoEquipo.foto_url ? 'Cambiar imagen' : 'Subir imagen') }}
+              </span>
+              <input type="file" accept="image/*" class="hidden" (change)="onNuevoEscudo($event)" [disabled]="subiendoNuevoEscudo()" />
+            </label>
+          </div>
         </div>
       </div>
       <div class="flex gap-sm">
@@ -46,8 +56,8 @@
       <table class="w-full text-body-md">
         <thead class="bg-background">
           <tr>
+            <th class="text-left px-md py-sm text-label-bold">Escudo</th>
             <th class="text-left px-md py-sm text-label-bold">Nombre</th>
-            <th class="text-left px-md py-sm text-label-bold">Escudo URL</th>
             <th class="text-left px-md py-sm text-label-bold">Entrenador ID</th>
             <th class="px-md py-sm text-label-bold">Acciones</th>
           </tr>
@@ -57,11 +67,25 @@
             <tr class="border-t border-outline">
               @if (e.editando) {
                 <td class="px-md py-sm">
-                  <input type="text" [(ngModel)]="e.nombreEdit"
-                    class="w-full border border-outline rounded px-xs py-0.5 text-body-md" />
+                  <div class="flex items-center gap-xs">
+                    @if (e.escudoEdit) {
+                      <img [src]="e.escudoEdit" alt="Escudo" class="w-10 h-10 object-contain rounded flex-shrink-0" />
+                    } @else {
+                      <div class="w-10 h-10 rounded bg-background border border-outline flex items-center justify-center flex-shrink-0">
+                        <span class="text-xs opacity-40">—</span>
+                      </div>
+                    }
+                    <label class="cursor-pointer">
+                      <span class="block border border-outline rounded px-xs py-0.5 text-xs hover:bg-background transition-colors whitespace-nowrap"
+                        [class.opacity-50]="e.subiendoEscudo">
+                        {{ e.subiendoEscudo ? 'Subiendo...' : 'Cambiar' }}
+                      </span>
+                      <input type="file" accept="image/*" class="hidden" (change)="onEscudoEditar($event, e)" [disabled]="e.subiendoEscudo" />
+                    </label>
+                  </div>
                 </td>
                 <td class="px-md py-sm">
-                  <input type="url" [(ngModel)]="e.escudoEdit" placeholder="https://..."
+                  <input type="text" [(ngModel)]="e.nombreEdit"
                     class="w-full border border-outline rounded px-xs py-0.5 text-body-md" />
                 </td>
                 <td class="px-md py-sm">
@@ -77,8 +101,16 @@
                   </div>
                 </td>
               } @else {
+                <td class="px-md py-sm">
+                  @if (e.foto_url) {
+                    <img [src]="e.foto_url" alt="Escudo {{ e.nombre }}" class="w-10 h-10 object-contain rounded" />
+                  } @else {
+                    <div class="w-10 h-10 rounded bg-background border border-outline flex items-center justify-center">
+                      <span class="text-xs opacity-40">—</span>
+                    </div>
+                  }
+                </td>
                 <td class="px-md py-sm font-medium">{{ e.nombre }}</td>
-                <td class="px-md py-sm opacity-50 text-xs truncate max-w-48">{{ e.escudo_url ?? '—' }}</td>
                 <td class="px-md py-sm opacity-50 text-xs font-mono truncate max-w-48">{{ e.entrenador_id ?? '—' }}</td>
                 <td class="px-md py-sm text-right">
                   <button type="button" (click)="editar(e)"

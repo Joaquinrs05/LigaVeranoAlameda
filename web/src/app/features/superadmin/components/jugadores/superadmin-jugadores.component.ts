@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AdminEquipo, AdminJugador, SuperadminService } from '../../../../core/services/superadmin.service';
+import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 
 const POSICIONES = ['portero', 'defensa', 'centrocampista', 'delantero'];
 const ESTADOS = ['disponible', 'lesionado', 'sancionado'];
@@ -13,6 +14,7 @@ const ESTADOS = ['disponible', 'lesionado', 'sancionado'];
 })
 export class SuperadminJugadoresComponent implements OnInit {
   private readonly svc = inject(SuperadminService);
+  private readonly cloudinary = inject(CloudinaryService);
 
   readonly posiciones = POSICIONES;
   readonly estados = ESTADOS;
@@ -27,6 +29,10 @@ export class SuperadminJugadoresComponent implements OnInit {
   readonly filtroEquipo = signal('');
   readonly filtroPosicion = signal('');
   readonly mostrarFormulario = signal(false);
+  readonly subiendoNuevaFoto = signal(false);
+
+  // Mapa de jugador_id → está subiendo foto
+  readonly subiendoFoto = signal<Record<string, boolean>>({});
 
   readonly jugadoresFiltrados = computed(() => {
     const q = this.busqueda().toLowerCase();
@@ -39,7 +45,7 @@ export class SuperadminJugadoresComponent implements OnInit {
     );
   });
 
-  nuevoJugador = { equipo_id: '', nombre: '', dorsal: undefined as number | undefined, posicion: 'delantero', precio_fantasy: 5 };
+  nuevoJugador = { equipo_id: '', nombre: '', dorsal: undefined as number | undefined, posicion: 'delantero', precio_fantasy: 5, foto_url: '' };
 
   ngOnInit(): void {
     this.cargar();
@@ -54,16 +60,67 @@ export class SuperadminJugadoresComponent implements OnInit {
     });
   }
 
+  onNuevaFoto(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.subiendoNuevaFoto.set(true);
+    this.cloudinary.subirImagen(file, 'jugadores').subscribe({
+      next: url => {
+        this.nuevoJugador.foto_url = url;
+        this.subiendoNuevaFoto.set(false);
+        this.flash('Foto subida');
+      },
+      error: () => {
+        this.error.set('Error al subir la foto');
+        this.subiendoNuevaFoto.set(false);
+      },
+    });
+  }
+
   crear(): void {
     if (!this.nuevoJugador.equipo_id || !this.nuevoJugador.nombre) return;
-    this.svc.crearJugador(this.nuevoJugador).subscribe({
+    const { foto_url, ...rest } = this.nuevoJugador;
+    const body = foto_url ? { ...rest, foto_url } : rest;
+    this.svc.crearJugador(body).subscribe({
       next: j => {
         this.jugadores.update(list => [...list, j]);
         this.mostrarFormulario.set(false);
-        this.nuevoJugador = { equipo_id: '', nombre: '', dorsal: undefined, posicion: 'delantero', precio_fantasy: 5 };
+        this.nuevoJugador = { equipo_id: '', nombre: '', dorsal: undefined, posicion: 'delantero', precio_fantasy: 5, foto_url: '' };
         this.flash('Jugador creado');
       },
       error: () => this.error.set('Error al crear jugador'),
+    });
+  }
+
+  onFotoJugador(event: Event, j: AdminJugador): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.subiendoFoto.update(m => ({ ...m, [j.id]: true }));
+    this.cloudinary.subirImagen(file, 'jugadores').subscribe({
+      next: url => {
+        this.svc.actualizarJugador(j.id, { foto_url: url }).subscribe({
+          next: updated => {
+            this.actualizarLocal(updated);
+            this.subiendoFoto.update(m => ({ ...m, [j.id]: false }));
+            this.flash('Foto actualizada');
+          },
+          error: () => {
+            this.error.set('Error al guardar la foto');
+            this.subiendoFoto.update(m => ({ ...m, [j.id]: false }));
+          },
+        });
+      },
+      error: () => {
+        this.error.set('Error al subir la foto');
+        this.subiendoFoto.update(m => ({ ...m, [j.id]: false }));
+      },
+    });
+  }
+
+  eliminarFoto(j: AdminJugador): void {
+    this.svc.eliminarFotoJugador(j.id).subscribe({
+      next: updated => { this.actualizarLocal(updated); this.flash('Foto eliminada'); },
+      error: () => this.error.set('Error al eliminar la foto'),
     });
   }
 

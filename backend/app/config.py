@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     supabase_anon_key: str
     supabase_service_role_key: str
     allowed_origins: str = "http://localhost:4200"
+    cloudinary_cloud_name: str = ""
+    cloudinary_api_key: str = ""
+    cloudinary_api_secret: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

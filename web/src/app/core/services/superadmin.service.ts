@@ -36,12 +36,13 @@ export interface AdminJugador {
   activo: boolean;
   equipo_id: string;
   equipo: { id: string; nombre: string } | null;
+  foto_url: string | null;
 }
 
 export interface AdminEquipo {
   id: string;
   nombre: string;
-  escudo_url: string | null;
+  foto_url: string | null;
   entrenador_id: string | null;
 }
 
@@ -93,11 +94,11 @@ export class SuperadminService {
     return this.http.get<ApiResp<AdminJugador[]>>(`${this.base}/jugadores`).pipe(map(r => r.data ?? []));
   }
 
-  crearJugador(body: { equipo_id: string; nombre: string; dorsal?: number; posicion: string; precio_fantasy?: number }): Observable<AdminJugador> {
+  crearJugador(body: { equipo_id: string; nombre: string; dorsal?: number; posicion: string; precio_fantasy?: number; foto_url?: string }): Observable<AdminJugador> {
     return this.http.post<ApiResp<AdminJugador>>(`${this.base}/jugadores`, body).pipe(map(r => r.data!));
   }
 
-  actualizarJugador(id: string, body: Partial<Pick<AdminJugador, 'nombre' | 'dorsal' | 'posicion' | 'precio_fantasy' | 'estado_fantasy'>>): Observable<AdminJugador> {
+  actualizarJugador(id: string, body: Partial<Pick<AdminJugador, 'nombre' | 'dorsal' | 'posicion' | 'precio_fantasy' | 'estado_fantasy' | 'foto_url'>>): Observable<AdminJugador> {
     return this.http.patch<ApiResp<AdminJugador>>(`${this.base}/jugadores/${id}`, body).pipe(map(r => r.data!));
   }
 
@@ -105,16 +106,20 @@ export class SuperadminService {
     return this.http.delete<ApiResp<AdminJugador>>(`${this.base}/jugadores/${id}`).pipe(map(r => r.data!));
   }
 
+  eliminarFotoJugador(id: string): Observable<AdminJugador> {
+    return this.http.delete<ApiResp<AdminJugador>>(`${this.base}/jugadores/${id}/foto`).pipe(map(r => r.data!));
+  }
+
   // Equipos
   getEquipos(): Observable<AdminEquipo[]> {
     return this.http.get<ApiResp<AdminEquipo[]>>(`${this.base}/equipos`).pipe(map(r => r.data ?? []));
   }
 
-  crearEquipo(body: { nombre: string; escudo_url?: string }): Observable<AdminEquipo> {
+  crearEquipo(body: { nombre: string; foto_url?: string }): Observable<AdminEquipo> {
     return this.http.post<ApiResp<AdminEquipo>>(`${this.base}/equipos`, body).pipe(map(r => r.data!));
   }
 
-  actualizarEquipo(id: string, body: Partial<Pick<AdminEquipo, 'nombre' | 'escudo_url' | 'entrenador_id'>>): Observable<AdminEquipo> {
+  actualizarEquipo(id: string, body: Partial<Pick<AdminEquipo, 'nombre' | 'foto_url' | 'entrenador_id'>>): Observable<AdminEquipo> {
     return this.http.patch<ApiResp<AdminEquipo>>(`${this.base}/equipos/${id}`, body).pipe(map(r => r.data!));
   }
 

@@ -1,8 +1,11 @@
+import hashlib
+import time
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.auth import get_admin_user
+from app.config import settings
 from app.database import supabase_admin
 from app.schemas.admin import (
     ActualizarEquipoIn,
@@ -159,6 +162,14 @@ def baja_jugador(jugador_id: UUID) -> dict:
     return {"data": result.data[0]}
 
 
+@router.delete("/jugadores/{jugador_id}/foto", response_model=ApiResponse[dict])
+def eliminar_foto_jugador(jugador_id: UUID) -> dict:
+    result = supabase_admin.table("jugadores").update({"foto_url": None}).eq("id", str(jugador_id)).execute()
+    if not result.data:
+        raise HTTPException(status_code=404, detail="Jugador no encontrado")
+    return {"data": result.data[0]}
+
+
 # ---- Equipos ----
 
 @router.get("/equipos", response_model=ApiResponse[list[dict]])
@@ -293,6 +304,22 @@ def calcular_puntuaciones(jornada_numero: int) -> dict:
         registros_insertados += 1
 
     return {"data": {"miembros_calculados": registros_insertados, "jornada": jornada_numero}}
+
+
+# ---- Cloudinary ----
+
+@router.get("/upload-signature", response_model=ApiResponse[dict])
+def generar_firma_upload(folder: str = Query(default="liga")) -> dict:
+    timestamp = int(time.time())
+    params_to_sign = f"folder={folder}&timestamp={timestamp}{settings.cloudinary_api_secret}"
+    signature = hashlib.sha1(params_to_sign.encode()).hexdigest()
+    return {"data": {
+        "signature": signature,
+        "timestamp": timestamp,
+        "cloud_name": settings.cloudinary_cloud_name,
+        "api_key": settings.cloudinary_api_key,
+        "folder": folder,
+    }}
 
 
 # ---- Helpers ----

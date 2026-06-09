@@ -1,12 +1,14 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AdminEquipo, SuperadminService } from '../../../../core/services/superadmin.service';
+import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 
 interface EquipoEditable extends AdminEquipo {
   editando: boolean;
   nombreEdit: string;
   escudoEdit: string;
   entrenadorEdit: string;
+  subiendoEscudo: boolean;
 }
 
 @Component({
@@ -17,14 +19,16 @@ interface EquipoEditable extends AdminEquipo {
 })
 export class SuperadminEquiposComponent implements OnInit {
   private readonly svc = inject(SuperadminService);
+  private readonly cloudinary = inject(CloudinaryService);
 
   readonly equipos = signal<EquipoEditable[]>([]);
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
   readonly exito = signal<string | null>(null);
   readonly mostrarFormulario = signal(false);
+  readonly subiendoNuevoEscudo = signal(false);
 
-  nuevoEquipo = { nombre: '', escudo_url: '' };
+  nuevoEquipo = { nombre: '', foto_url: '' };
 
   ngOnInit(): void {
     this.cargar();
@@ -41,15 +45,32 @@ export class SuperadminEquiposComponent implements OnInit {
     });
   }
 
+  onNuevoEscudo(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.subiendoNuevoEscudo.set(true);
+    this.cloudinary.subirImagen(file, 'equipos').subscribe({
+      next: url => {
+        this.nuevoEquipo.foto_url = url;
+        this.subiendoNuevoEscudo.set(false);
+        this.flash('Escudo subido');
+      },
+      error: () => {
+        this.error.set('Error al subir el escudo');
+        this.subiendoNuevoEscudo.set(false);
+      },
+    });
+  }
+
   crear(): void {
     if (!this.nuevoEquipo.nombre) return;
-    const body: { nombre: string; escudo_url?: string } = { nombre: this.nuevoEquipo.nombre };
-    if (this.nuevoEquipo.escudo_url) body.escudo_url = this.nuevoEquipo.escudo_url;
+    const body: { nombre: string; foto_url?: string } = { nombre: this.nuevoEquipo.nombre };
+    if (this.nuevoEquipo.foto_url) body.foto_url = this.nuevoEquipo.foto_url;
     this.svc.crearEquipo(body).subscribe({
       next: e => {
         this.equipos.update(list => [...list, this.toEditable(e)]);
         this.mostrarFormulario.set(false);
-        this.nuevoEquipo = { nombre: '', escudo_url: '' };
+        this.nuevoEquipo = { nombre: '', foto_url: '' };
         this.flash('Equipo creado');
       },
       error: () => this.error.set('Error al crear equipo'),
@@ -60,10 +81,27 @@ export class SuperadminEquiposComponent implements OnInit {
     e.editando = true;
   }
 
+  onEscudoEditar(event: Event, e: EquipoEditable): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    e.subiendoEscudo = true;
+    this.cloudinary.subirImagen(file, 'equipos').subscribe({
+      next: url => {
+        e.escudoEdit = url;
+        e.subiendoEscudo = false;
+        this.flash('Escudo subido');
+      },
+      error: () => {
+        this.error.set('Error al subir el escudo');
+        e.subiendoEscudo = false;
+      },
+    });
+  }
+
   guardar(e: EquipoEditable): void {
-    const body: Partial<Pick<AdminEquipo, 'nombre' | 'escudo_url' | 'entrenador_id'>> = {};
+    const body: Partial<Pick<AdminEquipo, 'nombre' | 'foto_url' | 'entrenador_id'>> = {};
     if (e.nombreEdit !== e.nombre) body.nombre = e.nombreEdit;
-    if (e.escudoEdit !== (e.escudo_url ?? '')) body.escudo_url = e.escudoEdit || null;
+    if (e.escudoEdit !== (e.foto_url ?? '')) body.foto_url = e.escudoEdit || null;
     if (e.entrenadorEdit !== (e.entrenador_id ?? '')) body.entrenador_id = e.entrenadorEdit || null;
 
     if (Object.keys(body).length === 0) { e.editando = false; return; }
@@ -80,12 +118,12 @@ export class SuperadminEquiposComponent implements OnInit {
   cancelar(e: EquipoEditable): void {
     e.editando = false;
     e.nombreEdit = e.nombre;
-    e.escudoEdit = e.escudo_url ?? '';
+    e.escudoEdit = e.foto_url ?? '';
     e.entrenadorEdit = e.entrenador_id ?? '';
   }
 
   private toEditable(e: AdminEquipo): EquipoEditable {
-    return { ...e, editando: false, nombreEdit: e.nombre, escudoEdit: e.escudo_url ?? '', entrenadorEdit: e.entrenador_id ?? '' };
+    return { ...e, editando: false, nombreEdit: e.nombre, escudoEdit: e.foto_url ?? '', entrenadorEdit: e.entrenador_id ?? '', subiendoEscudo: false };
   }
 
   private flash(msg: string): void {

@@ -55,6 +55,21 @@
           <input type="number" [(ngModel)]="nuevoJugador.precio_fantasy" min="0.5" step="0.5"
             class="w-full border border-outline rounded-lg px-sm py-1 text-body-md" />
         </div>
+        <div>
+          <label class="text-label-bold block mb-1">Foto <span class="opacity-50 font-normal">(opcional)</span></label>
+          <div class="flex items-center gap-xs">
+            @if (nuevoJugador.foto_url) {
+              <img [src]="nuevoJugador.foto_url" alt="Foto" class="w-8 h-8 object-cover rounded-full flex-shrink-0" />
+            }
+            <label class="cursor-pointer flex-1">
+              <span class="block w-full border border-outline rounded-lg px-sm py-1 text-body-md text-center hover:bg-background transition-colors"
+                [class.opacity-50]="subiendoNuevaFoto()">
+                {{ subiendoNuevaFoto() ? 'Subiendo...' : (nuevoJugador.foto_url ? 'Cambiar' : 'Subir foto') }}
+              </span>
+              <input type="file" accept="image/*" class="hidden" (change)="onNuevaFoto($event)" [disabled]="subiendoNuevaFoto()" />
+            </label>
+          </div>
+        </div>
       </div>
       <div class="flex gap-sm">
         <button type="button" (click)="crear()"
@@ -93,6 +108,7 @@
       <table class="w-full text-body-md">
         <thead class="bg-background">
           <tr>
+            <th class="text-left px-md py-sm text-label-bold">Foto</th>
             <th class="text-left px-md py-sm text-label-bold">#</th>
             <th class="text-left px-md py-sm text-label-bold">Nombre</th>
             <th class="text-left px-md py-sm text-label-bold">Equipo</th>
@@ -105,6 +121,27 @@
         <tbody>
           @for (j of jugadoresFiltrados(); track j.id) {
             <tr class="border-t border-outline" [class.opacity-40]="!j.activo">
+              <td class="px-md py-sm">
+                <div class="flex items-center gap-xs">
+                  <label class="cursor-pointer" [class.pointer-events-none]="!j.activo">
+                    @if (j.foto_url) {
+                      <img [src]="j.foto_url" alt="{{ j.nombre }}" class="w-9 h-9 object-cover rounded-full border border-outline" />
+                    } @else {
+                      <div class="w-9 h-9 rounded-full bg-background border border-outline flex items-center justify-center">
+                        <span class="text-xs opacity-40">+</span>
+                      </div>
+                    }
+                    @if (subiendoFoto()[j.id]) {
+                      <span class="text-xs opacity-50 block text-center">...</span>
+                    }
+                    <input type="file" accept="image/*" class="hidden" (change)="onFotoJugador($event, j)" [disabled]="!j.activo || subiendoFoto()[j.id]" />
+                  </label>
+                  @if (j.foto_url && j.activo) {
+                    <button type="button" (click)="eliminarFoto(j)" title="Eliminar foto"
+                      class="text-red-400 hover:text-red-600 text-xs leading-none">✕</button>
+                  }
+                </div>
+              </td>
               <td class="px-md py-sm text-on-background opacity-60">{{ j.dorsal ?? '—' }}</td>
               <td class="px-md py-sm font-medium">{{ j.nombre }}</td>
               <td class="px-md py-sm opacity-70">{{ j.equipo?.nombre ?? '—' }}</td>
@@ -134,7 +171,7 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="7" class="px-md py-lg text-center opacity-50">Sin resultados</td></tr>
+            <tr><td colspan="8" class="px-md py-lg text-center opacity-50">Sin resultados</td></tr>
           }
         </tbody>
       </table>
