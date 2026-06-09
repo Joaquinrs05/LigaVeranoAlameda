@@ -1,8 +1,6 @@
 <app-navbar-light />
 
-<main
-  class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto"
->
+<main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
   @if (equipo) {
     <!-- ── Cabecera ── -->
     <div class="mb-lg flex flex-col gap-md">
@@ -43,63 +41,111 @@
         ]; track stat.label) {
           <div
             class="rounded p-sm text-center"
-            style="
-              background: rgba(255,255,255,0.75);
-              backdrop-filter: blur(12px);
-              border: 1px solid rgba(255,255,255,0.7);
-              box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            "
+            style="background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 2px 8px rgba(0,0,0,0.05)"
           >
-            <span class="block text-[10px] font-bold uppercase tracking-wider text-on-background/40">
-              {{ stat.label }}
-            </span>
-            <span class="block text-headline-md font-bold mt-0.5" [class]="stat.color">
-              {{ stat.value }}
-            </span>
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-on-background/40">{{ stat.label }}</span>
+            <span class="block text-headline-md font-bold mt-0.5" [class]="stat.color">{{ stat.value }}</span>
           </div>
         }
       </div>
     </div>
 
-    <!-- ── Campo de fútbol sala ── -->
-    <!-- El container tiene aspect-ratio propio: así tiene altura aunque la img tarde en cargar.
-         La img rellena el espacio como absolute. Los jugadores también son absolute. -->
-    <div class="max-w-4xl mx-auto w-full">
+    <!-- ── Campo ── -->
+    <div class="max-w-2xl mx-auto w-full flex flex-col gap-lg">
       <div
-        class="relative w-full rounded-2xl overflow-hidden"
-        style="aspect-ratio: 268/188; box-shadow: 0 20px 60px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.2)"
+        class="relative w-full rounded-xl overflow-hidden"
+        style="background:linear-gradient(180deg,#0e2c1a 0%,#1a4a2e 35%,#1a4a2e 65%,#0e2c1a 100%);min-height:520px"
       >
-        <img
-          src="/campo.jpg"
-          alt="Campo de fútbol sala"
-          class="absolute inset-0 w-full h-full object-cover"
-          draggable="false"
-        />
+        <!-- Líneas del campo -->
+        <div class="absolute left-4 right-4 pointer-events-none" style="top:50%;height:1px;background:rgba(255,255,255,0.15)"></div>
+        <div class="absolute pointer-events-none" style="top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;border:1px solid rgba(255,255,255,0.15)"></div>
+        <div class="absolute pointer-events-none" style="top:50%;left:50%;transform:translate(-50%,-50%);width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.3)"></div>
+        <div class="absolute left-1/2 pointer-events-none" style="top:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-top:none"></div>
+        <div class="absolute left-1/2 pointer-events-none" style="bottom:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-bottom:none"></div>
+        <div class="absolute top-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(255,214,0,0.3),transparent)"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(255,214,0,0.2),transparent)"></div>
 
-        <!-- ── Jugadores sobre el campo ── -->
-        @for (jugador of jugadoresEnCampo; track jugador.id) {
-          <div
-            class="absolute"
-            [style.left]="jugador.x + '%'"
-            [style.top]="jugador.y + '%'"
-            style="transform: translate(-50%, -50%); z-index: 10; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.7))"
-          >
-            <app-player-card
-              [nombre]="jugador.nombre"
-              [dorsal]="jugador.dorsal"
-              [posicion]="jugador.posicion"
-              size="sm"
-            />
+        <!-- Filas de jugadores -->
+        <div class="relative z-10 flex flex-col justify-around py-xl" style="min-height:520px">
+
+          <!-- Delanteros -->
+          <div class="flex justify-center gap-lg">
+            @for (j of delanteros; track j.id) {
+              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
+              </div>
+            }
           </div>
-        }
+
+          <!-- Centrocampistas -->
+          <div class="flex justify-center gap-md md:gap-lg">
+            @for (j of centrocampistas; track j.id) {
+              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
+              </div>
+            }
+          </div>
+
+          <!-- Defensas -->
+          <div class="flex justify-center gap-xl md:gap-2xl">
+            @for (j of defensas; track j.id) {
+              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
+              </div>
+            }
+          </div>
+
+          <!-- Portero -->
+          <div class="flex justify-center">
+            @for (j of porteros; track j.id) {
+              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
+              </div>
+            }
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── Estadísticas de jugadores ── -->
+      <div class="flex flex-col gap-sm">
+        <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">bar_chart</span>
+          Jugadores
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+          @for (j of equipo.jugadores; track j.id) {
+            <div
+              class="flex items-center gap-sm p-sm rounded"
+              style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.12);box-shadow:0 2px 8px rgba(0,0,0,0.04)"
+            >
+              <div
+                class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-[12px] shrink-0"
+                [style.background]="equipo.color"
+              >{{ j.dorsal }}</div>
+              <div class="flex flex-col min-w-0 flex-1">
+                <span class="font-bold text-body-md text-on-background truncate">{{ j.nombre }}</span>
+                <span class="text-[11px] text-on-background/40">{{ j.posicion }}</span>
+              </div>
+              <div class="flex items-center gap-sm text-[11px] font-bold shrink-0">
+                <span class="flex items-center gap-0.5 text-primary">
+                  <span class="material-symbols-outlined text-[14px]">sports_soccer</span>
+                  {{ j.goles }}
+                </span>
+                <span class="flex items-center gap-0.5 text-tertiary">
+                  <span class="material-symbols-outlined text-[14px]">assistant</span>
+                  {{ j.asistencias }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
       </div>
 
     </div>
   } @else {
     <p class="text-body-md text-on-background/60">Equipo no encontrado.</p>
-    <a routerLink="/equipos" class="text-primary underline mt-md inline-block">
-      ← Volver a equipos
-    </a>
+    <a routerLink="/equipos" class="text-primary underline mt-md inline-block">← Volver a equipos</a>
   }
 </main>
 
