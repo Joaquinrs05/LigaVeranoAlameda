@@ -1,0 +1,240 @@
+<app-navbar-light />
+
+<!-- Blobs decorativos -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index:-1">
+  <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(192,85,42,0.12) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
+  <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(26,74,46,0.09) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
+</div>
+
+<main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-2xl mx-auto">
+  <div class="flex flex-col gap-lg">
+
+    <!-- Cabecera -->
+    <div class="flex flex-col gap-xs">
+      <h1 class="text-headline-lg font-bold text-on-background">Mis Ligas</h1>
+      <p class="text-body-md text-on-background/50">Gestiona tus ligas fantasy o únete con un código</p>
+    </div>
+
+    <!-- Lista de ligas -->
+    @if (cargando()) {
+      <div class="flex justify-center py-xl">
+        <span class="material-symbols-outlined text-primary text-[32px] animate-spin">progress_activity</span>
+      </div>
+    } @else {
+
+      @if (ligas().length > 0) {
+        <div class="flex flex-col gap-sm">
+          @for (liga of ligas(); track liga.id) {
+            <div
+              class="rounded-xl p-md flex items-center gap-md cursor-pointer transition-all hover:-translate-y-0.5 active:scale-[0.99]"
+              [class.ring-2]="esActiva(liga)"
+              [class.ring-primary]="esActiva(liga)"
+              style="background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border:1px solid rgba(192,85,42,0.15);box-shadow:0 2px 16px rgba(0,0,0,0.06)"
+              (click)="seleccionar(liga)"
+            >
+              <!-- Icono -->
+              <div
+                class="w-11 h-11 rounded-lg flex items-center justify-center shrink-0"
+                style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%)"
+              >
+                <span class="material-symbols-outlined text-secondary text-[22px]">shield</span>
+              </div>
+
+              <!-- Info liga -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-sm">
+                  <span class="font-bold text-body-lg text-on-background truncate">{{ liga.nombre }}</span>
+                  @if (esActiva(liga)) {
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-background bg-tertiary px-sm py-[2px] rounded-full shrink-0">Activa</span>
+                  }
+                </div>
+                <!-- Código de invitación -->
+                <div class="flex items-center gap-xs mt-[2px]">
+                  <span class="text-[11px] text-on-background/40">Código:</span>
+                  <span class="font-mono font-bold text-[13px] text-primary tracking-widest">{{ liga.codigo_invitacion }}</span>
+                </div>
+              </div>
+
+              <!-- Botón copiar -->
+              <button
+                (click)="$event.stopPropagation(); copiar(liga.codigo_invitacion)"
+                class="w-9 h-9 rounded-lg flex items-center justify-center transition-all hover:bg-primary/10 active:scale-95 shrink-0"
+                [style.background]="copiado() === liga.codigo_invitacion ? 'rgba(26,74,46,0.12)' : 'transparent'"
+                title="Copiar código"
+              >
+                @if (copiado() === liga.codigo_invitacion) {
+                  <span class="material-symbols-outlined text-tertiary text-[18px]">check</span>
+                } @else {
+                  <span class="material-symbols-outlined text-on-background/40 text-[18px]">content_copy</span>
+                }
+              </button>
+
+              <span class="material-symbols-outlined text-on-background/25 text-[20px] shrink-0">chevron_right</span>
+            </div>
+          }
+        </div>
+      } @else if (modo() === 'idle') {
+        <div
+          class="rounded-xl p-xl flex flex-col items-center gap-md text-center"
+          style="background:rgba(255,255,255,0.7);border:1px dashed rgba(192,85,42,0.25)"
+        >
+          <span class="material-symbols-outlined text-on-background/20 text-[48px]">shield</span>
+          <p class="text-body-md text-on-background/40">Todavía no perteneces a ninguna liga</p>
+        </div>
+      }
+
+      <!-- Acciones principales (cuando no hay formulario abierto) -->
+      @if (modo() === 'idle') {
+        <div class="flex flex-col gap-sm">
+          <button
+            (click)="modo.set('crear'); codigoGenerado.set(null); errorMsg.set(null)"
+            class="w-full flex items-center justify-center gap-sm py-sm rounded-xl font-bold text-label-bold text-background transition-all hover:opacity-90 active:scale-[0.98]"
+            style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%);box-shadow:0 4px 16px rgba(192,85,42,0.25)"
+          >
+            <span class="material-symbols-outlined text-[20px]">add_circle</span>
+            Crear liga
+          </button>
+          <button
+            (click)="modo.set('unirse'); errorMsg.set(null)"
+            class="w-full flex items-center justify-center gap-sm py-sm rounded-xl font-bold text-label-bold transition-all hover:bg-tertiary/5 active:scale-[0.98]"
+            style="border:1.5px solid rgba(26,74,46,0.3);color:#1a4a2e;background:rgba(255,255,255,0.7)"
+          >
+            <span class="material-symbols-outlined text-[20px]">group_add</span>
+            Unirse con código
+          </button>
+        </div>
+      }
+
+      <!-- Formulario: Crear liga -->
+      @if (modo() === 'crear') {
+        <div
+          class="rounded-xl p-lg flex flex-col gap-md"
+          style="background:rgba(255,255,255,0.88);backdrop-filter:blur(14px);border:1px solid rgba(192,85,42,0.2);box-shadow:0 4px 24px rgba(192,85,42,0.08)"
+        >
+          <div class="flex items-center gap-sm">
+            <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary text-[20px]">add_circle</span>
+            </div>
+            <p class="font-bold text-body-lg text-on-background">Crear nueva liga</p>
+          </div>
+
+          @if (codigoGenerado()) {
+            <div class="flex flex-col items-center gap-sm py-md rounded-lg" style="background:rgba(26,74,46,0.06);border:1px solid rgba(26,74,46,0.15)">
+              <span class="material-symbols-outlined text-tertiary text-[32px]">celebration</span>
+              <p class="font-bold text-body-lg text-tertiary">¡Liga creada!</p>
+              <p class="text-body-md text-on-background/50">Comparte este código con tus amigos:</p>
+              <div class="flex items-center gap-sm mt-xs">
+                <span class="font-mono font-bold text-[28px] text-primary tracking-[0.25em]">{{ codigoGenerado() }}</span>
+                <button
+                  (click)="copiar(codigoGenerado()!)"
+                  class="w-9 h-9 rounded-lg flex items-center justify-center transition-all hover:bg-primary/10"
+                  style="border:1px solid rgba(192,85,42,0.2)"
+                >
+                  @if (copiado() === codigoGenerado()) {
+                    <span class="material-symbols-outlined text-tertiary text-[18px]">check</span>
+                  } @else {
+                    <span class="material-symbols-outlined text-primary text-[18px]">content_copy</span>
+                  }
+                </button>
+              </div>
+            </div>
+            <button
+              (click)="modo.set('idle'); codigoGenerado.set(null)"
+              class="w-full py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90"
+              style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%)"
+            >
+              Ir al dashboard
+            </button>
+          } @else {
+            <div class="flex flex-col gap-sm">
+              <input
+                [(ngModel)]="nombreLiga"
+                placeholder="Nombre de la liga…"
+                class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors"
+                style="border-color:rgba(192,85,42,0.25);background:rgba(255,255,255,0.9)"
+              />
+              <input
+                [(ngModel)]="nombreEquipo"
+                placeholder="Nombre de tu equipo…"
+                class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors"
+                style="border-color:rgba(192,85,42,0.25);background:rgba(255,255,255,0.9)"
+              />
+              @if (errorMsg()) {
+                <p class="text-[12px] text-red-500">{{ errorMsg() }}</p>
+              }
+              <div class="flex gap-sm mt-xs">
+                <button
+                  (click)="modo.set('idle')"
+                  class="flex-1 py-sm rounded-lg font-bold text-label-bold text-on-background/50 border border-outline hover:bg-outline/10 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  (click)="crear()"
+                  [disabled]="!nombreLiga.trim() || !nombreEquipo.trim() || guardando()"
+                  class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                  style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%)"
+                >
+                  @if (guardando()) { Creando… } @else { Crear }
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Formulario: Unirse a una liga -->
+      @if (modo() === 'unirse') {
+        <div
+          class="rounded-xl p-lg flex flex-col gap-md"
+          style="background:rgba(255,255,255,0.88);backdrop-filter:blur(14px);border:1px solid rgba(26,74,46,0.2);box-shadow:0 4px 24px rgba(26,74,46,0.08)"
+        >
+          <div class="flex items-center gap-sm">
+            <div class="w-9 h-9 rounded-lg bg-tertiary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-tertiary text-[20px]">group_add</span>
+            </div>
+            <p class="font-bold text-body-lg text-on-background">Unirse a una liga</p>
+          </div>
+
+          <div class="flex flex-col gap-sm">
+            <input
+              [(ngModel)]="codigoUnirse"
+              placeholder="Código de invitación…"
+              maxlength="6"
+              class="w-full px-md py-md rounded-lg border text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors font-mono tracking-[0.3em] uppercase text-center"
+              style="border-color:rgba(26,74,46,0.25);background:rgba(255,255,255,0.9);font-size:1.4rem"
+            />
+            <input
+              [(ngModel)]="nombreEquipoUnirse"
+              placeholder="Nombre de tu equipo…"
+              class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors"
+              style="border-color:rgba(26,74,46,0.25);background:rgba(255,255,255,0.9)"
+            />
+            @if (errorMsg()) {
+              <p class="text-[12px] text-red-500">{{ errorMsg() }}</p>
+            }
+            <div class="flex gap-sm mt-xs">
+              <button
+                (click)="modo.set('idle')"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-on-background/50 border border-outline hover:bg-outline/10 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                (click)="unirse()"
+                [disabled]="!codigoUnirse.trim() || !nombreEquipoUnirse.trim() || guardando()"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%)"
+              >
+                @if (guardando()) { Entrando… } @else { Entrar }
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+    }
+  </div>
+</main>
+
+<app-footer />

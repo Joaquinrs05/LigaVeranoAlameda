@@ -65,6 +65,17 @@ export class FantasyDashboardComponent implements OnInit, AfterViewInit {
     this.mostrarTodosJugadores() ? this.titulares() : this.titulares().slice(0, 5)
   );
 
+  readonly codigoCopiado = signal(false);
+
+  copiarCodigo(): void {
+    const codigo = this.fantasy.ligaActiva()?.codigo_invitacion;
+    if (!codigo) return;
+    navigator.clipboard.writeText(codigo).then(() => {
+      this.codigoCopiado.set(true);
+      setTimeout(() => this.codigoCopiado.set(false), 2000);
+    });
+  }
+
   // Empty-state: crear / unirse
   readonly modoOnboarding = signal<'idle' | 'crear' | 'unirse'>('idle');
   readonly codigoGenerado  = signal<string | null>(null);

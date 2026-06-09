@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 
 interface ApiResp<T> { data: T | null }
 
-interface ApiLiga {
+export interface ApiLiga {
   id: string; nombre: string; codigo_invitacion: string;
   creador_id: string; jornada_inicio: number;
 }
@@ -41,6 +41,7 @@ export class FantasyService {
   private readonly http  = inject(HttpClient);
   private readonly auth  = inject(AuthService);
   private readonly base  = environment.apiUrl;
+  private readonly LIGA_KEY = 'fantasy_liga_activa_id';
 
   readonly misLigas      = signal<ApiLiga[]>([]);
   readonly ligaActiva    = signal<ApiLiga | null>(null);
@@ -55,6 +56,12 @@ export class FantasyService {
   readonly presupuesto = computed(() => this.miembro()?.presupuesto ?? 100);
   readonly ligaId      = computed(() => this.ligaActiva()?.id ?? null);
 
+  seleccionarLiga(liga: ApiLiga): void {
+    localStorage.setItem(this.LIGA_KEY, liga.id);
+    this.ligaActiva.set(liga);
+    this._cargarDatosLiga(liga.id);
+  }
+
   inicializar(): void {
     this.cargando.set(true);
     this.error.set(null);
@@ -63,8 +70,10 @@ export class FantasyService {
         const ligas = r.data ?? [];
         this.misLigas.set(ligas);
         if (ligas.length > 0) {
-          this.ligaActiva.set(ligas[0]);
-          this._cargarDatosLiga(ligas[0].id);
+          const savedId = localStorage.getItem(this.LIGA_KEY);
+          const liga = ligas.find(l => l.id === savedId) ?? ligas[0];
+          this.ligaActiva.set(liga);
+          this._cargarDatosLiga(liga.id);
         } else {
           this.cargando.set(false);
         }
