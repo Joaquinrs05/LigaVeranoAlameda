@@ -47,6 +47,3 @@ backend/venv/
 backend/__pycache__/
 backend/**/__pycache__/
 backend/*.pyc
-
-# Angular environments con credenciales reales
-web/src/environments/environment.prod.ts
