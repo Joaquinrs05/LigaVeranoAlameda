@@ -1,0 +1,9 @@
+services:
+  api:
+    build: .
+    container_name: liga-verano-api
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    env_file:
+      - .env
