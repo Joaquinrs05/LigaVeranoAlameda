@@ -133,7 +133,15 @@ def get_liga(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict:
         .eq("liga_id", str(liga_id))
         .execute()
     )
-    return {"data": {**liga, "clasificacion": clasificacion.data}}
+    jornada_activa = _ms(
+        supabase_admin.table("jornadas")
+        .select("mercado_activo")
+        .eq("estado", "en_curso")
+        .maybe_single()
+        .execute()
+    )
+    mercado_activo = bool(jornada_activa and jornada_activa.get("mercado_activo"))
+    return {"data": {**liga, "clasificacion": clasificacion.data, "mercado_activo": mercado_activo}}
 
 
 # ---- Mi equipo ----

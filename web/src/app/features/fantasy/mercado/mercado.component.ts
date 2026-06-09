@@ -30,10 +30,11 @@ export class MercadoComponent implements OnInit {
     { valor: 'delantero',      etiqueta: 'DEL'   },
   ];
 
-  readonly fantasy    = inject(FantasyService);
-  readonly posicion   = signal<PosicionFiltro>('todos');
-  readonly busqueda   = signal('');
-  readonly presupuesto = this.fantasy.presupuesto;
+  readonly fantasy        = inject(FantasyService);
+  readonly posicion       = signal<PosicionFiltro>('todos');
+  readonly busqueda       = signal('');
+  readonly presupuesto    = this.fantasy.presupuesto;
+  readonly mercadoAbierto = this.fantasy.mercadoAbierto;
 
   readonly idsEnEquipo = computed(() =>
     new Set(this.fantasy.miEquipo().map(j => j.id))

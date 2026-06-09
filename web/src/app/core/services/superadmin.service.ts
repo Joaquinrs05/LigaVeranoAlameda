@@ -46,6 +46,28 @@ export interface AdminEquipo {
   entrenador_id: string | null;
 }
 
+export interface AdminEstadistica {
+  jugador_id: string;
+  partido_id: string;
+  goles: number;
+  asistencias: number;
+  tarjeta_amarilla: boolean;
+  tarjeta_roja: boolean;
+  minutos_jugados: number;
+  portero_sin_goles: boolean;
+  puntos_fantasy: number;
+}
+
+export interface AdminEstadisticaIn {
+  jugador_id: string;
+  goles: number;
+  asistencias: number;
+  tarjeta_amarilla: boolean;
+  tarjeta_roja: boolean;
+  minutos_jugados: number;
+  portero_sin_goles: boolean;
+}
+
 export interface AdminParticipante {
   posicion: number;
   miembro_id: string;
@@ -85,13 +107,27 @@ export class SuperadminService {
     return this.http.get<ApiResp<AdminPartido[]>>(`${this.base}/partidos${params}`).pipe(map(r => r.data ?? []));
   }
 
-  actualizarPartido(id: string, body: { goles_local: number; goles_visitante: number }): Observable<AdminPartido> {
+  crearPartido(body: { jornada_id: string; equipo_local_id: string; equipo_visitante_id: string; hora_inicio: string }): Observable<AdminPartido> {
+    return this.http.post<ApiResp<AdminPartido>>(`${this.base}/partidos`, body).pipe(map(r => r.data!));
+  }
+
+  actualizarPartido(id: string, body: { goles_local: number; goles_visitante: number; estado?: string }): Observable<AdminPartido> {
     return this.http.patch<ApiResp<AdminPartido>>(`${this.base}/partidos/${id}`, body).pipe(map(r => r.data!));
   }
 
+  // Estadísticas de partido
+  getEstadisticas(partidoId: string): Observable<AdminEstadistica[]> {
+    return this.http.get<ApiResp<AdminEstadistica[]>>(`${this.base}/partidos/${partidoId}/estadisticas`).pipe(map(r => r.data ?? []));
+  }
+
+  putEstadisticas(partidoId: string, estadisticas: AdminEstadisticaIn[]): Observable<AdminEstadistica[]> {
+    return this.http.put<ApiResp<AdminEstadistica[]>>(`${this.base}/partidos/${partidoId}/estadisticas`, { estadisticas }).pipe(map(r => r.data ?? []));
+  }
+
   // Jugadores
-  getJugadores(): Observable<AdminJugador[]> {
-    return this.http.get<ApiResp<AdminJugador[]>>(`${this.base}/jugadores`).pipe(map(r => r.data ?? []));
+  getJugadores(equipoId?: string): Observable<AdminJugador[]> {
+    const params = equipoId ? `?equipo_id=${equipoId}` : '';
+    return this.http.get<ApiResp<AdminJugador[]>>(`${this.base}/jugadores${params}`).pipe(map(r => r.data ?? []));
   }
 
   crearJugador(body: { equipo_id: string; nombre: string; dorsal?: number; posicion: string; precio_fantasy?: number; foto_url?: string }): Observable<AdminJugador> {

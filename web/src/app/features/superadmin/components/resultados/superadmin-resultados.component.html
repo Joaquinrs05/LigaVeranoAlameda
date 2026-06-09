@@ -1,6 +1,18 @@
 <div class="space-y-md">
 
-  <h2 class="text-headline-md text-on-background">Resultados</h2>
+  <!-- Cabecera -->
+  <div class="flex items-center justify-between">
+    <h2 class="text-headline-md text-on-background">Resultados</h2>
+    @if (jornadaSeleccionada()) {
+      <button
+        type="button"
+        (click)="mostrarFormulario.set(!mostrarFormulario())"
+        class="bg-primary text-white px-md py-sm rounded-lg text-label-bold hover:opacity-90 transition-opacity"
+      >
+        {{ mostrarFormulario() ? 'Cancelar' : '+ Añadir partido' }}
+      </button>
+    }
+  </div>
 
   @if (error()) {
     <div class="bg-red-50 border border-red-200 text-red-700 px-md py-sm rounded-lg text-body-md">{{ error() }}</div>
@@ -21,49 +33,217 @@
     }
   </div>
 
+  <!-- Formulario nuevo partido -->
+  @if (mostrarFormulario()) {
+    <div class="bg-surface border border-outline rounded-xl p-md space-y-sm">
+      <p class="text-label-bold text-on-background">Nuevo partido — {{ jornadaSeleccionada()?.numero ? 'Jornada ' + jornadaSeleccionada()!.numero : '' }}</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-sm items-end">
+        <div>
+          <label class="text-label-bold text-on-background block mb-1">Local</label>
+          <select [(ngModel)]="nuevoPartido.equipo_local_id"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md bg-white">
+            <option value="">Seleccionar...</option>
+            @for (eq of equipos(); track eq.id) {
+              <option [value]="eq.id">{{ eq.nombre }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="text-label-bold text-on-background block mb-1">Visitante</label>
+          <select [(ngModel)]="nuevoPartido.equipo_visitante_id"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md bg-white">
+            <option value="">Seleccionar...</option>
+            @for (eq of equipos(); track eq.id) {
+              <option [value]="eq.id">{{ eq.nombre }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="text-label-bold text-on-background block mb-1">Fecha y hora</label>
+          <input type="datetime-local" [(ngModel)]="nuevoPartido.hora_inicio"
+            class="w-full border border-outline rounded-lg px-sm py-1 text-body-md" />
+        </div>
+      </div>
+      <div class="flex gap-sm">
+        <button type="button" (click)="crearPartido()"
+          [disabled]="!nuevoPartido.equipo_local_id || !nuevoPartido.equipo_visitante_id || !nuevoPartido.hora_inicio"
+          class="bg-primary text-white px-md py-sm rounded-lg text-label-bold hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed">
+          Crear partido
+        </button>
+        <button type="button" (click)="mostrarFormulario.set(false)"
+          class="border border-outline px-md py-sm rounded-lg text-body-md hover:bg-background transition-colors">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  }
+
   @if (cargando()) {
     <p class="text-body-md opacity-60">Cargando partidos...</p>
   } @else if (partidos().length === 0) {
     <p class="text-body-md opacity-50">Sin partidos en esta jornada.</p>
   } @else {
     <div class="bg-surface rounded-xl border border-outline overflow-hidden">
-      <table class="w-full text-body-md">
-        <thead class="bg-background">
-          <tr>
-            <th class="text-left px-md py-sm text-label-bold">Local</th>
-            <th class="text-center px-md py-sm text-label-bold">Goles</th>
-            <th class="text-left px-md py-sm text-label-bold">Visitante</th>
-            <th class="px-md py-sm"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (p of partidos(); track p.id) {
-            <tr class="border-t border-outline">
-              <td class="px-md py-sm">{{ p.equipo_local?.nombre ?? '—' }}</td>
-              <td class="px-md py-sm">
-                <div class="flex items-center gap-sm justify-center">
-                  <input type="number" [(ngModel)]="p.golesLocalEdit" min="0"
-                    class="w-14 border border-outline rounded-lg px-sm py-1 text-center text-body-md" />
-                  <span class="text-on-background opacity-40 font-bold">—</span>
-                  <input type="number" [(ngModel)]="p.golesVisitanteEdit" min="0"
-                    class="w-14 border border-outline rounded-lg px-sm py-1 text-center text-body-md" />
+
+      @for (p of partidos(); track p.id) {
+
+        <!-- Fila principal del partido -->
+        <div class="border-t border-outline first:border-t-0">
+          <div class="flex items-center px-md py-sm gap-sm">
+
+            <!-- Equipos + marcador -->
+            <span class="flex-1 font-semibold text-body-md text-on-background truncate">{{ p.equipo_local?.nombre ?? '—' }}</span>
+            <div class="flex items-center gap-xs shrink-0">
+              <input type="number" [(ngModel)]="p.golesLocalEdit" min="0"
+                class="w-12 border border-outline rounded px-xs py-0.5 text-center text-body-md" />
+              <span class="text-on-background/30 font-bold text-xs">—</span>
+              <input type="number" [(ngModel)]="p.golesVisitanteEdit" min="0"
+                class="w-12 border border-outline rounded px-xs py-0.5 text-center text-body-md" />
+            </div>
+            <span class="flex-1 font-semibold text-body-md text-on-background truncate text-right">{{ p.equipo_visitante?.nombre ?? '—' }}</span>
+
+            <!-- Botón guardar marcador -->
+            <button type="button" (click)="guardarPartido(p)"
+              class="px-sm py-0.5 rounded text-xs font-semibold transition-colors shrink-0"
+              [class.bg-green-100]="p.guardado"
+              [class.text-green-700]="p.guardado"
+              [class.bg-primary]="!p.guardado"
+              [class.text-white]="!p.guardado">
+              {{ p.guardado ? '✓' : 'Guardar' }}
+            </button>
+
+            <!-- Botón expandir estadísticas -->
+            <button type="button" (click)="toggleExpandir(p)"
+              class="flex items-center gap-1 px-sm py-0.5 rounded text-xs font-semibold border border-outline hover:border-primary hover:text-primary transition-colors shrink-0"
+              [class.bg-background]="!p.expandido"
+              [class.bg-primary]="p.expandido"
+              [class.text-white]="p.expandido"
+              [class.border-primary]="p.expandido">
+              <span class="material-symbols-outlined text-[14px]">{{ p.expandido ? 'expand_less' : 'bar_chart' }}</span>
+              Estadísticas
+            </button>
+          </div>
+
+          <!-- Panel expandible de estadísticas -->
+          @if (p.expandido) {
+            <div class="border-t border-outline bg-background px-md py-md space-y-md">
+
+              @if (p.cargandoStats) {
+                <p class="text-body-md opacity-50 text-center py-md">Cargando jugadores...</p>
+
+              } @else if (p.jugadoresStats.length === 0) {
+                <p class="text-body-md opacity-50 text-center py-sm">No hay jugadores en estos equipos.</p>
+
+              } @else {
+
+                <!-- Cabecera columnas -->
+                <div class="grid text-[10px] font-bold text-on-background/40 uppercase tracking-widest px-sm"
+                  style="grid-template-columns: 1fr 3.5rem 3rem 3rem 2.5rem 2.5rem 4rem">
+                  <span>Jugador</span>
+                  <span class="text-center">Minutos</span>
+                  <span class="text-center">Goles</span>
+                  <span class="text-center">Asist.</span>
+                  <span class="text-center">🟡</span>
+                  <span class="text-center">🔴</span>
+                  <span class="text-center">PG*</span>
                 </div>
-              </td>
-              <td class="px-md py-sm">{{ p.equipo_visitante?.nombre ?? '—' }}</td>
-              <td class="px-md py-sm text-right">
-                <button type="button" (click)="guardarPartido(p)"
-                  class="px-sm py-0.5 rounded text-xs transition-colors"
-                  [class.bg-green-100]="p.guardado"
-                  [class.text-green-700]="p.guardado"
-                  [class.bg-primary]="!p.guardado"
-                  [class.text-white]="!p.guardado">
-                  {{ p.guardado ? '✓ Guardado' : 'Guardar' }}
-                </button>
-              </td>
-            </tr>
+
+                <!-- Equipo local -->
+                <div class="space-y-xs">
+                  <p class="text-[11px] font-bold text-primary uppercase tracking-wider px-sm">
+                    {{ p.equipo_local?.nombre }}
+                  </p>
+                  @for (j of jugadoresDeEquipo(p, p.equipo_local?.id); track j.jugador_id) {
+                    <div class="grid items-center gap-xs bg-surface rounded-lg px-sm py-xs"
+                      style="grid-template-columns: 1fr 3.5rem 3rem 3rem 2.5rem 2.5rem 4rem">
+                      <div class="flex items-center gap-xs min-w-0">
+                        <span class="text-[9px] font-bold text-background px-1 rounded shrink-0"
+                          [style.background]="j.posicion === 'portero' ? '#1a4a2e' : j.posicion === 'defensa' ? '#c0552a' : j.posicion === 'centrocampista' ? '#0f5a8a' : '#7b2d8b'">
+                          {{ posicionAbrev(j.posicion) }}
+                        </span>
+                        <span class="text-body-md font-semibold truncate">{{ j.nombre }}</span>
+                      </div>
+                      <input type="number" [(ngModel)]="j.minutos_jugados" min="0" max="120"
+                        class="w-full border border-outline rounded px-xs py-0.5 text-center text-xs" />
+                      <input type="number" [(ngModel)]="j.goles" min="0"
+                        class="w-full border border-outline rounded px-xs py-0.5 text-center text-xs" />
+                      <input type="number" [(ngModel)]="j.asistencias" min="0"
+                        class="w-full border border-outline rounded px-xs py-0.5 text-center text-xs" />
+                      <div class="flex justify-center">
+                        <input type="checkbox" [(ngModel)]="j.tarjeta_amarilla" class="w-4 h-4 accent-yellow-500 cursor-pointer" />
+                      </div>
+                      <div class="flex justify-center">
+                        <input type="checkbox" [(ngModel)]="j.tarjeta_roja" class="w-4 h-4 accent-red-600 cursor-pointer" />
+                      </div>
+                      <div class="flex justify-center">
+                        @if (j.posicion === 'portero') {
+                          <input type="checkbox" [(ngModel)]="j.portero_sin_goles" class="w-4 h-4 accent-tertiary cursor-pointer" />
+                        } @else {
+                          <span class="text-on-background/20 text-xs">—</span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <!-- Equipo visitante -->
+                <div class="space-y-xs">
+                  <p class="text-[11px] font-bold text-primary uppercase tracking-wider px-sm">
+                    {{ p.equipo_visitante?.nombre }}
+                  </p>
+                  @for (j of jugadoresDeEquipo(p, p.equipo_visitante?.id); track j.jugador_id) {
+                    <div class="grid items-center gap-xs bg-surface rounded-lg px-sm py-xs"
+                      style="grid-template-columns: 1fr 3.5rem 3rem 3rem 2.5rem 2.5rem 4rem">
+                      <div class="flex items-center gap-xs min-w-0">
+                        <span class="text-[9px] font-bold text-background px-1 rounded shrink-0"
+                          [style.background]="j.posicion === 'portero' ? '#1a4a2e' : j.posicion === 'defensa' ? '#c0552a' : j.posicion === 'centrocampista' ? '#0f5a8a' : '#7b2d8b'">
+                          {{ posicionAbrev(j.posicion) }}
+                        </span>
+                        <span class="text-body-md font-semibold truncate">{{ j.nombre }}</span>
+                      </div>
+                      <input type="number" [(ngModel)]="j.minutos_jugados" min="0" max="120"
+                        class="w-full border border-outline rounded px-xs py-0.5 text-center text-xs" />
+                      <input type="number" [(ngModel)]="j.goles" min="0"
+                        class="w-full border border-outline rounded px-xs py-0.5 text-center text-xs" />
+                      <input type="number" [(ngModel)]="j.asistencias" min="0"
+                        class="w-full border border-outline rounded px-xs py-0.5 text-center text-xs" />
+                      <div class="flex justify-center">
+                        <input type="checkbox" [(ngModel)]="j.tarjeta_amarilla" class="w-4 h-4 accent-yellow-500 cursor-pointer" />
+                      </div>
+                      <div class="flex justify-center">
+                        <input type="checkbox" [(ngModel)]="j.tarjeta_roja" class="w-4 h-4 accent-red-600 cursor-pointer" />
+                      </div>
+                      <div class="flex justify-center">
+                        @if (j.posicion === 'portero') {
+                          <input type="checkbox" [(ngModel)]="j.portero_sin_goles" class="w-4 h-4 accent-tertiary cursor-pointer" />
+                        } @else {
+                          <span class="text-on-background/20 text-xs">—</span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <p class="text-[10px] text-on-background/30 px-sm">* PG = Portero sin goles encajados</p>
+
+                <!-- Botón guardar stats -->
+                <div class="flex justify-end pt-xs">
+                  <button type="button" (click)="guardarStats(p)"
+                    class="px-md py-sm rounded-lg text-label-bold font-bold transition-colors"
+                    [class.bg-green-100]="p.statsGuardadas"
+                    [class.text-green-700]="p.statsGuardadas"
+                    [class.bg-tertiary]="!p.statsGuardadas"
+                    [class.text-white]="!p.statsGuardadas">
+                    {{ p.statsGuardadas ? '✓ Estadísticas guardadas' : 'Guardar estadísticas' }}
+                  </button>
+                </div>
+
+              }
+            </div>
           }
-        </tbody>
-      </table>
+        </div>
+
+      }
     </div>
   }
 

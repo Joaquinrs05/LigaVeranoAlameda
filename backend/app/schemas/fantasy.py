@@ -60,6 +60,7 @@ class LigaDetalleOut(BaseModel):
     creador_id: UUID
     jornada_inicio: int
     clasificacion: list[ClasificacionFantasyRow] = []
+    mercado_activo: bool = False
 
 
 class PlantillaItemOut(BaseModel):

@@ -22,6 +22,7 @@ interface ApiClasificacionFantasy {
 }
 interface ApiLigaDetalle extends ApiLiga {
   clasificacion: ApiClasificacionFantasy[];
+  mercado_activo: boolean;
 }
 interface ApiEquipo { nombre: string; abrev: string }
 interface ApiJugadorBase {
@@ -43,14 +44,15 @@ export class FantasyService {
   private readonly base  = environment.apiUrl;
   private readonly LIGA_KEY = 'fantasy_liga_activa_id';
 
-  readonly misLigas      = signal<ApiLiga[]>([]);
-  readonly ligaActiva    = signal<ApiLiga | null>(null);
-  readonly miembro       = signal<ApiMiembro | null>(null);
-  readonly miEquipo      = signal<IJugadorFantasy[]>([]);
-  readonly clasificacion = signal<IClasificacionFantasy[]>([]);
-  readonly mercado       = signal<IJugadorFantasy[]>([]);
-  readonly cargando      = signal(false);
-  readonly error         = signal<string | null>(null);
+  readonly misLigas       = signal<ApiLiga[]>([]);
+  readonly ligaActiva     = signal<ApiLiga | null>(null);
+  readonly miembro        = signal<ApiMiembro | null>(null);
+  readonly miEquipo       = signal<IJugadorFantasy[]>([]);
+  readonly clasificacion  = signal<IClasificacionFantasy[]>([]);
+  readonly mercado        = signal<IJugadorFantasy[]>([]);
+  readonly mercadoAbierto = signal(false);
+  readonly cargando       = signal(false);
+  readonly error          = signal<string | null>(null);
 
   readonly enLiga      = computed(() => this.ligaActiva() !== null);
   readonly presupuesto = computed(() => this.miembro()?.presupuesto ?? 100);
@@ -161,6 +163,7 @@ export class FantasyService {
       next: r => {
         const clasi = r.data?.clasificacion ?? [];
         this.clasificacion.set(clasi.map(c => this._mapClasificacion(c, uid)));
+        this.mercadoAbierto.set(r.data?.mercado_activo ?? false);
       },
     });
 

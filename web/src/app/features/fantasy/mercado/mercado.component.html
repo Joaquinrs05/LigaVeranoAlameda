@@ -2,11 +2,26 @@
 
 <main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen">
 
+  <!-- ── Banner mercado cerrado ── -->
+  @if (!mercadoAbierto()) {
+    <div class="mb-lg flex items-center gap-md px-md py-md rounded-lg border"
+      style="background:rgba(192,85,42,0.06);border-color:rgba(192,85,42,0.25)">
+      <span class="material-symbols-outlined text-primary text-[24px] shrink-0">storefront</span>
+      <div>
+        <p class="font-bold text-body-md text-primary">Mercado cerrado</p>
+        <p class="text-[12px] text-on-background/50">El mercado está cerrado en esta jornada. No se puede fichar ni vender jugadores hasta que el administrador lo abra.</p>
+      </div>
+    </div>
+  }
+
   <!-- ── Cabecera ── -->
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-md pb-lg">
     <div>
       <h1 class="text-headline-lg font-bold text-primary">Mercado</h1>
-      <p class="text-body-md text-on-background/50">Ficha jugadores para tu equipo fantasy</p>
+      <p class="text-body-md text-on-background/50">
+        @if (mercadoAbierto()) { Ficha jugadores para tu equipo fantasy }
+        @else { El mercado está cerrado actualmente }
+      </p>
     </div>
     <div class="flex items-center gap-sm bg-surface border border-outline rounded-lg px-md py-sm shrink-0">
       <span class="material-symbols-outlined text-tertiary text-[22px]">account_balance_wallet</span>
@@ -65,7 +80,7 @@
             : ''"
         >
           <!-- Avatar -->
-          <div class="relative flex-shrink-0">
+          <div class="relative shrink-0">
             <div
               class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-background text-body-md"
               [style.background]="posicionColor(j.posicion)"
@@ -87,7 +102,7 @@
           </div>
 
           <!-- Precio y estado -->
-          <div class="text-right flex-shrink-0 mr-sm">
+          <div class="text-right shrink-0 mr-sm">
             <div class="font-bold text-on-background text-data-mono">{{ j.precio }}M</div>
             @if (j.estado === 'lesionado') {
               <div class="text-[9px] text-red-600 font-bold">Lesionado</div>
@@ -102,18 +117,24 @@
           @if (idsEnEquipo().has(j.id)) {
             <button
               disabled
-              class="flex-shrink-0 px-sm py-1 rounded text-label-bold font-bold text-on-background/40 bg-background border border-outline cursor-not-allowed whitespace-nowrap"
+              class="shrink-0 px-sm py-1 rounded text-label-bold font-bold text-on-background/40 bg-background border border-outline cursor-not-allowed whitespace-nowrap"
             >En equipo</button>
+          } @else if (!mercadoAbierto()) {
+            <button
+              disabled
+              class="shrink-0 px-sm py-1 rounded text-label-bold font-bold text-on-background/20 bg-background cursor-not-allowed whitespace-nowrap"
+              title="Mercado cerrado"
+            >Fichar</button>
           } @else if (j.estado !== 'disponible' || presupuesto() < j.precio) {
             <button
               disabled
-              class="flex-shrink-0 px-sm py-1 rounded text-label-bold font-bold text-on-background/30 bg-background cursor-not-allowed whitespace-nowrap"
+              class="shrink-0 px-sm py-1 rounded text-label-bold font-bold text-on-background/30 bg-background cursor-not-allowed whitespace-nowrap"
               [title]="j.estado !== 'disponible' ? 'Jugador no disponible' : 'Presupuesto insuficiente'"
             >Fichar</button>
           } @else {
             <button
               (click)="fichar(j)"
-              class="flex-shrink-0 px-sm py-1 rounded text-label-bold font-bold bg-primary text-background hover:bg-primary/90 transition-colors active:scale-95 whitespace-nowrap"
+              class="shrink-0 px-sm py-1 rounded text-label-bold font-bold bg-primary text-background hover:bg-primary/90 transition-colors active:scale-95 whitespace-nowrap"
             >Fichar</button>
           }
         </div>

@@ -83,6 +83,17 @@ def actualizar_partido(partido_id: UUID, body: ActualizarPartidoIn) -> dict:
     return {"data": result.data[0]}
 
 
+@router.get("/partidos/{partido_id}/estadisticas", response_model=ApiResponse[list[dict]])
+def get_estadisticas(partido_id: UUID) -> dict:
+    result = (
+        supabase_admin.table("estadisticas_jugador")
+        .select("*")
+        .eq("partido_id", str(partido_id))
+        .execute()
+    )
+    return {"data": result.data}
+
+
 @router.put("/partidos/{partido_id}/estadisticas", response_model=ApiResponse[list[dict]])
 def put_estadisticas(partido_id: UUID, body: PutEstadisticasIn) -> dict:
     jugador_ids = [str(e.jugador_id) for e in body.estadisticas]
