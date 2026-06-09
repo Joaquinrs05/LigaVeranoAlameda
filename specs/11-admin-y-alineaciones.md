@@ -6,77 +6,99 @@
 |---|---|
 | **ID** | `11-admin-y-alineaciones` |
 | **Status** | `draft` |
-| **Módulo** | `admin` + `fantasy/mi-equipo` |
+| **Módulo** | `admin` + `admin-equipo` + `fantasy/mi-equipo` |
 | **Prioridad** | `media` |
 | **Dependencias** | `08-auth`, `09-backend`, `10-backend-full`, `05-mi-equipo` |
 
 ---
 
-## Parte A — Vista de administración
+## Roles de administrador
+
+El sistema tiene **dos roles de admin completamente independientes**:
+
+| Rol | Quién | Acceso | Ruta |
+|---|---|---|---|
+| **Admin Global** | Nosotros (los creadores de la plataforma) | Flag `is_superadmin` en tabla `perfiles` | `/superadmin` |
+| **Admin de Equipo (Entrenador)** | El responsable de un equipo real | Campo `entrenador_id` en tabla `equipos_reales` | `/equipo/admin` |
+
+Cada rol tiene su propio guard, su propia ruta y su propio panel. No comparten interfaz.
+
+---
+
+## Parte A — Panel Admin Global (Superadmin)
 
 ### Contexto
 
-El creador de una liga fantasy (campo `creador_id` en `ligas_fantasy`) necesita un panel para gestionar la liga: controlar jornadas, abrir/cerrar el mercado, introducir resultados, actualizar el estado de los jugadores reales y calcular puntuaciones. Sin este panel, toda esa gestión requiere acceso directo a Supabase.
+El Admin Global somos nosotros: los que creamos y operamos la plataforma. Desde este panel controlamos la estructura completa de la liga real: equipos, jugadores, jornadas, resultados y puntuaciones fantasy. Sin este panel, toda esa gestión requiere acceso directo a Supabase.
 
 ### Ruta y acceso
 
 | Ruta | Componente raíz | Acceso |
 |---|---|---|
-| `/admin` | `AdminComponent` | Solo si el usuario es `creador_id` de al menos una liga |
+| `/superadmin` | `SuperadminComponent` | Solo si `perfil.is_superadmin === true` |
 
-- Si el usuario no es admin de ninguna liga → redirigir a `/fantasy`
-- Guard: `AdminGuard` que comprueba `fantasy.ligaActiva().creador_id === auth.usuario().uid`
+- Si el usuario no tiene flag `is_superadmin` → redirigir a `/fantasy`
+- Guard: `SuperadminGuard` comprueba `auth.usuario().is_superadmin`
+- El flag `is_superadmin` **nunca** es modificable desde la propia app — solo vía Supabase directamente
 
 ### En scope — Parte A
 
-- Panel de jornadas (listar, crear, cambiar estado, abrir/cerrar mercado)
-- Panel de resultados (introducir marcador de cada partido de la jornada activa)
-- Panel de jugadores (cambiar `estado_fantasy`: disponible / lesionado / sancionado)
-- Panel de puntuaciones (calcular y publicar puntos de la jornada finalizada)
-- Vista de participantes (tabla con todos los miembros de la liga, puntos y presupuesto)
+- **Panel de ligas**: listar ligas reales de la temporada, crear nueva liga/temporada
+- **Panel de equipos**: listar equipos, crear equipo nuevo, editar nombre, escudo/logo, asignar entrenador
+- **Panel de jugadores**: listar todos los jugadores reales, crear jugador, editar nombre/dorsal/posición/equipo, dar de baja (soft delete)
+- **Panel de jornadas**: listar, crear, cambiar estado (pendiente / en_curso / finalizada), abrir/cerrar mercado fantasy
+- **Panel de resultados**: introducir marcador de cada partido de la jornada activa
+- **Panel de puntuaciones**: introducir puntos por jugador en una jornada finalizada, calcular y publicar
+- **Panel de participantes fantasy**: tabla de clasificación extendida de cualquier liga fantasy
 
 ### Fuera de scope — Parte A
 
-- Gestión de equipos reales (nombres, escudos)
-- Creación/eliminación de jugadores reales
-- Múltiples ligas simultáneas en el panel (gestiona solo `ligaActiva`)
-- Sistema de roles granular (solo creador = admin)
+- Edición de fotos de jugadores o equipos (eso es responsabilidad del entrenador)
+- Gestión de alineaciones (eso es responsabilidad del entrenador)
+- Acceso a ligas fantasy de usuarios (solo ve la tabla de clasificación)
 
 ---
 
-### Árbol de componentes — Admin
+### Árbol de componentes — Superadmin
 
 ```
-AdminComponent                          (features/admin/admin.component)
-├── NavbarLightComponent                (shared)
-├── AdminTabsComponent                  (features/admin/components/tabs)
-│   — tabs: Jornada | Resultados | Jugadores | Puntuaciones | Participantes
+SuperadminComponent                          (features/superadmin/superadmin.component)
+├── NavbarLightComponent                     (shared)
+├── SuperadminTabsComponent                  (features/superadmin/components/tabs)
+│   — tabs: Equipos | Jugadores | Jornadas | Resultados | Puntuaciones | Participantes
 │
-├── [tab: Jornada] AdminJornadaComponent
+├── [tab: Equipos] SuperadminEquiposComponent
+│   ├── Tabla: nombre | escudo | entrenador asignado | nº jugadores
+│   ├── Botón "Nuevo equipo" → modal con nombre + upload escudo
+│   └── Por cada fila: botón editar (nombre, escudo, entrenador) + botón desactivar
+│
+├── [tab: Jugadores] SuperadminJugadoresComponent
+│   ├── Buscador por nombre
+│   ├── Filtro por equipo y posición
+│   ├── Tabla: nombre | dorsal | equipo | posición | estado_fantasy | precio_fantasy
+│   ├── Botón "Nuevo jugador" → modal con nombre, dorsal, equipo, posición
+│   └── Por cada fila: selector estado (disponible/lesionado/sancionado) + input precio + botón editar + botón dar de baja
+│
+├── [tab: Jornadas] SuperadminJornadasComponent
 │   ├── Lista de jornadas con estado badge (pendiente / en_curso / finalizada)
 │   ├── Botón "Iniciar jornada" (pendiente → en_curso)
 │   ├── Botón "Finalizar jornada" (en_curso → finalizada)
-│   ├── Toggle "Mercado abierto / cerrado" (mercado_activo en jornada en_curso)
+│   ├── Toggle "Mercado abierto / cerrado" (solo visible cuando jornada en_curso)
 │   └── Botón "Crear nueva jornada" (solo si no hay ninguna en_curso)
 │
-├── [tab: Resultados] AdminResultadosComponent
+├── [tab: Resultados] SuperadminResultadosComponent
 │   ├── Lista de partidos de la jornada activa (o última finalizada)
 │   ├── Por cada partido: inputs goles_local / goles_visitante
 │   └── Botón "Guardar resultados"
 │
-├── [tab: Jugadores] AdminJugadoresComponent
-│   ├── Buscador por nombre
-│   ├── Filtro por posición y equipo
-│   ├── Tabla: nombre | equipo | posición | estado_fantasy | precio_fantasy
-│   └── Por cada fila: selector estado (disponible / lesionado / sancionado) + input precio
-│
-├── [tab: Puntuaciones] AdminPuntuacionesComponent
+├── [tab: Puntuaciones] SuperadminPuntuacionesComponent
 │   ├── Selector de jornada (solo finalizadas)
 │   ├── Por cada jugador: input puntos obtenidos en esa jornada
 │   ├── Botón "Calcular y publicar" → llama endpoint que actualiza puntos_total de miembros
 │   └── Indicador de estado: publicado / pendiente
 │
-└── [tab: Participantes] AdminParticipantesComponent
+└── [tab: Participantes] SuperadminParticipantesComponent
+    ├── Selector de liga fantasy (dropdown con todas las ligas activas)
     └── Tabla: posición | nombre equipo | manager | puntos_total | presupuesto | nº jugadores
 ```
 
@@ -84,39 +106,189 @@ AdminComponent                          (features/admin/admin.component)
 
 ### Endpoints backend necesarios — Parte A
 
-Todos bajo `/admin` con guard que verifica que el usuario es `creador_id` de la liga.
+Todos bajo `/superadmin` con guard que verifica `is_superadmin`.
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| `GET` | `/admin/ligas/{liga_id}/jornadas` | Lista jornadas con estado y mercado_activo |
-| `POST` | `/admin/ligas/{liga_id}/jornadas` | Crear nueva jornada |
-| `PATCH` | `/admin/ligas/{liga_id}/jornadas/{id}` | Cambiar estado o mercado_activo |
-| `GET` | `/admin/ligas/{liga_id}/partidos` | Partidos de la jornada activa |
-| `PATCH` | `/admin/partidos/{id}` | Actualizar resultado (goles_local, goles_visitante) |
-| `GET` | `/admin/jugadores` | Todos los jugadores reales con estado y precio |
-| `PATCH` | `/admin/jugadores/{id}` | Actualizar estado_fantasy o precio_fantasy |
-| `POST` | `/admin/ligas/{liga_id}/puntuaciones` | Calcular y publicar puntos de jornada |
-| `GET` | `/admin/ligas/{liga_id}/participantes` | Tabla de clasificación extendida |
+| `GET` | `/superadmin/equipos` | Tabla `equipos` completa |
+| `POST` | `/superadmin/equipos` | Crear equipo nuevo en `equipos` |
+| `PATCH` | `/superadmin/equipos/{id}` | Editar nombre, escudo_url, entrenador_id |
+| `GET` | `/superadmin/jugadores` | Tabla `jugadores` completa con estado y precio |
+| `POST` | `/superadmin/jugadores` | Crear jugador nuevo en `jugadores` |
+| `PATCH` | `/superadmin/jugadores/{id}` | Editar datos, estado_fantasy, precio_fantasy |
+| `DELETE` | `/superadmin/jugadores/{id}` | Soft delete (activo = false) |
+| `GET` | `/superadmin/jornadas` | Lista jornadas con estado y mercado_activo |
+| `POST` | `/superadmin/jornadas` | Crear nueva jornada |
+| `PATCH` | `/superadmin/jornadas/{id}` | Cambiar estado o mercado_activo |
+| `GET` | `/superadmin/partidos` | Partidos de la jornada activa |
+| `PATCH` | `/superadmin/partidos/{id}` | Actualizar resultado (goles_local, goles_visitante) |
+| `POST` | `/superadmin/ligas/{liga_id}/puntuaciones` | Calcular y publicar puntos de jornada |
+| `GET` | `/superadmin/ligas/{liga_id}/participantes` | Clasificación extendida de una liga fantasy |
 
 ---
 
 ### Criterios de aceptación — Parte A
 
-- [ ] La ruta `/admin` es inaccesible para usuarios que no sean creadores de liga
+- [ ] La ruta `/superadmin` es inaccesible para usuarios sin flag `is_superadmin`
+- [ ] Se puede crear un equipo nuevo con nombre y escudo
+- [ ] Se puede asignar un entrenador (por email o ID) a un equipo
+- [ ] Se puede crear un jugador nuevo con nombre, dorsal, equipo y posición
+- [ ] Se puede editar nombre, posición y dorsal de un jugador existente
+- [ ] Se puede cambiar el estado fantasy de un jugador (disponible/lesionado/sancionado)
+- [ ] Se puede cambiar el precio fantasy de un jugador
+- [ ] Se puede dar de baja (soft delete) a un jugador
+- [ ] El buscador de jugadores filtra en tiempo real
 - [ ] Se puede crear una nueva jornada cuando no hay ninguna `en_curso`
 - [ ] Se puede iniciar y finalizar una jornada
 - [ ] El toggle de mercado solo aparece cuando la jornada está `en_curso`
 - [ ] Se pueden introducir y guardar resultados de partidos
-- [ ] Se puede cambiar el estado de un jugador (disponible/lesionado/sancionado)
-- [ ] Se puede cambiar el precio fantasy de un jugador
-- [ ] El buscador de jugadores filtra en tiempo real
 - [ ] Se pueden publicar puntuaciones de una jornada finalizada
 - [ ] La tabla de participantes muestra posición, puntos y presupuesto actualizados
 - [ ] Compilación sin errores TypeScript
 
 ---
 
-## Parte B — Alineaciones en Mi Equipo
+## Parte A2 — Panel Admin de Equipo (Entrenador)
+
+### Contexto
+
+Cada equipo real de la liga tiene un entrenador responsable. Este entrenador accede a un panel privado donde gestiona todo lo visual y táctico de su equipo: la foto del equipo, las fotos de sus jugadores, las posiciones de cada jugador y la alineación oficial para cada jornada.
+
+El entrenador **no puede** crear ni eliminar jugadores (eso es del superadmin), pero sí puede personalizar completamente la presentación de su equipo.
+
+### Ruta y acceso
+
+| Ruta | Componente raíz | Acceso |
+|---|---|---|
+| `/equipo/admin` | `EquipoAdminComponent` | Solo si `perfil.uid === equipo.entrenador_id` |
+
+- Si el usuario no es entrenador de ningún equipo → redirigir a `/`
+- Guard: `EntrenadorGuard` que comprueba que existe un equipo donde `entrenador_id === auth.usuario().uid`
+- Un usuario solo puede ser entrenador de un equipo a la vez
+
+### En scope — Parte A2
+
+- **Foto del equipo**: subir/reemplazar imagen que aparece en la web informativa y en el perfil del equipo
+- **Fotos de jugadores**: subir foto individual para cada jugador de la plantilla
+- **Posición de jugadores**: editar la posición (Portero / Defensa / Centrocampista / Delantero) de cada jugador de su equipo
+- **Dorsal de jugadores**: editar el dorsal de cada jugador
+- **Alineación oficial**: seleccionar los titulares de la jornada activa, elegir formación y guardar
+
+### Fuera de scope — Parte A2
+
+- Crear o eliminar jugadores (solo superadmin)
+- Cambiar el nombre del equipo (solo superadmin)
+- Modificar estado_fantasy ni precio_fantasy (solo superadmin)
+- Gestionar otras jornadas que no sean la activa para la alineación
+- Ver datos de otros equipos
+
+---
+
+### Árbol de componentes — Admin Equipo
+
+```
+EquipoAdminComponent                         (features/equipo-admin/equipo-admin.component)
+├── NavbarLightComponent                     (shared)
+├── EquipoAdminTabsComponent                 (features/equipo-admin/components/tabs)
+│   — tabs: Plantilla | Alineación | Equipo
+│
+├── [tab: Plantilla] EquipoAdminPlantillaComponent
+│   ├── Tabla de jugadores del equipo: foto | dorsal | nombre | posición
+│   ├── Por cada jugador:
+│   │   ├── Click en foto → file picker para subir nueva foto del jugador
+│   │   ├── Selector posición (Portero / Defensa / Centrocampista / Delantero)
+│   │   └── Input dorsal (número)
+│   └── Botón "Guardar cambios"
+│
+├── [tab: Alineación] EquipoAdminAlineacionComponent
+│   ├── Selector de formación (mismas 5 formaciones de la Parte B)
+│   ├── Campo visual con slots por fila según formación
+│   ├── Drag-and-drop de jugadores de la plantilla a los slots del campo
+│   ├── Lista de suplentes (jugadores no en el XI)
+│   ├── Indicador: jornada activa o "sin jornada activa"
+│   └── Botón "Guardar alineación"
+│
+└── [tab: Equipo] EquipoAdminEquipoComponent
+    ├── Vista previa de la foto actual del equipo
+    ├── Botón "Cambiar foto" → file picker para subir nueva foto del equipo
+    ├── Nombre del equipo (solo lectura, no editable por entrenador)
+    └── Botón "Guardar"
+```
+
+---
+
+### Modelo de datos adicionales — Parte A2
+
+```typescript
+// Tabla equipos — nuevos campos a añadir
+interface IEquipo {
+  id: string;
+  nombre: string;
+  escudo_url: string | null;    // gestionado por superadmin
+  foto_url: string | null;      // gestionado por entrenador — ADD COLUMN
+  entrenador_id: string | null; // FK a perfiles.uid — ADD COLUMN
+}
+
+// Tabla jugadores — nuevos campos a añadir
+interface IJugador {
+  id: string;
+  nombre: string;
+  dorsal: number;
+  equipo_id: string;
+  posicion: 'portero' | 'defensa' | 'centrocampista' | 'delantero';
+  foto_url: string | null;       // gestionado por entrenador — ADD COLUMN
+  estado_fantasy: 'disponible' | 'lesionado' | 'sancionado';
+  precio_fantasy: number;
+  activo: boolean;
+}
+
+// Nueva tabla: alineaciones_oficiales
+interface IAlineacionOficial {
+  id: string;
+  equipo_id: string;
+  jornada_id: string;
+  formacion: '1-2-2-2' | '1-3-2-1' | '1-2-3-1' | '1-3-1-2' | '1-1-3-2';
+  titulares: string[];   // array de jugador_id, ordenado por fila (POR, DEF, MC, DEL)
+  suplentes: string[];   // array de jugador_id
+  publicada: boolean;
+}
+```
+
+---
+
+### Endpoints backend necesarios — Parte A2
+
+Todos bajo `/equipo-admin` con guard que verifica que el usuario es `entrenador_id` del equipo.
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/equipo-admin/mi-equipo` | Datos del equipo del entrenador autenticado |
+| `POST` | `/equipo-admin/mi-equipo/foto` | Upload foto del equipo (multipart) |
+| `GET` | `/equipo-admin/mi-equipo/jugadores` | Plantilla completa del equipo |
+| `PATCH` | `/equipo-admin/jugadores/{id}` | Editar posición y/o dorsal |
+| `POST` | `/equipo-admin/jugadores/{id}/foto` | Upload foto del jugador (multipart) |
+| `GET` | `/equipo-admin/mi-equipo/alineacion` | Alineación oficial de la jornada activa |
+| `PUT` | `/equipo-admin/mi-equipo/alineacion` | Guardar/reemplazar alineación oficial |
+
+---
+
+### Criterios de aceptación — Parte A2
+
+- [ ] La ruta `/equipo/admin` es inaccesible para usuarios sin `entrenador_id` en ningún equipo
+- [ ] El entrenador ve únicamente los jugadores de su equipo
+- [ ] Se puede subir/reemplazar la foto del equipo
+- [ ] Se puede subir/reemplazar la foto de cada jugador individualmente
+- [ ] Se puede cambiar la posición de un jugador de la plantilla
+- [ ] Se puede cambiar el dorsal de un jugador
+- [ ] Se puede seleccionar la formación y colocar jugadores en el campo (drag-and-drop o click-to-assign)
+- [ ] La alineación se guarda correctamente vinculada a la jornada activa
+- [ ] Si no hay jornada activa, la tab de Alineación muestra un mensaje informativo y deshabilita el guardado
+- [ ] Las fotos subidas aparecen reflejadas en la web informativa del equipo
+- [ ] Compilación sin errores TypeScript
+
+---
+
+## Parte B — Alineaciones en Mi Equipo (Fantasy)
 
 ### Contexto
 
