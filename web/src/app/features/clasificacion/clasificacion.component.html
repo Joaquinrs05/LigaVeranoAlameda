@@ -173,13 +173,13 @@
                           <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
                             [class.bg-primary]="finalMatch.equipoLocal !== null"
                             [class.text-background]="finalMatch.equipoLocal !== null"
-                            [class.bg-outline/20]="finalMatch.equipoLocal === null"
-                            [class.text-on-background/20]="finalMatch.equipoLocal === null"
+                            [class.bg-outline/30]="finalMatch.equipoLocal === null"
+                            [class.text-on-background/50]="finalMatch.equipoLocal === null"
                           >{{ finalMatch.equipoLocal ? abrev(finalMatch.equipoLocal) : '?' }}</div>
                           <span class="text-body-md font-semibold truncate"
                             [class.text-on-background]="finalMatch.equipoLocal !== null"
-                            [class.text-on-background/25]="finalMatch.equipoLocal === null"
-                          >{{ finalMatch.equipoLocal ?? 'Por definir' }}</span>
+                            [class.text-on-background/50]="finalMatch.equipoLocal === null"
+                          >{{ finalMatch.equipoLocal ?? 'Sin definir' }}</span>
                         </div>
                         <span class="text-body-lg font-bold tabular-nums shrink-0"
                           [class.text-on-background]="finalMatch.golesLocal !== null"
@@ -193,19 +193,30 @@
                           <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
                             [class.bg-tertiary]="finalMatch.equipoVisitante !== null"
                             [class.text-background]="finalMatch.equipoVisitante !== null"
-                            [class.bg-outline/20]="finalMatch.equipoVisitante === null"
-                            [class.text-on-background/20]="finalMatch.equipoVisitante === null"
+                            [class.bg-outline/30]="finalMatch.equipoVisitante === null"
+                            [class.text-on-background/50]="finalMatch.equipoVisitante === null"
                           >{{ finalMatch.equipoVisitante ? abrev(finalMatch.equipoVisitante) : '?' }}</div>
                           <span class="text-body-md font-semibold truncate"
                             [class.text-on-background]="finalMatch.equipoVisitante !== null"
-                            [class.text-on-background/25]="finalMatch.equipoVisitante === null"
-                          >{{ finalMatch.equipoVisitante ?? 'Por definir' }}</span>
+                            [class.text-on-background/50]="finalMatch.equipoVisitante === null"
+                          >{{ finalMatch.equipoVisitante ?? 'Sin definir' }}</span>
                         </div>
                         <span class="text-body-lg font-bold tabular-nums shrink-0"
                           [class.text-on-background]="finalMatch.golesVisitante !== null"
                           [class.text-on-background/20]="finalMatch.golesVisitante === null"
                         >{{ finalMatch.golesVisitante ?? '—' }}</span>
                       </div>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="absolute left-0 top-41.5 w-full border border-outline/30 overflow-hidden bg-surface/50">
+                    <div class="flex items-center px-4 gap-2 border-b border-outline/20" style="height:44px">
+                      <div class="w-6 h-6 shrink-0 rounded-full bg-outline/20 flex items-center justify-center text-[9px] font-bold text-on-background/30">?</div>
+                      <span class="text-body-md text-on-background/40 italic">Sin definir</span>
+                    </div>
+                    <div class="flex items-center px-4 gap-2" style="height:44px">
+                      <div class="w-6 h-6 shrink-0 rounded-full bg-outline/20 flex items-center justify-center text-[9px] font-bold text-on-background/30">?</div>
+                      <span class="text-body-md text-on-background/40 italic">Sin definir</span>
                     </div>
                   </div>
                 }
@@ -224,48 +235,61 @@
 
 <!-- ── Match card reutilizable ── -->
 <ng-template #matchCard let-cruce>
-  <div class="w-full border border-outline/40 overflow-hidden bg-surface">
-    <div class="flex items-center justify-between px-4 gap-2 border-b border-outline/30"
-      style="height:44px"
-      [class.bg-background/50]="isWinner(cruce, 'local')"
-    >
-      <div class="flex items-center gap-2 min-w-0 flex-1">
-        <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
-          [class.bg-primary]="cruce.equipoLocal !== null"
-          [class.text-background]="cruce.equipoLocal !== null"
-          [class.bg-outline/20]="cruce.equipoLocal === null"
-          [class.text-on-background/20]="cruce.equipoLocal === null"
-        >{{ cruce.equipoLocal ? abrev(cruce.equipoLocal) : '?' }}</div>
-        <span class="text-body-md font-semibold truncate"
-          [class.text-on-background]="cruce.equipoLocal !== null"
-          [class.text-on-background/25]="cruce.equipoLocal === null"
-        >{{ cruce.equipoLocal ?? 'Por definir' }}</span>
+  @if (cruce) {
+    <div class="w-full border border-outline/40 overflow-hidden bg-surface">
+      <div class="flex items-center justify-between px-4 gap-2 border-b border-outline/30"
+        style="height:44px"
+        [class.bg-background/50]="isWinner(cruce, 'local')"
+      >
+        <div class="flex items-center gap-2 min-w-0 flex-1">
+          <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
+            [class.bg-primary]="cruce.equipoLocal !== null"
+            [class.text-background]="cruce.equipoLocal !== null"
+            [class.bg-outline/30]="cruce.equipoLocal === null"
+            [class.text-on-background/50]="cruce.equipoLocal === null"
+          >{{ cruce.equipoLocal ? abrev(cruce.equipoLocal) : '?' }}</div>
+          <span class="text-body-md font-semibold truncate"
+            [class.text-on-background]="cruce.equipoLocal !== null"
+            [class.text-on-background/50]="cruce.equipoLocal === null"
+          >{{ cruce.equipoLocal ?? 'Sin definir' }}</span>
+        </div>
+        <span class="text-body-lg font-bold tabular-nums shrink-0"
+          [class.text-on-background]="cruce.golesLocal !== null"
+          [class.text-on-background/30]="cruce.golesLocal === null"
+        >{{ cruce.golesLocal ?? '—' }}</span>
       </div>
-      <span class="text-body-lg font-bold tabular-nums shrink-0"
-        [class.text-on-background]="cruce.golesLocal !== null"
-        [class.text-on-background/20]="cruce.golesLocal === null"
-      >{{ cruce.golesLocal ?? '—' }}</span>
-    </div>
-    <div class="flex items-center justify-between px-4 gap-2"
-      style="height:44px"
-      [class.bg-background/50]="isWinner(cruce, 'visitante')"
-    >
-      <div class="flex items-center gap-2 min-w-0 flex-1">
-        <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
-          [class.bg-tertiary]="cruce.equipoVisitante !== null"
-          [class.text-background]="cruce.equipoVisitante !== null"
-          [class.bg-outline/20]="cruce.equipoVisitante === null"
-          [class.text-on-background/20]="cruce.equipoVisitante === null"
-        >{{ cruce.equipoVisitante ? abrev(cruce.equipoVisitante) : '?' }}</div>
-        <span class="text-body-md font-semibold truncate"
-          [class.text-on-background]="cruce.equipoVisitante !== null"
-          [class.text-on-background/25]="cruce.equipoVisitante === null"
-        >{{ cruce.equipoVisitante ?? 'Por definir' }}</span>
+      <div class="flex items-center justify-between px-4 gap-2"
+        style="height:44px"
+        [class.bg-background/50]="isWinner(cruce, 'visitante')"
+      >
+        <div class="flex items-center gap-2 min-w-0 flex-1">
+          <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
+            [class.bg-tertiary]="cruce.equipoVisitante !== null"
+            [class.text-background]="cruce.equipoVisitante !== null"
+            [class.bg-outline/30]="cruce.equipoVisitante === null"
+            [class.text-on-background/50]="cruce.equipoVisitante === null"
+          >{{ cruce.equipoVisitante ? abrev(cruce.equipoVisitante) : '?' }}</div>
+          <span class="text-body-md font-semibold truncate"
+            [class.text-on-background]="cruce.equipoVisitante !== null"
+            [class.text-on-background/50]="cruce.equipoVisitante === null"
+          >{{ cruce.equipoVisitante ?? 'Sin definir' }}</span>
+        </div>
+        <span class="text-body-lg font-bold tabular-nums shrink-0"
+          [class.text-on-background]="cruce.golesVisitante !== null"
+          [class.text-on-background/30]="cruce.golesVisitante === null"
+        >{{ cruce.golesVisitante ?? '—' }}</span>
       </div>
-      <span class="text-body-lg font-bold tabular-nums shrink-0"
-        [class.text-on-background]="cruce.golesVisitante !== null"
-        [class.text-on-background/20]="cruce.golesVisitante === null"
-      >{{ cruce.golesVisitante ?? '—' }}</span>
     </div>
-  </div>
+  } @else {
+    <div class="w-full border border-outline/30 overflow-hidden bg-surface/50">
+      <div class="flex items-center px-4 gap-2 border-b border-outline/20" style="height:44px">
+        <div class="w-6 h-6 shrink-0 rounded-full bg-outline/20 flex items-center justify-center text-[9px] font-bold text-on-background/30">?</div>
+        <span class="text-body-md text-on-background/40 italic">Sin definir</span>
+      </div>
+      <div class="flex items-center px-4 gap-2" style="height:44px">
+        <div class="w-6 h-6 shrink-0 rounded-full bg-outline/20 flex items-center justify-center text-[9px] font-bold text-on-background/30">?</div>
+        <span class="text-body-md text-on-background/40 italic">Sin definir</span>
+      </div>
+    </div>
+  }
 </ng-template>
