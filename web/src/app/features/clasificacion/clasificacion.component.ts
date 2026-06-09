@@ -66,6 +66,11 @@ export class ClasificacionComponent implements OnInit, AfterViewInit {
     });
   }
 
+  get placeholderCruces(): number[] {
+    const count = this.faseActiva() === 'cuartos' ? 4 : this.faseActiva() === 'semis' ? 2 : 1;
+    return Array.from({ length: count }, (_, i) => i);
+  }
+
   get crucesActivos(): ICruce[] {
     switch (this.faseActiva()) {
       case 'cuartos': return this.cuartos;
