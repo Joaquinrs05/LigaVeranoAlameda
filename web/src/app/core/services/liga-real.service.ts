@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
+import { forkJoin } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { IClasificacionEntry } from '../models/clasificacion.model';
 import { IGoleadorJornada } from '../models/jugador.model';
 import { IPartido, EstadoPartido } from '../models/partido.model';
 import { ICruce } from '../models/torneo.model';
+import { IEquipo } from '../models/equipo.model';
 
 interface ApiResp<T> { data: T | null }
 
@@ -31,6 +33,10 @@ interface ApiGoleador {
   id: string; nombre: string; equipo: string; posicion: string;
   goles: number; asistencias: number;
 }
+interface ApiEquipoDetalle {
+  id: string; nombre: string; abrev: string; color: string;
+  jugadores: Array<{ id: string; nombre: string; dorsal: number | null; posicion: string }>;
+}
 
 export interface CrucesPorFase {
   cuartos: ICruce[];
@@ -48,6 +54,8 @@ export class LigaRealService {
   readonly goleadores     = signal<IGoleadorJornada[]>([]);
   readonly cruces         = signal<CrucesPorFase>({ cuartos: [], semis: [], final: null });
   readonly jornadaActual  = signal<number>(0);
+  readonly equipos        = signal<IEquipo[]>([]);
+  readonly equipoDetalle  = signal<IEquipo | null>(null);
 
   cargarClasificacion(): void {
     this.http.get<ApiResp<ApiClasificacion[]>>(`${this.base}/clasificacion`).subscribe({
@@ -86,6 +94,56 @@ export class LigaRealService {
           cuartos: todos.filter(c => c.fase === 'cuartos').map(c => this.mapCruce(c)),
           semis:   todos.filter(c => c.fase === 'semis').map(c => this.mapCruce(c)),
           final:   (() => { const f = todos.find(c => c.fase === 'final'); return f ? this.mapCruce(f) : null; })(),
+        });
+      },
+    });
+  }
+
+  cargarEquipos(): void {
+    this.http.get<ApiResp<ApiClasificacion[]>>(`${this.base}/clasificacion`).subscribe({
+      next: r => this.equipos.set(
+        (r.data ?? []).map((c, i) => ({
+          id:        c.equipo_id,
+          nombre:    c.nombre,
+          abrev:     c.abrev,
+          color:     c.color,
+          posicion:  i + 1,
+          stats:     { pj: c.pj, v: c.pg, e: c.pe, d: c.pp, gf: c.gf, gc: c.gc, pts: c.puntos },
+          jugadores: [],
+        }))
+      ),
+    });
+  }
+
+  cargarEquipoDetalle(id: string): void {
+    this.equipoDetalle.set(null);
+    forkJoin({
+      equipo: this.http.get<ApiResp<ApiEquipoDetalle>>(`${this.base}/equipos/${id}`),
+      clas:   this.http.get<ApiResp<ApiClasificacion[]>>(`${this.base}/clasificacion`),
+    }).subscribe({
+      next: ({ equipo, clas }) => {
+        const e = equipo.data;
+        if (!e) return;
+        const clasList = clas.data ?? [];
+        const posIdx   = clasList.findIndex(c => c.equipo_id === id);
+        const statsRow = clasList[posIdx];
+        this.equipoDetalle.set({
+          id:        e.id,
+          nombre:    e.nombre,
+          abrev:     e.abrev,
+          color:     e.color,
+          posicion:  posIdx >= 0 ? posIdx + 1 : 0,
+          stats:     statsRow
+            ? { pj: statsRow.pj, v: statsRow.pg, e: statsRow.pe, d: statsRow.pp, gf: statsRow.gf, gc: statsRow.gc, pts: statsRow.puntos }
+            : { pj: 0, v: 0, e: 0, d: 0, gf: 0, gc: 0, pts: 0 },
+          jugadores: e.jugadores.map(j => ({
+            id:          j.id,
+            nombre:      j.nombre,
+            dorsal:      j.dorsal ?? 0,
+            posicion:    j.posicion as 'POR' | 'DEF' | 'MC' | 'DEL',
+            goles:       0,
+            asistencias: 0,
+          })),
         });
       },
     });

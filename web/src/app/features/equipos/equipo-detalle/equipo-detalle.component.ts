@@ -1,11 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { NavbarLightComponent } from '../../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { PlayerCardComponent } from '../../../shared/components/player-card/player-card.component';
-import { EQUIPOS_DATA } from '../../../core/data/equipos.data';
-import { IEquipo, IJugadorEquipo } from '../../../core/models/equipo.model';
+import { LigaRealService } from '../../../core/services/liga-real.service';
 
 @Component({
   selector: 'app-equipo-detalle',
@@ -14,19 +13,17 @@ import { IEquipo, IJugadorEquipo } from '../../../core/models/equipo.model';
   templateUrl: './equipo-detalle.component.html',
 })
 export class EquipoDetalleComponent {
-  private readonly route = inject(ActivatedRoute);
+  private readonly liga = inject(LigaRealService);
 
-  readonly equipo: IEquipo | undefined = (() => {
-    const id = this.route.snapshot.paramMap.get('id');
-    return EQUIPOS_DATA.find(e => e.id === id);
-  })();
+  readonly equipo = this.liga.equipoDetalle;
 
-  readonly porteros        = this.equipo?.jugadores.filter(j => j.posicion === 'POR') ?? [];
-  readonly defensas        = this.equipo?.jugadores.filter(j => j.posicion === 'DEF') ?? [];
-  readonly centrocampistas = this.equipo?.jugadores.filter(j => j.posicion === 'MC')  ?? [];
-  readonly delanteros      = this.equipo?.jugadores.filter(j => j.posicion === 'DEL') ?? [];
+  readonly porteros        = computed(() => this.equipo()?.jugadores.filter(j => j.posicion === 'POR') ?? []);
+  readonly defensas        = computed(() => this.equipo()?.jugadores.filter(j => j.posicion === 'DEF') ?? []);
+  readonly centrocampistas = computed(() => this.equipo()?.jugadores.filter(j => j.posicion === 'MC')  ?? []);
+  readonly delanteros      = computed(() => this.equipo()?.jugadores.filter(j => j.posicion === 'DEL') ?? []);
 
-  primerNombre(nombre: string): string {
-    return nombre.split(' ')[0];
+  constructor() {
+    const id = inject(ActivatedRoute).snapshot.paramMap.get('id')!;
+    this.liga.cargarEquipoDetalle(id);
   }
 }

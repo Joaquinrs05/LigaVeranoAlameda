@@ -1,10 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
-import { EQUIPOS_DATA } from '../../core/data/equipos.data';
-import { IEquipo } from '../../core/models/equipo.model';
+import { LigaRealService } from '../../core/services/liga-real.service';
 
 @Component({
   selector: 'app-equipos',
@@ -13,5 +12,8 @@ import { IEquipo } from '../../core/models/equipo.model';
   templateUrl: './equipos.component.html',
 })
 export class EquiposComponent {
-  readonly equipos: IEquipo[] = EQUIPOS_DATA;
+  private readonly liga = inject(LigaRealService);
+  readonly equipos = this.liga.equipos;
+
+  constructor() { this.liga.cargarEquipos(); }
 }

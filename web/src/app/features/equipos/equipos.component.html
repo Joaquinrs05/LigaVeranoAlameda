@@ -5,12 +5,12 @@
   <!-- Header -->
   <div class="mb-lg">
     <h1 class="text-headline-lg font-bold text-primary">Equipos</h1>
-    <p class="text-body-md text-on-background/60 mt-xs">{{ equipos.length }} equipos en la liga · Temporada 2026</p>
+    <p class="text-body-md text-on-background/60 mt-xs">{{ equipos().length }} equipos en la liga · Temporada 2026</p>
   </div>
 
   <!-- Grid -->
   <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-md">
-    @for (equipo of equipos; track equipo.id) {
+    @for (equipo of equipos(); track equipo.id) {
       <a
                 [routerLink]="['/equipos', equipo.id]"
         class="bg-surface border border-outline rounded overflow-hidden flex flex-col cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"

@@ -1,7 +1,7 @@
 <app-navbar-light />
 
 <main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
-  @if (equipo) {
+  @if (equipo()) {
     <!-- ── Cabecera ── -->
     <div class="mb-lg flex flex-col gap-md">
       <a
@@ -15,15 +15,15 @@
       <div class="flex items-center gap-md">
         <div
           class="w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0"
-          [style.background]="equipo.color"
-          [style.box-shadow]="'0 8px 24px ' + equipo.color + '55'"
+          [style.background]="equipo()!.color"
+          [style.box-shadow]="'0 8px 24px ' + equipo()!.color + '55'"
         >
-          {{ equipo.abrev }}
+          {{ equipo()!.abrev }}
         </div>
         <div>
-          <h1 class="text-headline-lg font-bold text-on-background">{{ equipo.nombre }}</h1>
+          <h1 class="text-headline-lg font-bold text-on-background">{{ equipo()!.nombre }}</h1>
           <p class="text-body-md text-on-background/50 mt-0.5">
-            <span class="font-bold text-primary">#{{ equipo.posicion }}</span> en la clasificación
+            <span class="font-bold text-primary">#{{ equipo()!.posicion }}</span> en la clasificación
           </p>
         </div>
       </div>
@@ -31,13 +31,13 @@
       <!-- Stats -->
       <div class="grid grid-cols-4 sm:grid-cols-7 gap-sm">
         @for (stat of [
-          { label: 'PJ',  value: equipo.stats.pj,  color: 'text-on-background' },
-          { label: 'V',   value: equipo.stats.v,   color: 'text-tertiary' },
-          { label: 'E',   value: equipo.stats.e,   color: 'text-on-background' },
-          { label: 'D',   value: equipo.stats.d,   color: 'text-primary' },
-          { label: 'GF',  value: equipo.stats.gf,  color: 'text-on-background' },
-          { label: 'GC',  value: equipo.stats.gc,  color: 'text-on-background' },
-          { label: 'Pts', value: equipo.stats.pts, color: 'text-primary' }
+          { label: 'PJ',  value: equipo()!.stats.pj,  color: 'text-on-background' },
+          { label: 'V',   value: equipo()!.stats.v,   color: 'text-tertiary' },
+          { label: 'E',   value: equipo()!.stats.e,   color: 'text-on-background' },
+          { label: 'D',   value: equipo()!.stats.d,   color: 'text-primary' },
+          { label: 'GF',  value: equipo()!.stats.gf,  color: 'text-on-background' },
+          { label: 'GC',  value: equipo()!.stats.gc,  color: 'text-on-background' },
+          { label: 'Pts', value: equipo()!.stats.pts, color: 'text-primary' }
         ]; track stat.label) {
           <div
             class="rounded p-sm text-center"
@@ -70,7 +70,7 @@
 
           <!-- Delanteros -->
           <div class="flex justify-center gap-lg">
-            @for (j of delanteros; track j.id) {
+            @for (j of delanteros(); track j.id) {
               <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
                 <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
               </div>
@@ -79,7 +79,7 @@
 
           <!-- Centrocampistas -->
           <div class="flex justify-center gap-md md:gap-lg">
-            @for (j of centrocampistas; track j.id) {
+            @for (j of centrocampistas(); track j.id) {
               <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
                 <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
               </div>
@@ -88,7 +88,7 @@
 
           <!-- Defensas -->
           <div class="flex justify-center gap-xl md:gap-2xl">
-            @for (j of defensas; track j.id) {
+            @for (j of defensas(); track j.id) {
               <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
                 <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
               </div>
@@ -97,7 +97,7 @@
 
           <!-- Portero -->
           <div class="flex justify-center">
-            @for (j of porteros; track j.id) {
+            @for (j of porteros(); track j.id) {
               <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
                 <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
               </div>
@@ -114,14 +114,14 @@
           Jugadores
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
-          @for (j of equipo.jugadores; track j.id) {
+          @for (j of equipo()!.jugadores; track j.id) {
             <div
               class="flex items-center gap-sm p-sm rounded"
               style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.12);box-shadow:0 2px 8px rgba(0,0,0,0.04)"
             >
               <div
                 class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-[12px] shrink-0"
-                [style.background]="equipo.color"
+                [style.background]="equipo()!.color"
               >{{ j.dorsal }}</div>
               <div class="flex flex-col min-w-0 flex-1">
                 <span class="font-bold text-body-md text-on-background truncate">{{ j.nombre }}</span>
