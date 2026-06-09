@@ -112,7 +112,14 @@
             <input
               [(ngModel)]="codigoInvitacion"
               placeholder="Código de invitación…"
+              maxlength="6"
               class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors font-mono tracking-wider uppercase"
+              style="border-color:rgba(26,74,46,0.25);background:rgba(255,255,255,0.9)"
+            />
+            <input
+              [(ngModel)]="nombreEquipo"
+              placeholder="Nombre de tu equipo…"
+              class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors"
               style="border-color:rgba(26,74,46,0.25);background:rgba(255,255,255,0.9)"
             />
             <div class="flex gap-sm">
@@ -124,7 +131,7 @@
               </button>
               <button
                 (click)="unirseALiga()"
-                [disabled]="!codigoInvitacion.trim()"
+                [disabled]="!codigoInvitacion.trim() || !nombreEquipo.trim()"
                 class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                 style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%)"
               >
