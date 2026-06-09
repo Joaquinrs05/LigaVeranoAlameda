@@ -23,6 +23,20 @@
         </a>
       </div>
 
+      <!-- Selector de formación -->
+      <div class="flex items-center gap-xs flex-wrap">
+        <span class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">Formación:</span>
+        @for (f of formaciones; track f) {
+          <button
+            (click)="cambiarFormacion(f)"
+            class="px-sm py-0.75 rounded text-[11px] font-bold transition-all duration-150"
+            [style.background]="formacion() === f ? '#C0552A' : 'rgba(255,255,255,0.75)'"
+            [style.color]="formacion() === f ? '#F5F0E8' : 'rgba(15,25,35,0.65)'"
+            style="border: 1px solid rgba(192,85,42,0.2)"
+          >{{ f }}</button>
+        }
+      </div>
+
       <!-- Stats -->
       <div class="grid grid-cols-3 gap-sm">
         <div class="rounded p-sm flex flex-col gap-xs" style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.15)">
@@ -194,7 +208,9 @@
               <div class="flex flex-col min-w-0">
                 <span class="font-bold text-body-md text-on-background truncate">{{ j.nombre.split(' ')[0] }}</span>
                 <div class="flex items-center gap-1">
-                  @if (j.estado === 'lesionado') {
+                  @if (movidos().includes(j.id)) {
+                    <span class="text-[9px] font-bold text-primary">↓ Movido</span>
+                  } @else if (j.estado === 'lesionado') {
                     <span class="text-[9px] font-bold text-red-500">LES</span>
                   } @else if (j.estado === 'sancionado') {
                     <span class="text-[9px] font-bold text-yellow-600">SAN</span>

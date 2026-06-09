@@ -185,3 +185,90 @@ cambiarFormacion(f: Formacion): void { ... }
 - [ ] La formación activa se persiste en `localStorage` y se restaura al volver a la página
 - [ ] Con 0 jugadores de una posición, los slots vacíos siguen mostrándose
 - [ ] Compilación sin errores TypeScript
+
+---
+
+## Parte C — Clasificación Fantasy
+
+### Contexto
+
+El dashboard muestra la clasificación de la liga fantasy inline, pero es limitada (máximo 5 entradas, sin detalle por equipo). Se necesita una vista dedicada con la tabla completa y la capacidad de ver el equipo de cualquier participante.
+
+### Ruta y acceso
+
+| Ruta | Componente raíz | Acceso |
+|---|---|---|
+| `/fantasy/clasificacion` | `ClasificacionFantasyComponent` | Autenticado + miembro de `ligaActiva` |
+| `/fantasy/clasificacion/:miembroId` | `EquipoRivalComponent` | Autenticado + miembro de `ligaActiva` |
+
+- Si `!enLiga` → redirigir a `/fantasy/dashboard`
+
+### En scope — Parte C
+
+- Tabla completa de clasificación de la `ligaActiva` (todos los participantes)
+- Indicador visual del equipo propio (fila resaltada)
+- Cada fila es navegable → va a `/fantasy/clasificacion/:miembroId`
+- Vista de equipo rival: alineación en campo (solo lectura, sin drag) con titular/reserva
+- Cabecera de equipo rival: nombre del equipo, puntos totales, presupuesto restante
+- Código de invitación de la liga visible con botón copiar (para compartir fácil)
+- Enlace a `/fantasy/ligas` para gestionar ligas
+
+### Fuera de scope — Parte C
+
+- Histórico de puntos por jornada
+- Chat entre participantes
+- Comparativa directa entre dos equipos
+
+### Árbol de componentes — Parte C
+
+```
+ClasificacionFantasyComponent              (features/fantasy/clasificacion-fantasy)
+├── NavbarLightComponent                   (shared)
+├── Hero: nombre de la liga + código       (inline)
+│   └── Botón copiar código de invitación
+├── TablaClasificacionComponent            (inline)
+│   ├── Cabecera: # | Equipo | Pts totales | Presupuesto
+│   ├── @for fila de clasificacion()
+│   │   ├── Badge posición (🥇 si es 1º)
+│   │   ├── Nombre equipo + nombre manager
+│   │   ├── Puntos totales (destacados en secondary si es el usuario)
+│   │   ├── Presupuesto restante
+│   │   └── Flecha → navega a /fantasy/clasificacion/:miembroId
+│   └── Fila propia resaltada con bg-tertiary/5 + ring
+└── FooterComponent                        (shared)
+
+EquipoRivalComponent                       (features/fantasy/clasificacion-fantasy/equipo-rival)
+├── NavbarLightComponent                   (shared)
+├── Cabecera: nombre equipo + puntos + presupuesto
+├── Campo de alineación (solo lectura)     — mismo layout que mi-equipo pero sin interacción
+│   ├── Fila portero
+│   ├── Fila defensas
+│   ├── Fila centrocampistas
+│   └── Fila delanteros
+├── Lista de reservas (solo lectura)
+└── FooterComponent                        (shared)
+```
+
+### Datos necesarios del backend
+
+- `GET /fantasy/ligas/{liga_id}` — ya existe: devuelve `clasificacion[]` con `miembro_id`, `nombre_equipo`, `puntos_total`, `presupuesto`, `posicion`
+- `GET /fantasy/ligas/{liga_id}/miembros/{miembro_id}/equipo` — **nuevo**: devuelve la plantilla de un miembro concreto (mismo formato que `mi-equipo`, pero de cualquier miembro de la liga)
+
+#### Schema del nuevo endpoint
+
+```python
+# GET /fantasy/ligas/{liga_id}/miembros/{miembro_id}/equipo
+# Guard: requiere que el usuario sea miembro de la liga (no solo el propietario del equipo)
+# Respuesta: ApiResponse[list[PlantillaItemOut]]  (mismo schema que mi-equipo)
+```
+
+### Criterios de aceptación — Parte C
+
+- [ ] La ruta `/fantasy/clasificacion` muestra la tabla completa de la liga activa
+- [ ] La fila del usuario propio está visualmente diferenciada
+- [ ] El código de invitación de la liga es visible y se puede copiar con un clic
+- [ ] Cada fila navega a `/fantasy/clasificacion/:miembroId`
+- [ ] `/fantasy/clasificacion/:miembroId` muestra el campo con la alineación del rival (solo lectura)
+- [ ] La cabecera del equipo rival muestra nombre, puntos totales y presupuesto
+- [ ] Si se intenta acceder sin estar en una liga, redirige a `/fantasy/dashboard`
+- [ ] Compilación sin errores TypeScript
