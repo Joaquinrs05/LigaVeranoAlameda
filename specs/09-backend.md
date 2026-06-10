@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `09-backend` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Tipo** | Arquitectura de servidor — independiente del frontend Angular |
 | **Prioridad** | `alta` |
 | **Dependencias** | `08-auth` (Supabase Auth ya configurado) |

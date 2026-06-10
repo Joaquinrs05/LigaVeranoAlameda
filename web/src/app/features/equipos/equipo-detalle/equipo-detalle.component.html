@@ -14,11 +14,15 @@
 
       <div class="flex items-center gap-md">
         <div
-          class="w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0"
+          class="w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden"
           [style.background]="equipo()!.color"
           [style.box-shadow]="'0 8px 24px ' + equipo()!.color + '55'"
         >
-          {{ equipo()!.abrev }}
+          @if (equipo()!.fotoUrl) {
+            <img [src]="equipo()!.fotoUrl" [alt]="equipo()!.nombre" class="w-full h-full object-contain p-1" />
+          } @else {
+            {{ equipo()!.abrev }}
+          }
         </div>
         <div>
           <h1 class="text-headline-lg font-bold text-on-background">{{ equipo()!.nombre }}</h1>

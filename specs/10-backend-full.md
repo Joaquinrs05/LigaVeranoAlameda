@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `10-backend-full` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Tipo** | Referencia de arquitectura — backend + BD |
 | **Prioridad** | `alta` |
 | **Dependencias** | `08-auth`, `09-backend` |

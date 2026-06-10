@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `11-admin-y-alineaciones` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Módulo** | `admin` + `admin-equipo` + `fantasy/mi-equipo` |
 | **Prioridad** | `media` |
 | **Dependencias** | `08-auth`, `09-backend`, `10-backend-full`, `05-mi-equipo` |

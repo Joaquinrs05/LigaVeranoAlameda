@@ -22,6 +22,7 @@ export interface IEquipo {
   nombre: string;
   abrev: string;
   color: string;
+  fotoUrl?: string;
   posicion: number;
   stats: IEquipoStats;
   jugadores: IJugadorEquipo[];

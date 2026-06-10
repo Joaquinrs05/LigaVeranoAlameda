@@ -12,6 +12,7 @@ class EquipoOut(BaseModel):
     nombre: str
     abrev: str
     color: str
+    foto_url: str | None = None
     created_at: datetime
 
 
@@ -93,6 +94,7 @@ class EquipoConStatsOut(BaseModel):
     nombre: str
     abrev: str
     color: str
+    foto_url: str | None = None
     jugadores: list[JugadorOut] = []
 
 

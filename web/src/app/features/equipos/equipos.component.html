@@ -24,7 +24,11 @@
             class="absolute inset-0 opacity-10 pointer-events-none"
             style="background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px); background-size: 18px 18px;"
           ></div>
-          <span class="text-white font-bold text-[2rem] leading-none z-10 drop-shadow">{{ equipo.abrev }}</span>
+          @if (equipo.fotoUrl) {
+            <img [src]="equipo.fotoUrl" [alt]="equipo.nombre" class="relative z-10 h-20 w-20 object-contain drop-shadow" />
+          } @else {
+            <span class="text-white font-bold text-[2rem] leading-none z-10 drop-shadow">{{ equipo.abrev }}</span>
+          }
         </div>
 
         <!-- Nombre -->

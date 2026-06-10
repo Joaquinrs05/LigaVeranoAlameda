@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `00-architecture` |
-| **Status** | `ready` |
+| **Status** | `done` |
 | **Tipo** | Decisiones de arquitectura — implementar ANTES que cualquier feature |
 
 ---

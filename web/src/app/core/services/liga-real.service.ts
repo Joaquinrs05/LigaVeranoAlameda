@@ -33,8 +33,11 @@ interface ApiGoleador {
   id: string; nombre: string; equipo: string; posicion: string;
   goles: number; asistencias: number;
 }
+interface ApiEquipoOut {
+  id: string; nombre: string; abrev: string; color: string; foto_url: string | null;
+}
 interface ApiEquipoDetalle {
-  id: string; nombre: string; abrev: string; color: string;
+  id: string; nombre: string; abrev: string; color: string; foto_url: string | null;
   jugadores: Array<{ id: string; nombre: string; dorsal: number | null; posicion: string }>;
 }
 
@@ -100,15 +103,16 @@ export class LigaRealService {
   }
 
   cargarEquipos(): void {
-    this.http.get<ApiResp<ApiClasificacion[]>>(`${this.base}/clasificacion`).subscribe({
+    this.http.get<ApiResp<ApiEquipoOut[]>>(`${this.base}/equipos`).subscribe({
       next: r => this.equipos.set(
-        (r.data ?? []).map((c, i) => ({
-          id:        c.equipo_id,
-          nombre:    c.nombre,
-          abrev:     c.abrev,
-          color:     c.color,
-          posicion:  i + 1,
-          stats:     { pj: c.pj, v: c.pg, e: c.pe, d: c.pp, gf: c.gf, gc: c.gc, pts: c.puntos },
+        (r.data ?? []).map(e => ({
+          id:        e.id,
+          nombre:    e.nombre,
+          abrev:     e.abrev,
+          color:     e.color,
+          fotoUrl:   e.foto_url ?? undefined,
+          posicion:  0,
+          stats:     { pj: 0, v: 0, e: 0, d: 0, gf: 0, gc: 0, pts: 0 },
           jugadores: [],
         }))
       ),
@@ -132,6 +136,7 @@ export class LigaRealService {
           nombre:    e.nombre,
           abrev:     e.abrev,
           color:     e.color,
+          fotoUrl:   e.foto_url ?? undefined,
           posicion:  posIdx >= 0 ? posIdx + 1 : 0,
           stats:     statsRow
             ? { pj: statsRow.pj, v: statsRow.pg, e: statsRow.pe, d: statsRow.pp, gf: statsRow.gf, gc: statsRow.gc, pts: statsRow.puntos }
@@ -140,13 +145,22 @@ export class LigaRealService {
             id:          j.id,
             nombre:      j.nombre,
             dorsal:      j.dorsal ?? 0,
-            posicion:    j.posicion as 'POR' | 'DEF' | 'MC' | 'DEL',
+            posicion:    this.normalizarPosicion(j.posicion),
             goles:       0,
             asistencias: 0,
           })),
         });
       },
     });
+  }
+
+  private normalizarPosicion(p: string): 'POR' | 'DEF' | 'MC' | 'DEL' {
+    const lower = p.toLowerCase();
+    if (lower === 'por' || lower === 'portero')        return 'POR';
+    if (lower === 'def' || lower === 'defensa')        return 'DEF';
+    if (lower === 'mc'  || lower === 'centrocampista') return 'MC';
+    if (lower === 'del' || lower === 'delantero')      return 'DEL';
+    return 'MC';
   }
 
   private mapClasificacion(c: ApiClasificacion, idx: number): IClasificacionEntry {

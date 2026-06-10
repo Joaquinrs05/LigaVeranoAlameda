@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `06-ajustes` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Módulo** | `shared` |
 | **Prioridad** | `baja` |
 | **Mockup** | `screens/ajustes-escritorio.html` |

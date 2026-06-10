@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `04-mercado` |
-| **Status** | `draft` |
+| **Status** | `done` |
 | **Módulo** | `fantasy` |
 | **Prioridad** | `alta` |
 | **Mockup** | `screens/mercado-escritorio.html`, `screens/mercado-movil.html` |
