@@ -72,10 +72,12 @@
     <span class="material-symbols-outlined text-[22px]">bolt</span>
     <span>Fantasy</span>
   </a>
-  <a routerLink="/ajustes" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
-    <span class="material-symbols-outlined text-[22px]">settings</span>
-    <span>Ajustes</span>
-  </a>
+  @if (auth.autenticado()) {
+    <a routerLink="/ajustes" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
+      <span class="material-symbols-outlined text-[22px]">settings</span>
+      <span>Ajustes</span>
+    </a>
+  }
   @if (auth.usuario()?.esAdmin) {
     <a routerLink="/superadmin" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
       <span class="material-symbols-outlined text-[22px]">admin_panel_settings</span>
@@ -143,10 +145,12 @@
       <div class="border-t border-outline my-sm"></div>
     }
 
-    <a routerLink="/ajustes" routerLinkActive="nav-active" class="nav-link">
-      <span class="material-symbols-outlined text-[20px]">settings</span>
-      Ajustes
-    </a>
+    @if (auth.autenticado()) {
+      <a routerLink="/ajustes" routerLinkActive="nav-active" class="nav-link">
+        <span class="material-symbols-outlined text-[20px]">settings</span>
+        Ajustes
+      </a>
+    }
 
     @if (auth.usuario()?.esAdmin) {
       <div class="border-t border-outline my-sm"></div>
