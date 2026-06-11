@@ -19,10 +19,22 @@
   </a>
 
   <div class="flex items-center gap-sm">
+    <button
+      type="button"
+      (click)="tema.alternar()"
+      class="w-9 h-9 rounded-full flex items-center justify-center text-tertiary hover:bg-tertiary/10 border border-tertiary/15 transition-colors"
+      [attr.aria-label]="tema.oscuro() ? 'Activar modo claro' : 'Activar modo oscuro'"
+      [attr.title]="tema.oscuro() ? 'Modo claro' : 'Modo oscuro'"
+    >
+      <span class="material-symbols-outlined text-[20px]">
+        {{ tema.oscuro() ? 'light_mode' : 'dark_mode' }}
+      </span>
+    </button>
+
     @if (!auth.autenticado()) {
       <a
         routerLink="/fantasy/dashboard"
-        class="hidden md:flex items-center gap-1.5 bg-primary text-surface font-bold text-label-bold px-md py-sm rounded-full hover:bg-primary/90 transition-colors shadow-sm"
+        class="hidden md:flex items-center gap-1.5 bg-primary text-cream font-bold text-label-bold px-md py-sm rounded-full hover:bg-primary/90 transition-colors shadow-sm"
       >
         <span class="material-symbols-outlined text-[16px]">bolt</span>
         Entrar al Fantasy
@@ -181,7 +193,7 @@
           @if (auth.usuario()?.fotoPerfil) {
             <img [src]="auth.usuario()!.fotoPerfil!" class="w-full h-full object-cover" />
           } @else {
-            <span class="material-symbols-outlined text-surface text-[16px]">person</span>
+            <span class="material-symbols-outlined text-cream text-[16px]">person</span>
           }
         </div>
         <div class="flex flex-col min-w-0 flex-1">
@@ -201,7 +213,7 @@
     } @else {
       <a
         routerLink="/auth/login"
-        class="w-full bg-primary text-surface font-bold text-label-bold py-sm rounded-full hover:bg-primary/90 transition-colors flex justify-center items-center gap-2 shadow-sm"
+        class="w-full bg-primary text-cream font-bold text-label-bold py-sm rounded-full hover:bg-primary/90 transition-colors flex justify-center items-center gap-2 shadow-sm"
       >
         <span class="material-symbols-outlined text-[16px]">add</span>
         Unirse a la Liga Fantasy

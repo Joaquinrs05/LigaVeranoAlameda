@@ -140,7 +140,7 @@
             >
               {{ partidoDestacado.abrevLocal }}
             </div>
-            <span class="display-font text-surface text-[18px] md:text-[22px] text-center leading-tight">
+            <span class="display-font text-cream text-[18px] md:text-[22px] text-center leading-tight">
               {{ partidoDestacado.equipoLocal }}
             </span>
           </div>
@@ -148,26 +148,26 @@
           <div class="flex flex-col items-center gap-1 shrink-0">
             @if (partidoDestacado.golesLocal !== null) {
               <div class="flex items-center gap-3">
-                <span class="display-font tabular text-surface leading-none text-[56px] md:text-[72px]">{{
+                <span class="display-font tabular text-cream leading-none text-[56px] md:text-[72px]">{{
                   partidoDestacado.golesLocal
                 }}</span>
                 <span class="text-secondary/60 text-3xl font-light leading-none">–</span>
-                <span class="display-font tabular text-surface leading-none text-[56px] md:text-[72px]">{{
+                <span class="display-font tabular text-cream leading-none text-[56px] md:text-[72px]">{{
                   partidoDestacado.golesVisitante
                 }}</span>
               </div>
             } @else {
-              <span class="display-font text-surface/30 leading-none text-[48px] md:text-[64px]">VS</span>
+              <span class="display-font text-cream/30 leading-none text-[48px] md:text-[64px]">VS</span>
             }
           </div>
 
           <div class="flex flex-col items-center gap-sm flex-1">
             <div
-              class="w-14 h-14 rounded-full bg-surface/20 border border-surface/30 flex items-center justify-center text-surface text-[13px] font-bold shrink-0"
+              class="w-14 h-14 rounded-full bg-surface/20 border border-surface/30 flex items-center justify-center text-cream text-[13px] font-bold shrink-0"
             >
               {{ partidoDestacado.abrevVisitante }}
             </div>
-            <span class="display-font text-surface/90 text-[18px] md:text-[22px] text-center leading-tight">
+            <span class="display-font text-cream/90 text-[18px] md:text-[22px] text-center leading-tight">
               {{ partidoDestacado.equipoVisitante }}
             </span>
           </div>
@@ -185,34 +185,34 @@
             >
               {{ jornadaNumero }}
             </span>
-            <span class="text-surface/55 text-[9px] font-bold uppercase tracking-[0.22em]"
+            <span class="text-cream/55 text-[9px] font-bold uppercase tracking-[0.22em]"
               >Jornada</span
             >
           </div>
           <div class="w-px self-stretch" style="background: rgba(245, 240, 232, 0.1)"></div>
           <div class="flex flex-col items-center gap-1">
-            <span class="display-font tabular text-surface text-[24px] leading-none">{{
+            <span class="display-font tabular text-cream text-[24px] leading-none">{{
               temporada().equipos
             }}</span>
-            <span class="text-surface/55 text-[9px] font-bold uppercase tracking-[0.22em]"
+            <span class="text-cream/55 text-[9px] font-bold uppercase tracking-[0.22em]"
               >Equipos</span
             >
           </div>
           <div class="w-px self-stretch" style="background: rgba(245, 240, 232, 0.1)"></div>
           <div class="flex flex-col items-center gap-1">
-            <span class="display-font tabular text-surface text-[24px] leading-none">{{
+            <span class="display-font tabular text-cream text-[24px] leading-none">{{
               temporada().partidos
             }}</span>
-            <span class="text-surface/55 text-[9px] font-bold uppercase tracking-[0.22em]"
+            <span class="text-cream/55 text-[9px] font-bold uppercase tracking-[0.22em]"
               >Partidos</span
             >
           </div>
           <div class="w-px self-stretch" style="background: rgba(245, 240, 232, 0.1)"></div>
           <div class="flex flex-col items-center gap-1">
-            <span class="display-font tabular text-surface text-[24px] leading-none">{{
+            <span class="display-font tabular text-cream text-[24px] leading-none">{{
               temporada().goles
             }}</span>
-            <span class="text-surface/55 text-[9px] font-bold uppercase tracking-[0.22em]"
+            <span class="text-cream/55 text-[9px] font-bold uppercase tracking-[0.22em]"
               >Goles</span
             >
           </div>
@@ -287,7 +287,7 @@
                 <div class="flex justify-between items-center text-data-mono font-semibold">
                   <div class="flex items-center gap-2">
                     <div
-                      class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-surface text-[10px] font-bold shrink-0"
+                      class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-cream text-[10px] font-bold shrink-0"
                     >
                       {{ partido.abrevLocal }}
                     </div>
@@ -303,7 +303,7 @@
                 <div class="flex justify-between items-center text-data-mono">
                   <div class="flex items-center gap-2">
                     <div
-                      class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-surface text-[10px] font-bold shrink-0"
+                      class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-cream text-[10px] font-bold shrink-0"
                     >
                       {{ partido.abrevVisitante }}
                     </div>
@@ -407,7 +407,7 @@
             <div
               class="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
               style="
-                background: linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, transparent 100%);
+                background: linear-gradient(to top, var(--color-surface) 0%, transparent 100%);
               "
             ></div>
           }

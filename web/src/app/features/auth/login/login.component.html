@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-on-background flex items-center justify-center relative overflow-hidden">
+<div class="min-h-screen bg-tertiary-deep text-cream flex items-center justify-center relative overflow-hidden">
 
   <!-- Patrón de rayas diagonal -->
   <div class="absolute inset-0 pointer-events-none"
@@ -18,7 +18,7 @@
     <!-- Cabecera -->
     <div class="flex flex-col items-center gap-2 mb-8">
       <img src="escudo.png" alt="Liga de Verano Alameda" class="h-20 w-auto select-none" style="filter: drop-shadow(0 6px 16px rgba(0,0,0,0.45))" />
-      <h1 class="display-font text-background text-center text-[22px] leading-tight mt-2">Liga de Verano<br>Alameda</h1>
+      <h1 class="display-font text-cream text-center text-[22px] leading-tight mt-2">Liga de Verano<br>Alameda</h1>
       <p class="text-[11px] font-bold uppercase tracking-[0.25em]" style="color: rgba(243,160,30,0.8)">Fútbol y tradición · 2026</p>
     </div>
 
@@ -27,7 +27,7 @@
 
       <!-- Header del card -->
       <div class="px-6 pt-7 pb-5" style="border-bottom: 1px solid rgba(245,240,232,0.06)">
-        <h2 class="text-headline-md font-bold text-background">Bienvenido de vuelta</h2>
+        <h2 class="text-headline-md font-bold text-cream">Bienvenido de vuelta</h2>
         <p class="text-body-md mt-1" style="color: rgba(245,240,232,0.5)">Accede a tu equipo fantasy</p>
       </div>
 
@@ -55,7 +55,7 @@
               (blur)="onBlurEmail()"
               [disabled]="cargando()"
               placeholder="tu@email.es"
-              class="w-full rounded-lg px-3 py-2.5 text-body-md text-background transition-all outline-none disabled:opacity-50"
+              class="w-full rounded-lg px-3 py-2.5 text-body-md text-cream transition-all outline-none disabled:opacity-50"
               style="background: rgba(15,25,35,0.5); border: 1px solid rgba(245,240,232,0.12)"
               [style.border-color]="mostrarErrorEmail() && !emailValido() ? 'rgba(239,68,68,0.7)' : ''"
             />
@@ -74,7 +74,7 @@
               (blur)="onBlurContrasena()"
               [disabled]="cargando()"
               placeholder="••••••••"
-              class="w-full rounded-lg px-3 py-2.5 text-body-md text-background transition-all outline-none disabled:opacity-50"
+              class="w-full rounded-lg px-3 py-2.5 text-body-md text-cream transition-all outline-none disabled:opacity-50"
               style="background: rgba(15,25,35,0.5); border: 1px solid rgba(245,240,232,0.12)"
               [style.border-color]="mostrarErrorContrasena() && !contrasenaValida() ? 'rgba(239,68,68,0.7)' : ''"
             />
@@ -87,7 +87,7 @@
           <button
             type="submit"
             [disabled]="cargando()"
-            class="w-full font-bold text-background rounded-lg py-2.5 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60"
+            class="w-full font-bold text-cream rounded-lg py-2.5 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60"
             style="background: #e0610b; font-size: 0.8125rem; letter-spacing: 0.02em; margin-top: 4px"
           >
             @if (cargando()) {

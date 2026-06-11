@@ -17,7 +17,7 @@
           <h1 class="display-font text-on-background leading-tight text-[28px] md:text-[38px]">{{ equipo.nombre }}</h1>
         </div>
         <a routerLink="/fantasy/mercado"
-          class="hidden md:flex items-center gap-1 bg-primary text-surface font-bold text-label-bold px-md py-sm rounded-full hover:bg-primary/90 transition-colors shadow-sm">
+          class="hidden md:flex items-center gap-1 bg-primary text-cream font-bold text-label-bold px-md py-sm rounded-full hover:bg-primary/90 transition-colors shadow-sm">
           <span class="material-symbols-outlined text-[16px]">shopping_cart</span>
           Mercado
         </a>
@@ -30,24 +30,24 @@
           <button
             (click)="cambiarFormacion(f)"
             class="px-sm py-0.75 rounded-full text-[11px] font-bold transition-all duration-150"
-            [style.background]="formacion() === f ? '#e0610b' : 'rgba(255,255,255,0.85)'"
-            [style.color]="formacion() === f ? '#fff' : 'rgba(20,39,29,0.7)'"
-            [style.border]="formacion() === f ? '1px solid #e0610b' : '1px solid rgba(12,107,61,0.18)'"
+            [style.background]="formacion() === f ? '#e0610b' : 'var(--color-surface)'"
+            [style.color]="formacion() === f ? '#fff' : 'var(--color-on-background)'"
+            [style.border]="formacion() === f ? '1px solid #e0610b' : '1px solid var(--color-outline)'"
           >{{ f }}</button>
         }
       </div>
 
       <!-- Stats -->
       <div class="grid grid-cols-3 gap-sm">
-        <div class="rounded-lg p-sm flex flex-col gap-xs" style="background:rgba(255,255,255,0.85);border:1px solid rgba(12,107,61,0.14)">
+        <div class="card-soft rounded-lg p-sm flex flex-col gap-xs">
           <span class="text-[9px] font-bold text-on-background/40 uppercase tracking-[0.2em]">Puntos jornada</span>
           <span class="display-font tabular text-primary text-[22px]">{{ equipo.puntuacionJornada }}</span>
         </div>
-        <div class="rounded-lg p-sm flex flex-col gap-xs" style="background:rgba(255,255,255,0.85);border:1px solid rgba(12,107,61,0.14)">
+        <div class="card-soft rounded-lg p-sm flex flex-col gap-xs">
           <span class="text-[9px] font-bold text-on-background/40 uppercase tracking-[0.2em]">Valor equipo</span>
           <span class="display-font tabular text-on-background text-[22px]">{{ valorTotal() | number:'1.1-1' }}M</span>
         </div>
-        <div class="rounded-lg p-sm flex flex-col gap-xs" style="background:rgba(255,255,255,0.85);border:1px solid rgba(12,107,61,0.14)">
+        <div class="card-soft rounded-lg p-sm flex flex-col gap-xs">
           <span class="text-[9px] font-bold text-on-background/40 uppercase tracking-[0.2em]">Presupuesto</span>
           <span class="display-font tabular text-tertiary text-[22px]">{{ equipo.presupuesto }}M</span>
         </div>
@@ -238,8 +238,8 @@
             <button
               (click)="seleccionar(j.id)"
               class="flex items-center gap-sm p-sm rounded border transition-all duration-200 text-left outline-none"
-              [style.background]="seleccionado() === j.id ? 'rgba(243,160,30,0.1)' : 'rgba(255,255,255,0.85)'"
-              [style.border-color]="seleccionado() === j.id ? 'rgba(243,160,30,0.5)' : 'rgba(12,107,61,0.14)'"
+              [style.background]="seleccionado() === j.id ? 'rgba(243,160,30,0.1)' : 'var(--color-surface)'"
+              [style.border-color]="seleccionado() === j.id ? 'rgba(243,160,30,0.5)' : 'var(--color-outline)'"
               [style.box-shadow]="seleccionado() === j.id ? '0 0 0 2px rgba(243,160,30,0.35)' : '0 2px 8px rgba(0,0,0,0.05)'"
               [class.opacity-60]="j.estado !== 'disponible'"
             >

@@ -13,7 +13,7 @@
 
     <!-- ── PERFIL ── -->
     <section class="card-pro">
-      <div class="px-lg py-md flex items-center gap-sm" style="border-bottom: 1px solid rgba(12, 107, 61, 0.1)">
+      <div class="px-lg py-md flex items-center gap-sm" style="border-bottom: 1px solid var(--color-outline)">
         <span class="material-symbols-outlined text-primary text-[20px]">person</span>
         <h2 class="display-font text-on-background text-[16px]">Perfil</h2>
       </div>
@@ -22,7 +22,7 @@
 
         <!-- Avatar + nombre de equipo -->
         <div class="flex items-center gap-lg">
-          <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center font-bold text-background text-headline-md shrink-0 select-none">
+          <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center font-bold text-cream text-headline-md shrink-0 select-none">
             {{ iniciales() }}
           </div>
           <div class="flex-1 min-w-0">
@@ -94,9 +94,43 @@
       </div>
     </section>
 
+    <!-- ── APARIENCIA ── -->
+    <section class="card-pro">
+      <div class="px-lg py-md flex items-center gap-sm" style="border-bottom: 1px solid var(--color-outline)">
+        <span class="material-symbols-outlined text-primary text-[20px]">dark_mode</span>
+        <h2 class="display-font text-on-background text-[16px]">Apariencia</h2>
+      </div>
+
+      <div class="p-lg">
+        <div class="flex items-center justify-between p-md border border-outline rounded-lg hover:border-tertiary/40 transition-colors group">
+          <div class="flex items-center gap-md">
+            <span class="material-symbols-outlined text-on-background/40 group-hover:text-primary transition-colors text-[22px]">
+              {{ tema.oscuro() ? 'nights_stay' : 'wb_sunny' }}
+            </span>
+            <div>
+              <p class="font-bold text-body-md text-on-background">Modo oscuro</p>
+              <p class="text-[12px] text-on-background/40">Fondo verde profundo, ideal de noche</p>
+            </div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer shrink-0">
+            <input
+              type="checkbox"
+              class="sr-only peer"
+              [checked]="tema.oscuro()"
+              (change)="tema.establecer(!tema.oscuro())"
+            >
+            <div class="w-10 h-6 rounded-full bg-outline peer-checked:bg-tertiary transition-colors relative
+                        after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                        after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow
+                        after:transition-all peer-checked:after:translate-x-4"></div>
+          </label>
+        </div>
+      </div>
+    </section>
+
     <!-- ── NOTIFICACIONES ── -->
     <section class="card-pro">
-      <div class="px-lg py-md flex items-center gap-sm" style="border-bottom: 1px solid rgba(12, 107, 61, 0.1)">
+      <div class="px-lg py-md flex items-center gap-sm" style="border-bottom: 1px solid var(--color-outline)">
         <span class="material-symbols-outlined text-primary text-[20px]">notifications</span>
         <h2 class="display-font text-on-background text-[16px]">Notificaciones</h2>
       </div>
@@ -162,7 +196,7 @@
 
     <!-- ── LIGA ── -->
     <section class="card-pro">
-      <div class="px-lg py-md flex items-center gap-sm" style="border-bottom: 1px solid rgba(12, 107, 61, 0.1)">
+      <div class="px-lg py-md flex items-center gap-sm" style="border-bottom: 1px solid var(--color-outline)">
         <span class="material-symbols-outlined text-primary text-[20px]">groups</span>
         <h2 class="display-font text-on-background text-[16px]">Liga</h2>
       </div>
@@ -249,7 +283,7 @@
                   <button
                     (click)="confirmarSalirDeLiga()"
                     [disabled]="saliendoDeLiga()"
-                    class="px-md py-sm rounded font-bold text-label-bold text-background bg-red-600 hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-xs"
+                    class="px-md py-sm rounded font-bold text-label-bold text-cream bg-red-600 hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-xs"
                   >
                     @if (saliendoDeLiga()) {
                       <span class="material-symbols-outlined text-[16px] animate-spin">refresh</span>
@@ -275,12 +309,12 @@
       </button>
 
       @if (guardando()) {
-        <button disabled class="px-lg py-sm bg-primary/60 text-background font-bold text-label-bold rounded cursor-not-allowed flex items-center gap-xs">
+        <button disabled class="px-lg py-sm bg-primary/60 text-cream font-bold text-label-bold rounded cursor-not-allowed flex items-center gap-xs">
           <span class="material-symbols-outlined text-[16px] animate-spin">refresh</span>
           Guardando…
         </button>
       } @else if (guardado()) {
-        <button disabled class="px-lg py-sm bg-tertiary text-background font-bold text-label-bold rounded flex items-center gap-xs">
+        <button disabled class="px-lg py-sm bg-tertiary text-cream font-bold text-label-bold rounded flex items-center gap-xs">
           <span class="material-symbols-outlined text-[16px]">check</span>
           Guardado
         </button>
@@ -288,7 +322,7 @@
         <button
           (click)="guardar()"
           [disabled]="!formularioValido()"
-          class="px-lg py-sm bg-primary text-surface font-bold text-label-bold rounded-full hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+          class="px-lg py-sm bg-primary text-cream font-bold text-label-bold rounded-full hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
         >
           Guardar cambios
         </button>

@@ -13,6 +13,10 @@
   --color-error: #c62828;
   --color-surface-container: #eef3ec;
 
+  /* Constantes — no cambian con el tema (texto sobre verdes/naranjas) */
+  --color-cream: #f6f2e9;
+  --color-ink: #14271d;
+
   /* ── Tipografía ── */
   --font-sans: 'Chivo', sans-serif;
   --font-display: 'Archivo Black', 'Chivo', sans-serif;
@@ -61,6 +65,95 @@
   --spacing-margin-mobile: 1rem;
   --spacing-margin-desktop: 2rem;
   --spacing-gutter: 1rem;
+}
+
+/* ── Modo oscuro — tokens invertidos ── */
+html.dark {
+  color-scheme: dark;
+  --color-background: #0b1a12;
+  --color-on-background: #eef0e6;
+  --color-surface: #13281e;
+  --color-on-surface: #eef0e6;
+  --color-outline: rgba(243, 160, 30, 0.22);
+  --color-surface-container: #173024;
+  /* Verde más luminoso para que respire sobre fondos oscuros */
+  --color-tertiary: #2fa066;
+}
+
+html.dark body {
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% -15%, rgba(12, 107, 61, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 80%, rgba(224, 97, 11, 0.1) 0%, transparent 50%);
+}
+
+html.dark body::after {
+  opacity: 0.035;
+}
+
+html.dark .card-pro {
+  border-color: rgba(243, 160, 30, 0.14);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 8px 24px -8px rgba(0, 0, 0, 0.5);
+}
+
+html.dark .card-pro-header {
+  border-bottom-color: rgba(243, 160, 30, 0.12);
+}
+
+html.dark .nav-link {
+  color: rgba(237, 240, 231, 0.62);
+}
+html.dark .nav-link:hover {
+  background-color: rgba(243, 160, 30, 0.08);
+  color: var(--color-secondary);
+}
+html.dark .nav-link.nav-active,
+html.dark .nav-link.nav-active:hover {
+  background-color: rgba(12, 107, 61, 0.4);
+  color: var(--color-secondary);
+  box-shadow: inset 3px 0 0 var(--color-secondary);
+}
+
+html.dark .bottom-nav-item {
+  color: rgba(237, 240, 231, 0.42);
+}
+html.dark .bottom-nav-item:hover,
+html.dark .bottom-nav-item.bottom-nav-active {
+  color: var(--color-secondary);
+}
+html.dark .bottom-nav-item.bottom-nav-active::before {
+  background: rgba(243, 160, 30, 0.16);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-secondary);
+}
+
+/* ── Superficie suave: tarjetas ligeras que se adaptan al tema ── */
+.card-soft {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(12, 107, 61, 0.14);
+}
+html.dark .card-soft {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(243, 160, 30, 0.16);
+}
+
+/* ── Input que se adapta al tema ── */
+.input-soft {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(12, 107, 61, 0.25);
+  color: var(--color-on-background);
+}
+html.dark .input-soft {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(243, 160, 30, 0.25);
+}
+
+/* ── Fade inferior de listas colapsadas ── */
+.fade-bottom {
+  background: linear-gradient(to top, var(--color-surface) 0%, transparent 100%);
 }
 
 /* ── Fondo cálido con toques de campo ── */

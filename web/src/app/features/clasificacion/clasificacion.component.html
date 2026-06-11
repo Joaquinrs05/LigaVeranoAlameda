@@ -29,7 +29,7 @@
           (click)="setFase(fase.tipo)"
           class="px-md py-sm rounded-full text-[11px] font-bold uppercase tracking-wider transition-all shrink-0"
           [class.bg-tertiary]="faseActiva() === fase.tipo"
-          [class.text-surface]="faseActiva() === fase.tipo"
+          [class.text-cream]="faseActiva() === fase.tipo"
           [class.text-on-background/50]="faseActiva() !== fase.tipo"
           [class.hover:text-tertiary]="faseActiva() !== fase.tipo"
           [class.hover:bg-tertiary/8]="faseActiva() !== fase.tipo"
@@ -62,7 +62,7 @@
               <thead>
                 <tr
                   class="text-[10px] font-bold text-on-background/50 uppercase tracking-widest"
-                  style="border-bottom: 1px solid rgba(12, 107, 61, 0.1); background: rgba(238, 243, 236, 0.6)"
+                  style="border-bottom: 1px solid var(--color-outline); background: rgba(238, 243, 236, 0.6)"
                 >
                   <th class="p-sm pl-md w-8">#</th>
                   <th class="p-sm">Equipo</th>
@@ -105,7 +105,7 @@
                         <span
                           class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0"
                           [class.bg-tertiary]="$index !== 0"
-                          [class.text-surface]="true"
+                          [class.text-cream]="true"
                           [style.background]="$index === 0 ? '#e0610b' : ''"
                         >{{ abrev(entry.equipo) }}</span>
                         {{ entry.equipo }}
@@ -242,7 +242,7 @@
                         <div class="flex items-center gap-2 min-w-0 flex-1">
                           <div class="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
                             [class.bg-primary]="finalMatch.equipoLocal !== null"
-                            [class.text-surface]="finalMatch.equipoLocal !== null"
+                            [class.text-cream]="finalMatch.equipoLocal !== null"
                             [class.bg-outline/30]="finalMatch.equipoLocal === null"
                             [class.text-on-background/50]="finalMatch.equipoLocal === null"
                           >{{ finalMatch.equipoLocal ? abrev(finalMatch.equipoLocal) : '?' }}</div>
@@ -269,7 +269,7 @@
                         <div class="flex items-center gap-2 min-w-0 flex-1">
                           <div class="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
                             [class.bg-tertiary]="finalMatch.equipoVisitante !== null"
-                            [class.text-surface]="finalMatch.equipoVisitante !== null"
+                            [class.text-cream]="finalMatch.equipoVisitante !== null"
                             [class.bg-outline/30]="finalMatch.equipoVisitante === null"
                             [class.text-on-background/50]="finalMatch.equipoVisitante === null"
                           >{{ finalMatch.equipoVisitante ? abrev(finalMatch.equipoVisitante) : '?' }}</div>
@@ -292,7 +292,7 @@
                     </div>
                   </div>
                 } @else {
-                  <div class="absolute left-0 top-41.5 w-full rounded-lg overflow-hidden" style="border: 1px dashed rgba(12, 107, 61, 0.25); background: rgba(255, 255, 255, 0.5)">
+                  <div class="absolute left-0 top-41.5 w-full rounded-lg overflow-hidden" style="border: 1px dashed rgba(12, 107, 61, 0.25); background: var(--color-surface)">
                     <div class="flex items-center px-4 gap-2" style="height:44px; border-bottom: 1px solid rgba(12, 107, 61, 0.08)">
                       <div class="w-6 h-6 shrink-0 rounded-full bg-outline/20 flex items-center justify-center text-[9px] font-bold text-on-background/30">?</div>
                       <span class="text-body-md text-on-background/40 italic">Sin definir</span>
@@ -321,7 +321,7 @@
   @if (cruce) {
     <div
       class="w-full rounded-lg overflow-hidden bg-surface"
-      style="border: 1px solid rgba(12, 107, 61, 0.12); box-shadow: 0 1px 2px rgba(8, 55, 37, 0.05), 0 8px 24px -8px rgba(8, 55, 37, 0.1)"
+      style="border: 1px solid var(--color-outline); box-shadow: 0 1px 2px rgba(8, 55, 37, 0.05), 0 8px 24px -8px rgba(8, 55, 37, 0.1)"
     >
       <div class="flex items-center justify-between px-4 gap-2"
         style="height:44px; border-bottom: 1px solid rgba(12, 107, 61, 0.08)"
@@ -331,7 +331,7 @@
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
             [class.bg-primary]="cruce.equipoLocal !== null"
-            [class.text-surface]="cruce.equipoLocal !== null"
+            [class.text-cream]="cruce.equipoLocal !== null"
             [class.bg-outline/30]="cruce.equipoLocal === null"
             [class.text-on-background/50]="cruce.equipoLocal === null"
           >{{ cruce.equipoLocal ? abrev(cruce.equipoLocal) : '?' }}</div>
@@ -356,7 +356,7 @@
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
             [class.bg-tertiary]="cruce.equipoVisitante !== null"
-            [class.text-surface]="cruce.equipoVisitante !== null"
+            [class.text-cream]="cruce.equipoVisitante !== null"
             [class.bg-outline/30]="cruce.equipoVisitante === null"
             [class.text-on-background/50]="cruce.equipoVisitante === null"
           >{{ cruce.equipoVisitante ? abrev(cruce.equipoVisitante) : '?' }}</div>
@@ -377,7 +377,7 @@
   } @else {
     <div
       class="w-full rounded-lg overflow-hidden"
-      style="border: 1px dashed rgba(12, 107, 61, 0.25); background: rgba(255, 255, 255, 0.5)"
+      style="border: 1px dashed rgba(12, 107, 61, 0.25); background: var(--color-surface)"
     >
       <div class="flex items-center px-4 gap-2" style="height:44px; border-bottom: 1px solid rgba(12, 107, 61, 0.08)">
         <div class="w-6 h-6 shrink-0 rounded-full bg-outline/20 flex items-center justify-center text-[9px] font-bold text-on-background/30">?</div>

@@ -30,7 +30,7 @@
               class="rounded-xl p-md flex items-center gap-md cursor-pointer transition-all hover:-translate-y-0.5 active:scale-[0.99]"
               [class.ring-2]="esActiva(liga)"
               [class.ring-tertiary]="esActiva(liga)"
-              style="background:var(--color-surface);border:1px solid rgba(12,107,61,0.12);box-shadow:0 1px 2px rgba(8,55,37,0.05),0 8px 24px -8px rgba(8,55,37,0.1)"
+              style="background:var(--color-surface);border:1px solid var(--color-outline);box-shadow:0 1px 2px rgba(8,55,37,0.05),0 8px 24px -8px rgba(8,55,37,0.1)"
               (click)="seleccionar(liga)"
             >
               <!-- Icono -->
@@ -46,7 +46,7 @@
                 <div class="flex items-center gap-sm">
                   <span class="font-bold text-body-lg text-on-background truncate">{{ liga.nombre }}</span>
                   @if (esActiva(liga)) {
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-background bg-tertiary px-sm py-[2px] rounded-full shrink-0">Activa</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-cream bg-tertiary px-sm py-[2px] rounded-full shrink-0">Activa</span>
                   }
                 </div>
                 <!-- Código de invitación -->
@@ -77,7 +77,7 @@
       } @else if (modo() === 'idle') {
         <div
           class="rounded-xl p-xl flex flex-col items-center gap-md text-center"
-          style="background:rgba(255,255,255,0.7);border:1px dashed rgba(12,107,61,0.3)"
+          style="background:var(--color-surface);border:1px dashed rgba(12,107,61,0.3)"
         >
           <span class="material-symbols-outlined text-on-background/20 text-[48px]">shield</span>
           <p class="text-body-md text-on-background/40">Todavía no perteneces a ninguna liga</p>
@@ -89,7 +89,7 @@
         <div class="flex flex-col gap-sm">
           <button
             (click)="modo.set('crear'); codigoGenerado.set(null); errorMsg.set(null)"
-            class="w-full flex items-center justify-center gap-sm py-sm rounded-xl font-bold text-label-bold text-background transition-all hover:opacity-90 active:scale-[0.98]"
+            class="w-full flex items-center justify-center gap-sm py-sm rounded-xl font-bold text-label-bold text-cream transition-all hover:opacity-90 active:scale-[0.98]"
             style="background:linear-gradient(135deg,#e0610b 0%,#a34708 100%);box-shadow:0 4px 16px rgba(224,97,11,0.3)"
           >
             <span class="material-symbols-outlined text-[20px]">add_circle</span>
@@ -98,7 +98,7 @@
           <button
             (click)="modo.set('unirse'); errorMsg.set(null)"
             class="w-full flex items-center justify-center gap-sm py-sm rounded-xl font-bold text-label-bold transition-all hover:bg-tertiary/5 active:scale-[0.98]"
-            style="border:1.5px solid rgba(12,107,61,0.35);color:#0c6b3d;background:rgba(255,255,255,0.7)"
+            style="border:1.5px solid var(--color-outline);color:var(--color-tertiary);background:var(--color-surface)"
           >
             <span class="material-symbols-outlined text-[20px]">group_add</span>
             Unirse con código
@@ -141,7 +141,7 @@
             </div>
             <button
               (click)="modo.set('idle'); codigoGenerado.set(null)"
-              class="w-full py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90"
+              class="w-full py-sm rounded-lg font-bold text-label-bold text-cream transition-all hover:opacity-90"
               style="background:linear-gradient(135deg,#0c6b3d 0%,#083725 100%)"
             >
               Ir al dashboard
@@ -151,14 +151,12 @@
               <input
                 [(ngModel)]="nombreLiga"
                 placeholder="Nombre de la liga…"
-                class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors"
-                style="border-color:rgba(224,97,11,0.25);background:rgba(255,255,255,0.9)"
+                class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors input-soft"
               />
               <input
                 [(ngModel)]="nombreEquipo"
                 placeholder="Nombre de tu equipo…"
-                class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors"
-                style="border-color:rgba(224,97,11,0.25);background:rgba(255,255,255,0.9)"
+                class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors input-soft"
               />
               @if (errorMsg()) {
                 <p class="text-[12px] text-red-500">{{ errorMsg() }}</p>
@@ -173,7 +171,7 @@
                 <button
                   (click)="crear()"
                   [disabled]="!nombreLiga.trim() || !nombreEquipo.trim() || guardando()"
-                  class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                  class="flex-1 py-sm rounded-lg font-bold text-label-bold text-cream transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                   style="background:linear-gradient(135deg,#e0610b 0%,#a34708 100%)"
                 >
                   @if (guardando()) { Creando… } @else { Crear }
@@ -202,14 +200,12 @@
               [(ngModel)]="codigoUnirse"
               placeholder="Código de invitación…"
               maxlength="6"
-              class="w-full px-md py-md rounded-lg border text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors font-mono tracking-[0.3em] uppercase text-center"
-              style="border-color:rgba(12,107,61,0.25);background:rgba(255,255,255,0.9);font-size:1.4rem"
+              class="w-full px-md py-md rounded-lg border text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors font-mono tracking-[0.3em] uppercase text-center input-soft" style="font-size:1.4rem"
             />
             <input
               [(ngModel)]="nombreEquipoUnirse"
               placeholder="Nombre de tu equipo…"
-              class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors"
-              style="border-color:rgba(12,107,61,0.25);background:rgba(255,255,255,0.9)"
+              class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors input-soft"
             />
             @if (errorMsg()) {
               <p class="text-[12px] text-red-500">{{ errorMsg() }}</p>
@@ -224,7 +220,7 @@
               <button
                 (click)="unirse()"
                 [disabled]="!codigoUnirse.trim() || !nombreEquipoUnirse.trim() || guardando()"
-                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-cream transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                 style="background:linear-gradient(135deg,#0c6b3d 0%,#083725 100%)"
               >
                 @if (guardando()) { Entrando… } @else { Entrar }

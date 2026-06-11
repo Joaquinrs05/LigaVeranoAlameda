@@ -6,6 +6,13 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#075530" />
+    <script>
+      try {
+        if (localStorage.getItem('liga-tema-oscuro') === 'true') {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (_) {}
+    </script>
     <link rel="icon" type="image/png" href="/escudo.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
 

@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-on-background flex flex-col items-center justify-center px-margin-mobile relative overflow-hidden">
+<div class="min-h-screen bg-tertiary-deep text-cream flex flex-col items-center justify-center px-margin-mobile relative overflow-hidden">
 
   <!-- Patrón de fondo -->
   <div class="absolute inset-0 pointer-events-none"
@@ -17,8 +17,8 @@
       </svg>
 
       <div class="flex flex-col gap-xs">
-        <p class="text-headline-md font-bold text-background">Autenticando con Google</p>
-        <p class="text-background/50 text-body-md">Un momento...</p>
+        <p class="text-headline-md font-bold text-cream">Autenticando con Google</p>
+        <p class="text-cream/50 text-body-md">Un momento...</p>
       </div>
 
     } @else {
@@ -26,13 +26,13 @@
       <span class="material-symbols-outlined text-red-400" style="font-size:48px">error</span>
 
       <div class="flex flex-col gap-sm">
-        <p class="text-headline-md font-bold text-background">Error de autenticación</p>
-        <p class="text-background/50 text-body-md max-w-xs">{{ error() }}</p>
+        <p class="text-headline-md font-bold text-cream">Error de autenticación</p>
+        <p class="text-cream/50 text-body-md max-w-xs">{{ error() }}</p>
       </div>
 
       <a
         routerLink="/auth/login"
-        class="bg-primary text-background font-bold text-label-bold px-lg py-sm rounded hover:bg-primary/90 transition-colors"
+        class="bg-primary text-cream font-bold text-label-bold px-lg py-sm rounded hover:bg-primary/90 transition-colors"
       >
         Volver al login
       </a>
