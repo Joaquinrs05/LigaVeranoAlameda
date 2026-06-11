@@ -47,3 +47,6 @@ backend/venv/
 backend/__pycache__/
 backend/**/__pycache__/
 backend/*.pyc
+
+# Skills locales de agentes
+.claude/
