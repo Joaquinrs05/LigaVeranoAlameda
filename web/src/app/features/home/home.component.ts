@@ -43,14 +43,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return this.ligaReal.jornadaActual();
   }
 
+  readonly totalEquipos = computed(() => this.ligaReal.clasificacion().length);
   readonly mostrarTodosClasificacion = signal(false);
 
-  // clasificacionVisible sí usa () en el template → computed signal
-  readonly clasificacionVisible = computed<IClasificacionEntry[]>(() =>
-    this.mostrarTodosClasificacion()
-      ? this.ligaReal.clasificacion()
-      : this.ligaReal.clasificacion().slice(0, 6)
-  );
+  readonly clasificacionVisible = computed<IClasificacionEntry[]>(() => {
+    const all = this.ligaReal.clasificacion();
+    return (this.mostrarTodosClasificacion() || all.length <= 6) ? all : all.slice(0, 6);
+  });
+
+  readonly totalGoleadores = computed(() => this.ligaReal.goleadores().length);
+  readonly mostrarTodosGoleadores = signal(false);
+
+  readonly goleadoresVisible = computed<IGoleadorJornada[]>(() => {
+    const all = this.ligaReal.goleadores();
+    return (this.mostrarTodosGoleadores() || all.length <= 5) ? all : all.slice(0, 5);
+  });
 
   ngOnInit(): void {
     this.ligaReal.cargarClasificacion();

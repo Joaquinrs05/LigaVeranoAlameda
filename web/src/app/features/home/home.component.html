@@ -265,7 +265,7 @@
     </section>
 
     <!-- ── SECCIÓN 2: Clasificación + Goleadores ── -->
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-lg items-start">
       <!-- Clasificación -->
       <div
         data-anim="clasificacion"
@@ -360,36 +360,36 @@
             </table>
           </div>
 
-          <!-- Fade difuminado cuando está colapsado -->
-          @if (!mostrarTodosClasificacion()) {
-            <div
-              class="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
-              style="
-                background: linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, transparent 100%);
-              "
-            ></div>
-          }
         </div>
 
+        @if (totalEquipos() > 6 && !mostrarTodosClasificacion()) {
+          <div
+            class="h-12 -mt-12 pointer-events-none relative z-10"
+            style="background: linear-gradient(to top, rgba(255, 255, 255, 0.97) 0%, transparent 100%);"
+          ></div>
+        }
+
         <!-- Botón expandir/colapsar -->
-        @if (!mostrarTodosClasificacion()) {
-          <button
-            (click)="mostrarTodosClasificacion.set(true)"
-            class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
-            style="border-top: 1px solid rgba(192, 85, 42, 0.12)"
-          >
-            <span class="material-symbols-outlined text-[16px]">expand_more</span>
-            Ver todos los equipos
-          </button>
-        } @else {
-          <button
-            (click)="mostrarTodosClasificacion.set(false)"
-            class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
-            style="border-top: 5px solid rgba(192, 85, 42, 0.12)"
-          >
-            <span class="material-symbols-outlined text-[16px]">expand_less</span>
-            Ver menos
-          </button>
+        @if (totalEquipos() > 6) {
+          @if (!mostrarTodosClasificacion()) {
+            <button
+              (click)="mostrarTodosClasificacion.set(true)"
+              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
+              style="border-top: 1px solid rgba(192, 85, 42, 0.12)"
+            >
+              <span class="material-symbols-outlined text-[16px]">expand_more</span>
+              Ver todos los equipos
+            </button>
+          } @else {
+            <button
+              (click)="mostrarTodosClasificacion.set(false)"
+              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
+              style="border-top: 5px solid rgba(192, 85, 42, 0.12)"
+            >
+              <span class="material-symbols-outlined text-[16px]">expand_less</span>
+              Ver menos
+            </button>
+          }
         }
       </div>
 
@@ -426,7 +426,7 @@
         </div>
 
         <div class="p-md flex flex-col gap-sm">
-          @for (jugador of goleadores; track jugador.id) {
+          @for (jugador of goleadoresVisible(); track jugador.id) {
             <div
               class="flex items-center justify-between p-sm rounded transition-all duration-200 cursor-default hover:-translate-y-px"
               [style.background]="
@@ -491,6 +491,35 @@
             </div>
           }
         </div>
+
+        @if (totalGoleadores() > 5 && !mostrarTodosGoleadores()) {
+          <div
+            class="h-12 -mt-12 pointer-events-none relative z-10"
+            style="background: linear-gradient(to top, rgba(255, 255, 255, 0.97) 0%, transparent 100%);"
+          ></div>
+        }
+
+        @if (totalGoleadores() > 5) {
+          @if (!mostrarTodosGoleadores()) {
+            <button
+              (click)="mostrarTodosGoleadores.set(true)"
+              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
+              style="border-top: 1px solid rgba(192, 85, 42, 0.12)"
+            >
+              <span class="material-symbols-outlined text-[16px]">expand_more</span>
+              Ver todos los goleadores
+            </button>
+          } @else {
+            <button
+              (click)="mostrarTodosGoleadores.set(false)"
+              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
+              style="border-top: 1px solid rgba(192, 85, 42, 0.12)"
+            >
+              <span class="material-symbols-outlined text-[16px]">expand_less</span>
+              Ver menos
+            </button>
+          }
+        }
       </div>
     </section>
   </div>
