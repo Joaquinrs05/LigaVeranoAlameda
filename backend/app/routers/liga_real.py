@@ -121,7 +121,7 @@ def get_goleadores() -> dict:
     jornada_res = (
         supabase_admin.table("jornadas").select("id").eq("estado", "en_curso").maybe_single().execute()
     )
-    if not jornada_res.data:
+    if not jornada_res or not jornada_res.data:
         j_res = (
             supabase_admin.table("jornadas")
             .select("id")
