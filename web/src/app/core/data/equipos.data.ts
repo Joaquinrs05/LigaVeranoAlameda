@@ -5,7 +5,7 @@ export const EQUIPOS_DATA: IEquipo[] = [
     id: 'fc-alameda',
     nombre: 'FC Alameda',
     abrev: 'FCA',
-    color: '#C0552A',
+    color: '#e0610b',
     posicion: 1,
     stats: { pj: 11, v: 9, e: 1, d: 1, gf: 38, gc: 16, pts: 28 },
     jugadores: [
@@ -53,7 +53,7 @@ export const EQUIPOS_DATA: IEquipo[] = [
     id: 'atleti-verde',
     nombre: 'Atleti Verde',
     abrev: 'ATV',
-    color: '#1A4A2E',
+    color: '#0c6b3d',
     posicion: 4,
     stats: { pj: 11, v: 5, e: 3, d: 3, gf: 24, gc: 23, pts: 18 },
     jugadores: [

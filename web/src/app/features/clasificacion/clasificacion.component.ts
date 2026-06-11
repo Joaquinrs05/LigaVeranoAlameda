@@ -71,6 +71,10 @@ export class ClasificacionComponent implements OnInit, AfterViewInit {
     return Array.from({ length: count }, (_, i) => i);
   }
 
+  get faseActivaLabel(): string {
+    return FASES.find(f => f.tipo === this.faseActiva())?.label ?? '';
+  }
+
   get crucesActivos(): ICruce[] {
     switch (this.faseActiva()) {
       case 'cuartos': return this.cuartos;

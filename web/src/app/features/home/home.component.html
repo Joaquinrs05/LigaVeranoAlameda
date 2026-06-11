@@ -6,7 +6,7 @@
   <div style="
     position: absolute; top: -20%; right: -15%;
     width: 820px; height: 820px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(192,85,42,0.17) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(224,97,11,0.12) 0%, transparent 65%);
     animation: blob-drift-1 24s ease-in-out infinite;
   "></div>
 
@@ -14,7 +14,7 @@
   <div style="
     position: absolute; top: 28%; left: -22%;
     width: 680px; height: 680px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(26,74,46,0.14) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(12,107,61,0.13) 0%, transparent 65%);
     animation: blob-drift-2 30s ease-in-out infinite;
   "></div>
 
@@ -22,7 +22,7 @@
   <div style="
     position: absolute; bottom: -18%; left: 22%;
     width: 640px; height: 640px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,214,0,0.09) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(243,160,30,0.1) 0%, transparent 65%);
     animation: blob-drift-3 21s ease-in-out infinite;
   "></div>
 
@@ -30,7 +30,7 @@
   <div style="
     position: absolute; bottom: 5%; left: -12%;
     width: 480px; height: 480px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(192,85,42,0.1) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(224,97,11,0.08) 0%, transparent 65%);
     animation: blob-drift-4 17s ease-in-out infinite;
   "></div>
 </div>
@@ -43,16 +43,34 @@
     <section
       data-anim="match-hero"
       class="relative overflow-hidden flex items-center min-h-50 md:min-h-55 rounded"
-      style="background: linear-gradient(135deg, #1a4a2e 0%, #0e2c1a 55%, #091b10 100%)"
+      style="background: linear-gradient(135deg, #0c7344 0%, #075530 45%, #083725 100%)"
     >
       <!-- Trama de puntos -->
       <div
         class="absolute inset-0 opacity-[0.08] pointer-events-none"
         style="
-          background-image: radial-gradient(#ffd600 1px, transparent 1px);
+          background-image: radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px);
           background-size: 24px 24px;
         "
       ></div>
+
+      <!-- Líneas de campo de fútbol -->
+      <svg
+        class="absolute inset-0 w-full h-full pointer-events-none"
+        style="opacity: 0.1"
+        viewBox="0 0 400 200"
+        preserveAspectRatio="none"
+        fill="none"
+        aria-hidden="true"
+      >
+        <line x1="200" y1="0" x2="200" y2="200" stroke="#F5F0E8" stroke-width="1.5" />
+        <circle cx="200" cy="100" r="44" stroke="#F5F0E8" stroke-width="1.5" />
+        <circle cx="200" cy="100" r="2.5" fill="#F5F0E8" />
+        <rect x="0" y="52" width="46" height="96" stroke="#F5F0E8" stroke-width="1.5" />
+        <rect x="0" y="78" width="18" height="44" stroke="#F5F0E8" stroke-width="1.5" />
+        <rect x="354" y="52" width="46" height="96" stroke="#F5F0E8" stroke-width="1.5" />
+        <rect x="382" y="78" width="18" height="44" stroke="#F5F0E8" stroke-width="1.5" />
+      </svg>
 
       <!-- Halo cálido central desde abajo — efecto focos de estadio -->
       <div
@@ -60,7 +78,7 @@
         style="
           background: radial-gradient(
             ellipse 90% 55% at 50% 115%,
-            rgba(192, 85, 42, 0.45) 0%,
+            rgba(224, 97, 11, 0.32) 0%,
             transparent 100%
           );
         "
@@ -73,7 +91,7 @@
           background: linear-gradient(
             90deg,
             transparent 0%,
-            rgba(255, 214, 0, 0.55) 50%,
+            rgba(255, 255, 255, 0.35) 50%,
             transparent 100%
           );
         "
@@ -86,36 +104,43 @@
           background: linear-gradient(
             90deg,
             transparent 0%,
-            rgba(255, 214, 0, 0.2) 50%,
+            rgba(255, 255, 255, 0.15) 50%,
             transparent 100%
           );
         "
       ></div>
+
+      <!-- Rayos de marca — esquina inferior derecha -->
+      <div class="brand-rays" style="right: 0; bottom: 0; width: 180px; height: 120px; opacity: 0.5"></div>
+
+      <!-- Escudo como marca de agua -->
+      <img
+        src="escudo.png"
+        alt=""
+        aria-hidden="true"
+        class="absolute pointer-events-none select-none"
+        style="right: 4%; top: 50%; transform: translateY(-50%) rotate(8deg); height: 130%; opacity: 0.08; filter: grayscale(0.3) brightness(1.6)"
+      />
 
       <div class="relative z-10 w-full px-lg py-lg flex flex-col gap-md">
         <div class="flex items-center gap-2">
           @if (partidoDestacado.estado === 'live') {
             <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
           }
-          <span class="text-background/50 text-[11px] font-bold uppercase tracking-widest">
+          <span class="kicker text-secondary">
             {{ partidoDestacado.estado === 'live' ? 'En Vivo' : 'Partido del Día' }}
-            &nbsp;·&nbsp;Jornada {{ jornadaNumero }}
+            · Jornada {{ jornadaNumero }}
           </span>
         </div>
 
         <div class="flex items-center justify-between gap-md">
           <div class="flex flex-col items-center gap-sm flex-1">
             <div
-              class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-background text-[13px] font-bold shrink-0"
-              style="
-                box-shadow:
-                  0 0 24px rgba(192, 85, 42, 0.6),
-                  0 0 8px rgba(192, 85, 42, 0.4);
-              "
+              class="w-14 h-14 rounded-full bg-surface flex items-center justify-center text-tertiary text-[13px] font-bold shrink-0 shadow-md"
             >
               {{ partidoDestacado.abrevLocal }}
             </div>
-            <span class="text-background font-bold text-headline-md text-center leading-tight">
+            <span class="display-font text-surface text-[18px] md:text-[22px] text-center leading-tight">
               {{ partidoDestacado.equipoLocal }}
             </span>
           </div>
@@ -123,28 +148,73 @@
           <div class="flex flex-col items-center gap-1 shrink-0">
             @if (partidoDestacado.golesLocal !== null) {
               <div class="flex items-center gap-3">
-                <span class="text-display-lg font-bold text-background leading-none">{{
+                <span class="display-font tabular text-surface leading-none text-[56px] md:text-[72px]">{{
                   partidoDestacado.golesLocal
                 }}</span>
-                <span class="text-background/30 text-3xl font-light leading-none">—</span>
-                <span class="text-display-lg font-bold text-background leading-none">{{
+                <span class="text-secondary/60 text-3xl font-light leading-none">–</span>
+                <span class="display-font tabular text-surface leading-none text-[56px] md:text-[72px]">{{
                   partidoDestacado.golesVisitante
                 }}</span>
               </div>
             } @else {
-              <span class="text-display-lg font-bold text-background/25 leading-none">VS</span>
+              <span class="display-font text-surface/30 leading-none text-[48px] md:text-[64px]">VS</span>
             }
           </div>
 
           <div class="flex flex-col items-center gap-sm flex-1">
             <div
-              class="w-14 h-14 rounded-full bg-background/15 border border-background/20 flex items-center justify-center text-background text-[13px] font-bold shrink-0"
+              class="w-14 h-14 rounded-full bg-surface/20 border border-surface/30 flex items-center justify-center text-surface text-[13px] font-bold shrink-0"
             >
               {{ partidoDestacado.abrevVisitante }}
             </div>
-            <span class="text-background/80 font-bold text-headline-md text-center leading-tight">
+            <span class="display-font text-surface/90 text-[18px] md:text-[22px] text-center leading-tight">
               {{ partidoDestacado.equipoVisitante }}
             </span>
+          </div>
+        </div>
+
+        <!-- Temporada de un vistazo -->
+        <div
+          class="flex items-stretch justify-around gap-md pt-md mt-sm"
+          style="border-top: 1px solid rgba(245, 240, 232, 0.12)"
+        >
+          <div class="flex flex-col items-center gap-1">
+            <span
+              class="display-font tabular text-secondary text-[24px] leading-none"
+              style="text-shadow: 0 0 14px rgba(243, 160, 30, 0.45)"
+            >
+              {{ jornadaNumero }}
+            </span>
+            <span class="text-surface/55 text-[9px] font-bold uppercase tracking-[0.22em]"
+              >Jornada</span
+            >
+          </div>
+          <div class="w-px self-stretch" style="background: rgba(245, 240, 232, 0.1)"></div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="display-font tabular text-surface text-[24px] leading-none">{{
+              temporada().equipos
+            }}</span>
+            <span class="text-surface/55 text-[9px] font-bold uppercase tracking-[0.22em]"
+              >Equipos</span
+            >
+          </div>
+          <div class="w-px self-stretch" style="background: rgba(245, 240, 232, 0.1)"></div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="display-font tabular text-surface text-[24px] leading-none">{{
+              temporada().partidos
+            }}</span>
+            <span class="text-surface/55 text-[9px] font-bold uppercase tracking-[0.22em]"
+              >Partidos</span
+            >
+          </div>
+          <div class="w-px self-stretch" style="background: rgba(245, 240, 232, 0.1)"></div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="display-font tabular text-surface text-[24px] leading-none">{{
+              temporada().goles
+            }}</span>
+            <span class="text-surface/55 text-[9px] font-bold uppercase tracking-[0.22em]"
+              >Goles</span
+            >
           </div>
         </div>
       </div>
@@ -152,19 +222,19 @@
 
     <!-- ── SECCIÓN 1: Partidos ── -->
     <section class="flex flex-col gap-md">
-      <div data-anim="partidos-header" class="flex items-center justify-between">
-        <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-          Partidos en Directo
-          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline"
-            >| Jornada {{ jornadaNumero }}</span
-          >
-        </h2>
+      <div data-anim="partidos-header" class="flex items-end justify-between">
+        <div class="flex flex-col gap-1.5">
+          <span class="kicker text-primary">Jornada {{ jornadaNumero }}</span>
+          <h2 class="display-font text-on-background text-[22px] md:text-[26px] leading-none">
+            Partidos en directo
+          </h2>
+        </div>
         <a
           routerLink="/clasificacion"
-          class="text-label-bold font-bold text-primary hover:underline transition-colors text-[11px] uppercase tracking-wider hidden sm:block"
+          class="text-label-bold font-bold text-tertiary hover:text-primary transition-colors text-[11px] uppercase tracking-wider hidden sm:flex items-center gap-1"
         >
           Ver todos
+          <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
         </a>
       </div>
 
@@ -181,23 +251,17 @@
           >
             @for (partido of partidos; track $index) {
               <div
-                class="shrink-0 w-[85vw] md:w-[calc((100cqw-2rem)/3)] rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
-                [class.border]="true"
-                [class.border-primary]="partido.estado === 'live'"
-                [class.border-outline]="partido.estado !== 'live'"
+                class="shrink-0 w-[85vw] md:w-[calc((100cqw-2rem)/3)] rounded-lg p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer hover:-translate-y-0.5 bg-surface"
                 [class.opacity-60]="partido.estado === 'finished'"
-                [class.opacity-75]="partido.estado === 'upcoming'"
-                [style.background]="
+                [style.border]="
                   partido.estado === 'live'
-                    ? 'linear-gradient(145deg, rgba(255,252,250,0.92) 0%, rgba(255,245,240,0.92) 100%)'
-                    : 'rgba(255,255,255,0.88)'
+                    ? '1px solid rgba(224,97,11,0.35)'
+                    : '1px solid rgba(12,107,61,0.12)'
                 "
-                [style.backdrop-filter]="'blur(14px)'"
-                [style.-webkit-backdrop-filter]="'blur(14px)'"
                 [style.box-shadow]="
                   partido.estado === 'live'
-                    ? '0 4px 24px rgba(192,85,42,0.18), 0 1px 4px rgba(0,0,0,0.06)'
-                    : '0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)'
+                    ? 'inset 0 3px 0 #e0610b, 0 1px 2px rgba(8,55,37,0.05), 0 8px 24px -8px rgba(224,97,11,0.25)'
+                    : '0 1px 2px rgba(8,55,37,0.05), 0 8px 24px -8px rgba(8,55,37,0.1)'
                 "
               >
                 <div
@@ -223,14 +287,14 @@
                 <div class="flex justify-between items-center text-data-mono font-semibold">
                   <div class="flex items-center gap-2">
                     <div
-                      class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-background text-[10px] font-bold shrink-0"
+                      class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-surface text-[10px] font-bold shrink-0"
                     >
                       {{ partido.abrevLocal }}
                     </div>
                     <span>{{ partido.equipoLocal }}</span>
                   </div>
                   @if (partido.golesLocal !== null) {
-                    <span class="text-lg font-bold">{{ partido.golesLocal }}</span>
+                    <span class="display-font tabular text-[18px]">{{ partido.golesLocal }}</span>
                   } @else {
                     <span class="text-on-background/30 font-normal">—</span>
                   }
@@ -239,7 +303,7 @@
                 <div class="flex justify-between items-center text-data-mono">
                   <div class="flex items-center gap-2">
                     <div
-                      class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-background text-[10px] font-bold shrink-0"
+                      class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-surface text-[10px] font-bold shrink-0"
                     >
                       {{ partido.abrevVisitante }}
                     </div>
@@ -247,8 +311,7 @@
                   </div>
                   @if (partido.golesVisitante !== null) {
                     <span
-                      class="text-lg"
-                      [class.font-bold]="partido.estado === 'live'"
+                      class="display-font tabular text-[18px]"
                       [class.text-on-background/40]="partido.estado !== 'live'"
                     >
                       {{ partido.golesVisitante }}
@@ -267,40 +330,18 @@
     <!-- ── SECCIÓN 2: Clasificación + Goleadores ── -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
       <!-- Clasificación -->
-      <div
-        data-anim="clasificacion"
-        class="flex flex-col overflow-hidden rounded"
-        style="
-          background: rgba(255, 255, 255, 0.75);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.7);
-          box-shadow:
-            0 4px 24px rgba(26, 74, 46, 0.08),
-            0 1px 4px rgba(0, 0, 0, 0.04);
-        "
-      >
-        <div
-          class="p-md border-b flex justify-between items-center"
-          style="
-            background: linear-gradient(90deg, rgba(26, 74, 46, 0.07) 0%, transparent 100%);
-            border-color: rgba(192, 85, 42, 0.15);
-          "
-        >
-          <h3 class="text-headline-md font-semibold text-tertiary flex items-center gap-2">
-            <span
-              class="w-5 h-5 rounded flex items-center justify-center text-[13px]"
-              style="background: rgba(26, 74, 46, 0.12)"
-            >
-              <span class="material-symbols-outlined" style="font-size: 13px">trophy</span>
-            </span>
-            Clasificación
-          </h3>
+      <div data-anim="clasificacion" class="card-pro flex flex-col">
+        <div class="card-pro-header">
+          <div class="flex flex-col gap-1">
+            <span class="kicker text-primary">Liga regular</span>
+            <h3 class="display-font text-on-background text-[18px] leading-none">Clasificación</h3>
+          </div>
           <a
             routerLink="/clasificacion"
-            class="font-bold text-[11px] uppercase tracking-wider text-primary hover:underline transition-colors"
+            class="font-bold text-[11px] uppercase tracking-wider text-tertiary hover:text-primary transition-colors flex items-center gap-1"
           >
             Ver completa
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
           </a>
         </div>
 
@@ -311,8 +352,8 @@
                 <tr
                   class="text-[10px] font-bold text-on-background/50 uppercase tracking-widest"
                   style="
-                    border-bottom: 1px solid rgba(192, 85, 42, 0.15);
-                    background: rgba(245, 240, 232, 0.4);
+                    border-bottom: 1px solid rgba(43, 122, 82, 0.1);
+                    background: rgba(243, 247, 244, 0.6);
                   "
                 >
                   <th class="p-sm pl-md w-8">#</th>
@@ -325,16 +366,17 @@
                   <th class="p-sm pr-md text-right w-10">Pts</th>
                 </tr>
               </thead>
-              <tbody class="text-data-mono">
+              <tbody class="text-data-mono tabular">
                 @for (entry of clasificacionVisible(); track entry.posicion) {
                   <tr
-                    class="transition-colors hover:bg-primary/4"
+                    class="transition-colors hover:bg-tertiary/5"
                     [style.background]="
                       $index === 0
-                        ? 'linear-gradient(90deg, rgba(192,85,42,0.06) 0%, transparent 60%)'
+                        ? 'linear-gradient(90deg, rgba(243,160,30,0.1) 0%, transparent 55%)'
                         : ''
                     "
-                    style="border-bottom: 1px solid rgba(192, 85, 42, 0.1)"
+                    [style.box-shadow]="$index === 0 ? 'inset 3px 0 0 #f3a01e' : 'none'"
+                    style="border-bottom: 1px solid rgba(43, 122, 82, 0.08)"
                   >
                     <td
                       class="p-sm pl-md font-bold"
@@ -353,7 +395,7 @@
                     <td class="p-sm text-center text-on-background/60">
                       {{ entry.gf - entry.gc }}
                     </td>
-                    <td class="p-sm pr-md text-right font-bold text-primary">{{ entry.puntos }}</td>
+                    <td class="p-sm pr-md text-right display-font text-[15px] text-tertiary">{{ entry.puntos }}</td>
                   </tr>
                 }
               </tbody>
@@ -375,8 +417,8 @@
         @if (!mostrarTodosClasificacion()) {
           <button
             (click)="mostrarTodosClasificacion.set(true)"
-            class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
-            style="border-top: 1px solid rgba(192, 85, 42, 0.12)"
+            class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-tertiary transition-colors hover:bg-tertiary/5"
+            style="border-top: 1px solid rgba(43, 122, 82, 0.1)"
           >
             <span class="material-symbols-outlined text-[16px]">expand_more</span>
             Ver todos los equipos
@@ -384,8 +426,8 @@
         } @else {
           <button
             (click)="mostrarTodosClasificacion.set(false)"
-            class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
-            style="border-top: 5px solid rgba(192, 85, 42, 0.12)"
+            class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-tertiary/5"
+            style="border-top: 1px solid rgba(43, 122, 82, 0.1)"
           >
             <span class="material-symbols-outlined text-[16px]">expand_less</span>
             Ver menos
@@ -394,66 +436,44 @@
       </div>
 
       <!-- Goleadores -->
-      <div
-        data-anim="goleadores"
-        class="flex flex-col overflow-hidden rounded"
-        style="
-          background: rgba(255, 255, 255, 0.75);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.7);
-          box-shadow:
-            0 4px 24px rgba(26, 74, 46, 0.08),
-            0 1px 4px rgba(0, 0, 0, 0.04);
-        "
-      >
-        <div
-          class="p-md border-b flex justify-between items-center"
-          style="
-            background: linear-gradient(90deg, rgba(26, 74, 46, 0.07) 0%, transparent 100%);
-            border-color: rgba(192, 85, 42, 0.15);
-          "
-        >
-          <h3 class="text-headline-md font-semibold text-tertiary flex items-center gap-2">
-            <span
-              class="w-5 h-5 rounded flex items-center justify-center"
-              style="background: rgba(26, 74, 46, 0.12)"
-            >
-              <span class="material-symbols-outlined" style="font-size: 13px">sports_soccer</span>
-            </span>
-            Goleadores · Jornada {{ jornadaNumero }}
-          </h3>
+      <div data-anim="goleadores" class="card-pro flex flex-col">
+        <div class="card-pro-header">
+          <div class="flex flex-col gap-1">
+            <span class="kicker text-primary">Pichichi · Jornada {{ jornadaNumero }}</span>
+            <h3 class="display-font text-on-background text-[18px] leading-none">Goleadores</h3>
+          </div>
         </div>
 
         <div class="p-md flex flex-col gap-sm">
           @for (jugador of goleadores; track jugador.id) {
             <div
-              class="flex items-center justify-between p-sm rounded transition-all duration-200 cursor-default hover:-translate-y-px"
+              class="flex flex-col gap-2 p-sm rounded transition-all duration-200 cursor-default hover:-translate-y-px"
               [style.background]="
                 $index === 0
-                  ? 'linear-gradient(90deg, rgba(255,214,0,0.12) 0%, rgba(255,214,0,0.04) 100%)'
-                  : 'rgba(245,240,232,0.6)'
+                  ? 'linear-gradient(90deg, rgba(243,160,30,0.16) 0%, rgba(243,160,30,0.04) 100%)'
+                  : 'rgba(238,243,236,0.8)'
               "
               [style.border]="
-                $index === 0 ? '1px solid rgba(255,214,0,0.35)' : '1px solid rgba(192,85,42,0.12)'
+                $index === 0 ? '1px solid rgba(243,160,30,0.4)' : '1px solid rgba(12,107,61,0.1)'
               "
-              [style.box-shadow]="$index === 0 ? '0 2px 12px rgba(255,214,0,0.12)' : 'none'"
+              [style.box-shadow]="$index === 0 ? '0 2px 12px rgba(243,160,30,0.15)' : 'none'"
             >
+              <div class="flex items-center justify-between">
               <div class="flex items-center gap-md">
                 <span
                   class="text-data-mono font-bold w-4 text-center"
                   [class.text-secondary]="$index === 0"
                   [class.text-on-background/30]="$index !== 0"
-                  [style.text-shadow]="$index === 0 ? '0 0 12px rgba(255,214,0,0.6)' : ''"
+                  [style.text-shadow]="$index === 0 ? '0 0 8px rgba(243,160,30,0.5)' : ''"
                   >{{ $index + 1 }}</span
                 >
                 <div
                   class="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
-                  [style.background]="$index === 0 ? 'rgba(26,74,46,0.15)' : 'rgba(26,74,46,0.08)'"
+                  [style.background]="$index === 0 ? 'rgba(43,122,82,0.12)' : 'rgba(43,122,82,0.06)'"
                   [style.border]="
                     $index === 0
-                      ? '1px solid rgba(26,74,46,0.25)'
-                      : '1px solid rgba(192,85,42,0.15)'
+                      ? '1px solid rgba(43,122,82,0.2)'
+                      : '1px solid rgba(43,122,82,0.1)'
                   "
                 >
                   <span class="material-symbols-outlined text-[20px] text-tertiary/70">person</span>
@@ -471,11 +491,7 @@
               <div class="flex items-center gap-1">
                 @if (jugador.goles > 0) {
                   <span
-                    class="px-2 py-0.5 rounded text-[11px] font-bold"
-                    [style.background]="
-                      $index === 0 ? 'rgba(192,85,42,0.15)' : 'rgba(192,85,42,0.08)'
-                    "
-                    [style.color]="'#c0552a'"
+                    class="px-2 py-0.5 rounded text-[11px] font-bold bg-primary/10 text-primary"
                   >
                     {{ jugador.goles }}G
                   </span>
@@ -487,6 +503,22 @@
                     {{ jugador.asistencias }}A
                   </span>
                 }
+                </div>
+              </div>
+
+              <!-- Barra de goles relativa al pichichi -->
+              <div
+                class="h-1.5 rounded-full overflow-hidden"
+                style="background: rgba(43, 122, 82, 0.1)"
+              >
+                <div
+                  class="h-full rounded-full transition-all duration-500"
+                  [style.width.%]="maxGoles() ? (jugador.goles / maxGoles()) * 100 : 0"
+                  [class.bg-primary]="$index !== 0"
+                  [class.bg-gradient-to-r]="$index === 0"
+                  [class.from-tertiary]="$index === 0"
+                  [class.to-primary]="$index === 0"
+                ></div>
               </div>
             </div>
           }

@@ -1,19 +1,21 @@
 @import 'tailwindcss';
 @theme {
-  /* ── Colores ── */
-  --color-primary: #c0552a;
-  --color-secondary: #ffd600;
-  --color-tertiary: #1a4a2e;
-  --color-background: #f5f0e8;
-  --color-on-background: #0f1923;
+  /* ── Colores — derivados del escudo "Liga de Verano" ── */
+  --color-primary: #e0610b;        /* Naranja escudo — identidad / CTA */
+  --color-secondary: #f3a01e;      /* Ámbar corona — acentos sobre verde */
+  --color-tertiary: #0c6b3d;       /* Verde bosque — estructura */
+  --color-tertiary-deep: #083725;  /* Verde profundo — superficies oscuras */
+  --color-background: #f6f2e9;     /* Crema cálida */
+  --color-on-background: #14271d;  /* Verde casi negro — texto */
   --color-surface: #ffffff;
-  --color-on-surface: #0f1923;
-  --color-outline: rgba(192, 85, 42, 0.3);
-  --color-error: #93000a;
-  --color-surface-container: #f5f0e8;
+  --color-on-surface: #14271d;
+  --color-outline: rgba(12, 107, 61, 0.18);
+  --color-error: #c62828;
+  --color-surface-container: #eef3ec;
 
   /* ── Tipografía ── */
   --font-sans: 'Chivo', sans-serif;
+  --font-display: 'Archivo Black', 'Chivo', sans-serif;
 
   --text-display-lg: 3rem;
   --text-display-lg--line-height: 1.1;
@@ -61,25 +63,22 @@
   --spacing-gutter: 1rem;
 }
 
-/* ── Fondo con rayas diagonales ── */
+/* ── Fondo cálido con toques de campo ── */
 body {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    rgba(192, 85, 42, 0.045) 0px,
-    rgba(192, 85, 42, 0.045) 1px,
-    transparent 1px,
-    transparent 14px
-  );
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% -15%, rgba(12, 107, 61, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 80%, rgba(224, 97, 11, 0.05) 0%, transparent 50%);
 }
 
-/* ── Capa de grano — efecto textura premium ── */
+/* ── Grano sutil ── */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9998;
-  opacity: 0.035;
+  opacity: 0.02;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 256px 256px;
 }
@@ -115,7 +114,7 @@ body::after {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c0552a;
+  background: var(--color-tertiary);
   border-radius: 3px;
 }
 
@@ -130,7 +129,76 @@ body::after {
 
 /* ── Utility reutilizable ── */
 .glow-active {
-  box-shadow: 0 4px 20px rgba(192, 85, 42, 0.1);
+  box-shadow: 0 4px 20px rgba(43, 122, 82, 0.12);
+}
+
+/* ══ Sistema de diseño editorial ══ */
+
+/* Titular display — cartel deportivo */
+.display-font {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-weight: 400; /* Archivo Black solo tiene un peso */
+}
+
+/* Kicker editorial: barra naranja + label espaciada */
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+}
+.kicker::before {
+  content: '';
+  width: 18px;
+  height: 3px;
+  background: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* Card profesional: superficie limpia, borde fino, sombra en dos capas */
+.card-pro {
+  background: var(--color-surface);
+  border: 1px solid rgba(12, 107, 61, 0.12);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 1px 2px rgba(8, 55, 37, 0.05),
+    0 8px 24px -8px rgba(8, 55, 37, 0.1);
+  overflow: hidden;
+}
+.card-pro-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid rgba(12, 107, 61, 0.1);
+}
+
+/* Cifras tabulares: las columnas de números quedan alineadas */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Rayos diagonales del escudo — acento de marca */
+.brand-rays {
+  position: absolute;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    -55deg,
+    transparent 0px,
+    transparent 14px,
+    rgba(243, 160, 30, 0.55) 14px,
+    rgba(243, 160, 30, 0.55) 18px,
+    transparent 18px,
+    transparent 30px,
+    rgba(224, 97, 11, 0.5) 30px,
+    rgba(224, 97, 11, 0.5) 36px
+  );
+  clip-path: polygon(0 100%, 100% 0, 100% 100%);
 }
 
 /* ── Nav link sidebar ── */
@@ -138,44 +206,60 @@ body::after {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  border-radius: var(--radius-DEFAULT);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-sm) var(--spacing-md);
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  transition: all 150ms ease;
-  color: rgba(15, 25, 35, 0.7);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+  transition: all 180ms ease;
+  color: rgba(45, 58, 70, 0.65);
   text-decoration: none;
 }
 .nav-link:hover {
-  background-color: var(--color-background);
-  color: var(--color-primary);
+  background-color: rgba(12, 107, 61, 0.08);
+  color: var(--color-tertiary);
 }
 .nav-link.nav-active,
 .nav-link.nav-active:hover {
-  background-color: var(--color-primary);
-  color: var(--color-background);
+  background-color: rgba(12, 107, 61, 0.12);
+  color: var(--color-tertiary);
+  font-weight: 700;
+  box-shadow: inset 3px 0 0 var(--color-tertiary);
 }
 
 /* ── Bottom nav (móvil) ── */
 .bottom-nav-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
   flex: 1;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: rgba(15, 25, 35, 0.45);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(45, 58, 70, 0.45);
   text-decoration: none;
-  transition: color 150ms ease;
+  transition: color 180ms ease;
   padding-bottom: env(safe-area-inset-bottom);
 }
 .bottom-nav-item:hover {
-  color: var(--color-primary);
+  color: var(--color-tertiary);
 }
 .bottom-nav-item.bottom-nav-active {
-  color: var(--color-primary);
+  color: var(--color-tertiary);
+  font-weight: 700;
+}
+.bottom-nav-item.bottom-nav-active::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 30px;
+  background: rgba(12, 107, 61, 0.12);
+  border-radius: 9999px;
+  z-index: -1;
 }

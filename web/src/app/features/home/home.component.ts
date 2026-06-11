@@ -52,6 +52,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
       : this.ligaReal.clasificacion().slice(0, 6)
   );
 
+  // Resumen de la temporada para el hero — un vistazo a los datos de la liga
+  readonly temporada = computed(() => {
+    const clas = this.ligaReal.clasificacion();
+    return {
+      equipos: clas.length,
+      partidos: Math.round(clas.reduce((acc, c) => acc + c.pj, 0) / 2),
+      goles: clas.reduce((acc, c) => acc + c.gf, 0),
+    };
+  });
+
+  // Máximo de goles del pichichi — escala las barras del ranking de goleadores
+  readonly maxGoles = computed(() =>
+    this.ligaReal.goleadores().reduce((max, g) => Math.max(max, g.goles), 0)
+  );
+
   ngOnInit(): void {
     this.ligaReal.cargarClasificacion();
     this.ligaReal.cargarPartidos();

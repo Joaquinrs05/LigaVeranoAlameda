@@ -1,20 +1,28 @@
 <!-- ── Top bar ── -->
 <nav
   data-anim="navbar"
-  class="bg-tertiary fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 shadow-lg"
+  class="bg-surface/95 backdrop-blur-md fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 border-b border-tertiary/10 shadow-sm"
 >
-  <div class="flex items-center gap-md">
-    <span class="material-symbols-outlined text-secondary text-[22px]">sports_soccer</span>
-    <span class="text-headline-md font-bold text-background tracking-tight"
-      >Liga Verano Alameda</span
-    >
-  </div>
+  <a routerLink="/" class="flex items-center gap-sm group">
+    <img
+      src="escudo.png"
+      alt="Escudo Liga de Verano Alameda"
+      class="h-11 w-auto shrink-0 transition-transform group-hover:scale-105"
+      style="filter: drop-shadow(0 1px 2px rgba(8, 55, 37, 0.2))"
+    />
+    <div class="flex flex-col leading-none gap-0.5">
+      <span class="display-font text-tertiary text-[16px]">Liga de Verano</span>
+      <span class="text-[9px] font-bold uppercase tracking-[0.24em] text-primary"
+        >Fútbol y tradición</span
+      >
+    </div>
+  </a>
 
-  <div class="flex items-center gap-md">
+  <div class="flex items-center gap-sm">
     @if (!auth.autenticado()) {
       <a
         routerLink="/fantasy/dashboard"
-        class="hidden md:flex items-center gap-1 bg-secondary text-on-background font-bold text-label-bold px-md py-sm rounded hover:bg-secondary/90 transition-colors"
+        class="hidden md:flex items-center gap-1.5 bg-primary text-surface font-bold text-label-bold px-md py-sm rounded-full hover:bg-primary/90 transition-colors shadow-sm"
       >
         <span class="material-symbols-outlined text-[16px]">bolt</span>
         Entrar al Fantasy
@@ -22,7 +30,7 @@
     } @else {
       <button
         (click)="auth.logout()"
-        class="hidden md:flex items-center gap-1 text-background/70 font-bold text-label-bold px-md py-sm rounded hover:text-background hover:bg-white/10 transition-colors"
+        class="hidden md:flex items-center gap-1 text-on-background/55 font-semibold text-label-bold px-md py-sm rounded-full hover:text-on-background hover:bg-tertiary/8 transition-colors"
       >
         <span class="material-symbols-outlined text-[16px]">logout</span>
         Cerrar sesión
@@ -33,15 +41,15 @@
       <a routerLink="/ajustes">
         <img
           [src]="auth.usuario()!.fotoPerfil!"
-          class="w-8 h-8 rounded-full object-cover border border-background/50 hover:border-secondary transition-colors cursor-pointer"
+          class="w-8 h-8 rounded-full object-cover border-2 border-tertiary/20 hover:border-tertiary/50 transition-colors cursor-pointer"
         />
       </a>
     } @else {
       <a
         [routerLink]="auth.autenticado() ? '/ajustes' : '/auth/login'"
-        class="w-8 h-8 rounded-full bg-white/20 border border-background/50 flex items-center justify-center hover:border-secondary transition-colors"
+        class="w-8 h-8 rounded-full bg-tertiary/8 border border-tertiary/15 flex items-center justify-center hover:bg-tertiary/15 hover:border-tertiary/30 transition-colors"
       >
-        <span class="material-symbols-outlined text-background text-[18px]">person</span>
+        <span class="material-symbols-outlined text-tertiary text-[18px]">person</span>
       </a>
     }
   </div>
@@ -49,7 +57,7 @@
 
 <!-- ── Bottom nav (móvil) ── -->
 <nav
-  class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-outline flex items-stretch h-16"
+  class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/98 backdrop-blur-md border-t border-tertiary/10 flex items-stretch h-16 shadow-[0_-4px_24px_rgba(43,122,82,0.08)]"
 >
   <a
     routerLink="/"
@@ -89,21 +97,21 @@
 <!-- ── Sidebar ── -->
 <aside
   data-anim="sidebar"
-  class="bg-surface hidden md:flex flex-col fixed left-0 top-0 h-full p-md border-r border-outline w-64 pt-24 z-40"
+  class="bg-surface hidden md:flex flex-col fixed left-0 top-0 h-full p-md border-r border-tertiary/10 w-64 pt-24 z-40"
 >
   <!-- Liga info -->
-  <div class="flex items-center gap-md mb-xl p-sm rounded bg-background border border-outline">
-    <div class="w-10 h-10 rounded bg-tertiary flex items-center justify-center shrink-0">
-      <span class="material-symbols-outlined text-secondary text-[20px]">sports_soccer</span>
-    </div>
+  <div
+    class="flex items-center gap-md mb-xl p-sm rounded-lg bg-tertiary/5 border border-tertiary/12"
+  >
+    <img src="escudo.png" alt="Escudo" class="h-12 w-auto shrink-0" />
     <div class="flex flex-col min-w-0">
-      <span class="font-bold text-label-bold text-on-background truncate">Liga Verano Alameda</span>
-      <span class="text-[11px] text-on-background/60">Temporada 2026</span>
+      <span class="font-bold text-label-bold text-on-background truncate">Liga de Verano Alameda</span>
+      <span class="text-[11px] text-tertiary/70">Temporada 2026 · Fútbol y tradición</span>
     </div>
   </div>
 
   <!-- Nav links -->
-  <nav class="flex flex-col gap-sm flex-1">
+  <nav class="flex flex-col gap-xs flex-1">
     <a
       routerLink="/"
       routerLinkActive="nav-active"
@@ -123,7 +131,7 @@
     </a>
 
     @if (auth.autenticado()) {
-      <div class="border-t border-outline my-sm"></div>
+      <div class="border-t border-tertiary/10 my-sm"></div>
 
       <a routerLink="/fantasy/dashboard" routerLinkActive="nav-active" class="nav-link">
         <span class="material-symbols-outlined text-[20px]">bolt</span>
@@ -142,7 +150,7 @@
         Mercado
       </a>
 
-      <div class="border-t border-outline my-sm"></div>
+      <div class="border-t border-tertiary/10 my-sm"></div>
     }
 
     @if (auth.autenticado()) {
@@ -153,7 +161,7 @@
     }
 
     @if (auth.usuario()?.esAdmin) {
-      <div class="border-t border-outline my-sm"></div>
+      <div class="border-t border-tertiary/10 my-sm"></div>
       <a routerLink="/superadmin" routerLinkActive="nav-active" class="nav-link">
         <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
         Superadmin
@@ -164,28 +172,38 @@
   <!-- CTA bottom -->
   <div class="mt-auto pt-lg">
     @if (auth.autenticado()) {
-      <div class="flex items-center gap-sm p-sm rounded bg-background border border-outline">
-        <div class="w-8 h-8 rounded-full bg-tertiary flex items-center justify-center shrink-0 overflow-hidden">
+      <div
+        class="flex items-center gap-sm p-sm rounded-lg bg-surface-container border border-tertiary/10"
+      >
+        <div
+          class="w-8 h-8 rounded-full bg-tertiary flex items-center justify-center shrink-0 overflow-hidden"
+        >
           @if (auth.usuario()?.fotoPerfil) {
             <img [src]="auth.usuario()!.fotoPerfil!" class="w-full h-full object-cover" />
           } @else {
-            <span class="material-symbols-outlined text-secondary text-[16px]">person</span>
+            <span class="material-symbols-outlined text-surface text-[16px]">person</span>
           }
         </div>
         <div class="flex flex-col min-w-0 flex-1">
-          <span class="font-bold text-label-bold text-on-background truncate">{{ auth.usuario()?.nombre }}</span>
+          <span class="font-bold text-label-bold text-on-background truncate">{{
+            auth.usuario()?.nombre
+          }}</span>
           <span class="text-[11px] text-on-background/50 truncate">{{ auth.usuario()?.email }}</span>
         </div>
-        <button (click)="auth.logout()" class="text-on-background/40 hover:text-primary transition-colors" title="Cerrar sesión">
+        <button
+          (click)="auth.logout()"
+          class="text-on-background/35 hover:text-primary transition-colors"
+          title="Cerrar sesión"
+        >
           <span class="material-symbols-outlined text-[18px]">logout</span>
         </button>
       </div>
     } @else {
       <a
         routerLink="/auth/login"
-        class="w-full bg-tertiary text-background font-bold text-label-bold py-sm rounded border border-white/10 hover:bg-primary transition-colors flex justify-center items-center gap-2"
+        class="w-full bg-primary text-surface font-bold text-label-bold py-sm rounded-full hover:bg-primary/90 transition-colors flex justify-center items-center gap-2 shadow-sm"
       >
-        <span class="material-symbols-outlined text-[16px] text-secondary">add</span>
+        <span class="material-symbols-outlined text-[16px]">add</span>
         Unirse a la Liga Fantasy
       </a>
     }

@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 
 import { NavbarLightComponent } from '../../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { PlayerCardComponent } from '../../../shared/components/player-card/player-card.component';
 import { FantasyService } from '../../../core/services/fantasy.service';
 import { LigaRealService } from '../../../core/services/liga-real.service';
 import { IJugadorFantasy } from '../../../core/models/fantasy.model';
@@ -13,7 +14,7 @@ import { IPartido } from '../../../core/models/partido.model';
 @Component({
   selector: 'app-fantasy-dashboard',
   standalone: true,
-  imports: [NavbarLightComponent, FooterComponent, RouterLink, FormsModule],
+  imports: [NavbarLightComponent, FooterComponent, PlayerCardComponent, RouterLink, FormsModule],
   templateUrl: './fantasy-dashboard.component.html',
 })
 export class FantasyDashboardComponent implements OnInit, AfterViewInit {
@@ -51,6 +52,13 @@ export class FantasyDashboardComponent implements OnInit, AfterViewInit {
   readonly titulares = computed<IJugadorFantasy[]>(() =>
     this.fantasy.miEquipo().filter(j => j.titular)
   );
+
+  // Estrella de la jornada: el jugador del usuario con más puntos esta jornada
+  readonly estrella = computed<IJugadorFantasy | null>(() => {
+    const plantilla = this.fantasy.miEquipo();
+    if (!plantilla.length) return null;
+    return [...plantilla].sort((a, b) => b.puntuacionJornada - a.puntuacionJornada)[0];
+  });
   readonly reservas = computed<IJugadorFantasy[]>(() =>
     this.fantasy.miEquipo().filter(j => !j.titular)
   );

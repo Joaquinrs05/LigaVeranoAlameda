@@ -2,9 +2,9 @@
 
 <!-- Blobs decorativos -->
 <div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: -1">
-  <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(192,85,42,0.14) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
-  <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(26,74,46,0.11) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
-  <div style="position:absolute;bottom:-18%;left:22%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,0,0.07) 0%,transparent 65%);animation:blob-drift-3 21s ease-in-out infinite"></div>
+  <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(224,97,11,0.1) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
+  <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(12,107,61,0.1) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
+  <div style="position:absolute;bottom:-18%;left:22%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(243,160,30,0.08) 0%,transparent 65%);animation:blob-drift-3 21s ease-in-out infinite"></div>
 </div>
 
 <main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
@@ -43,18 +43,17 @@
         <a routerLink="/fantasy/dashboard" class="w-9 h-9 rounded-full bg-surface border border-outline flex items-center justify-center text-on-background/50 hover:text-primary hover:border-primary transition-colors shrink-0">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
         </a>
-        <div>
-          <h1 class="text-headline-lg font-bold text-on-background leading-tight">Clasificación</h1>
+        <div class="flex flex-col gap-1">
+          <span class="kicker text-primary">Liga Fantasy</span>
+          <h1 class="display-font text-on-background leading-none text-[26px] md:text-[34px]">Clasificación</h1>
           <p class="text-body-md text-on-background/50">{{ fantasy.ligaActiva()?.nombre }}</p>
         </div>
       </div>
 
       <!-- Pódium top 3 -->
       @if (top3().length > 0) {
-        <div
-          class="rounded-xl p-lg"
-          style="background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 4px 24px rgba(26,74,46,0.08),0 1px 4px rgba(0,0,0,0.04)"
-        >
+        <div class="card-pro p-lg relative">
+          <div class="brand-rays" style="right: -10px; top: -10px; width: 130px; height: 80px; opacity: 0.3"></div>
           <div class="flex items-end justify-center gap-md pb-md">
 
             <!-- 2º puesto -->
@@ -72,7 +71,7 @@
                 <span class="text-[20px] leading-none">🥈</span>
                 <p class="font-bold text-[12px] text-on-background text-center leading-tight px-xs truncate w-full text-center">{{ top3()[1].equipo }}</p>
                 <p class="text-[10px] text-on-background/40 truncate w-full text-center">{{ top3()[1].propietario }}</p>
-                <p class="font-bold text-data-mono text-primary text-[13px]">{{ top3()[1].puntos }} pts</p>
+                <p class="display-font tabular text-primary text-[14px]">{{ top3()[1].puntos }} pts</p>
                 <!-- Barra -->
                 <div class="w-full rounded-t-sm" style="height:56px;background:linear-gradient(180deg,#64748b 0%,#475569 100%)"></div>
               </div>
@@ -81,22 +80,22 @@
             <!-- 1º puesto -->
             <div class="flex flex-col items-center gap-xs flex-1 max-w-[140px]" style="order:2">
               <!-- Corona -->
-              <span class="material-symbols-outlined text-secondary text-[22px]" style="filter:drop-shadow(0 0 8px rgba(255,214,0,0.6))">military_tech</span>
+              <span class="material-symbols-outlined text-secondary text-[22px]" style="filter:drop-shadow(0 0 8px rgba(243,160,30,0.6))">military_tech</span>
               <!-- Avatar -->
               <div
                 class="w-14 h-14 rounded-full flex items-center justify-center border-2"
                 [class.border-secondary]="!top3()[0].esUsuario"
                 [class.border-tertiary]="top3()[0].esUsuario"
-                style="background:linear-gradient(135deg,rgba(26,74,46,0.12) 0%,rgba(26,74,46,0.06) 100%)"
+                style="background:linear-gradient(135deg,rgba(12,107,61,0.12) 0%,rgba(12,107,61,0.06) 100%)"
               >
                 <span class="material-symbols-outlined text-on-background/50 text-[28px]">person</span>
               </div>
               <span class="text-[24px] leading-none">🥇</span>
               <p class="font-bold text-[13px] text-on-background text-center leading-tight px-xs truncate w-full text-center">{{ top3()[0].equipo }}</p>
               <p class="text-[10px] text-on-background/40 truncate w-full text-center">{{ top3()[0].propietario }}</p>
-              <p class="font-bold text-data-mono text-[15px]" [class.text-tertiary]="top3()[0].esUsuario" [class.text-primary]="!top3()[0].esUsuario">{{ top3()[0].puntos }} pts</p>
+              <p class="display-font tabular text-[16px]" [class.text-tertiary]="top3()[0].esUsuario" [class.text-primary]="!top3()[0].esUsuario">{{ top3()[0].puntos }} pts</p>
               <!-- Barra -->
-              <div class="w-full rounded-t-sm" style="height:80px;background:linear-gradient(180deg,#1a4a2e 0%,#0e2c1a 100%)"></div>
+              <div class="w-full rounded-t-sm" style="height:80px;background:linear-gradient(180deg,#0c6b3d 0%,#083725 100%)"></div>
             </div>
 
             <!-- 3º puesto -->
@@ -114,9 +113,9 @@
                 <span class="text-[20px] leading-none">🥉</span>
                 <p class="font-bold text-[12px] text-on-background text-center leading-tight px-xs truncate w-full text-center">{{ top3()[2].equipo }}</p>
                 <p class="text-[10px] text-on-background/40 truncate w-full text-center">{{ top3()[2].propietario }}</p>
-                <p class="font-bold text-data-mono text-primary text-[13px]">{{ top3()[2].puntos }} pts</p>
+                <p class="display-font tabular text-primary text-[14px]">{{ top3()[2].puntos }} pts</p>
                 <!-- Barra -->
-                <div class="w-full rounded-t-sm" style="height:40px;background:linear-gradient(180deg,#c0552a 0%,#8a3a1a 100%)"></div>
+                <div class="w-full rounded-t-sm" style="height:40px;background:linear-gradient(180deg,#e0610b 0%,#a34708 100%)"></div>
               </div>
             }
 
@@ -125,12 +124,9 @@
       }
 
       <!-- Lista completa -->
-      <div
-        class="rounded overflow-hidden"
-        style="background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 4px 24px rgba(26,74,46,0.08),0 1px 4px rgba(0,0,0,0.04)"
-      >
+      <div class="card-pro">
         <!-- Cabecera -->
-        <div class="px-md py-sm border-b" style="border-color:rgba(192,85,42,0.15);background:linear-gradient(90deg,rgba(26,74,46,0.07) 0%,transparent 100%)">
+        <div class="px-md py-sm border-b" style="border-color:rgba(12,107,61,0.12);background:linear-gradient(90deg,rgba(12,107,61,0.06) 0%,transparent 100%)">
           <div class="flex items-center text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
             <span class="w-8">#</span>
             <span class="flex-1">Equipo</span>
@@ -139,20 +135,20 @@
           </div>
         </div>
 
-        <div class="divide-y" style="divide-color:rgba(192,85,42,0.08)">
+        <div class="divide-y" style="divide-color:rgba(12,107,61,0.08)">
           @for (entry of clasificacion(); track entry.posicion) {
             <div
-              class="flex items-center px-md py-md transition-colors hover:bg-primary/3"
+              class="flex items-center px-md py-md transition-colors hover:bg-tertiary/3"
               [class.border-l-2]="entry.esUsuario"
               [class.border-l-tertiary]="entry.esUsuario"
-              [style.background]="entry.posicion === 1 ? 'linear-gradient(90deg,rgba(192,85,42,0.06) 0%,transparent 60%)' : entry.esUsuario ? 'rgba(26,74,46,0.04)' : ''"
+              [style.background]="entry.posicion === 1 ? 'linear-gradient(90deg,rgba(243,160,30,0.1) 0%,transparent 60%)' : entry.esUsuario ? 'rgba(12,107,61,0.04)' : ''"
             >
               <!-- Posición -->
               <div class="w-8 shrink-0">
                 @if (entry.posicion === 1) {
-                  <span class="material-symbols-outlined text-secondary text-[18px]" style="filter:drop-shadow(0 0 6px rgba(255,214,0,0.5))">military_tech</span>
+                  <span class="material-symbols-outlined text-secondary text-[18px]" style="filter:drop-shadow(0 0 6px rgba(243,160,30,0.5))">military_tech</span>
                 } @else {
-                  <span class="font-bold text-data-mono" [class.text-on-background/60]="entry.posicion <= 3" [class.text-on-background/30]="entry.posicion > 3">{{ entry.posicion }}</span>
+                  <span class="display-font tabular text-[13px]" [class.text-on-background/60]="entry.posicion <= 3" [class.text-on-background/30]="entry.posicion > 3">{{ entry.posicion }}</span>
                 }
               </div>
 
@@ -175,7 +171,7 @@
                   <span class="w-1.5 h-1.5 rounded-full bg-tertiary shrink-0"></span>
                 }
                 <span
-                  class="font-bold text-data-mono text-[16px]"
+                  class="display-font tabular text-[16px]"
                   [class.text-primary]="!entry.esUsuario"
                   [class.text-tertiary]="entry.esUsuario"
                 >{{ entry.puntos }}</span>

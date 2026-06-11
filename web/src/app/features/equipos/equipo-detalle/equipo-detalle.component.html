@@ -6,7 +6,7 @@
     <div class="mb-lg flex flex-col gap-md">
       <a
         routerLink="/equipos"
-        class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-on-background/50 hover:text-primary transition-colors w-fit"
+        class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-on-background/50 hover:text-tertiary transition-colors w-fit"
       >
         <span class="material-symbols-outlined text-[16px]">arrow_back</span>
         Todos los equipos
@@ -14,19 +14,20 @@
 
       <div class="flex items-center gap-md">
         <div
-          class="w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden"
+          class="w-16 h-16 rounded-xl flex items-center justify-center text-white shrink-0 overflow-hidden relative"
           [style.background]="equipo()!.color"
           [style.box-shadow]="'0 8px 24px ' + equipo()!.color + '55'"
         >
           @if (equipo()!.fotoUrl) {
             <img [src]="equipo()!.fotoUrl" [alt]="equipo()!.nombre" class="w-full h-full object-contain p-1" />
           } @else {
-            {{ equipo()!.abrev }}
+            <span class="display-font text-lg">{{ equipo()!.abrev }}</span>
           }
         </div>
-        <div>
-          <h1 class="text-headline-lg font-bold text-on-background">{{ equipo()!.nombre }}</h1>
-          <p class="text-body-md text-on-background/50 mt-0.5">
+        <div class="flex flex-col gap-1">
+          <span class="kicker text-primary">Temporada 2026</span>
+          <h1 class="display-font text-on-background leading-none text-[24px] md:text-[32px]">{{ equipo()!.nombre }}</h1>
+          <p class="text-body-md text-on-background/50">
             <span class="font-bold text-primary">#{{ equipo()!.posicion }}</span> en la clasificación
           </p>
         </div>
@@ -44,11 +45,11 @@
           { label: 'Pts', value: equipo()!.stats.pts, color: 'text-primary' }
         ]; track stat.label) {
           <div
-            class="rounded p-sm text-center"
-            style="background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 2px 8px rgba(0,0,0,0.05)"
+            class="rounded-lg p-sm text-center bg-surface"
+            style="border: 1px solid rgba(12, 107, 61, 0.12); box-shadow: 0 1px 2px rgba(8, 55, 37, 0.05)"
           >
-            <span class="block text-[10px] font-bold uppercase tracking-wider text-on-background/40">{{ stat.label }}</span>
-            <span class="block text-headline-md font-bold mt-0.5" [class]="stat.color">{{ stat.value }}</span>
+            <span class="block text-[9px] font-bold uppercase tracking-[0.18em] text-on-background/40">{{ stat.label }}</span>
+            <span class="block display-font tabular text-[20px] mt-0.5" [class]="stat.color">{{ stat.value }}</span>
           </div>
         }
       </div>
@@ -58,7 +59,7 @@
     <div class="max-w-2xl mx-auto w-full flex flex-col gap-lg">
       <div
         class="relative w-full rounded-xl overflow-hidden"
-        style="background:linear-gradient(180deg,#0e2c1a 0%,#1a4a2e 35%,#1a4a2e 65%,#0e2c1a 100%);min-height:520px"
+        style="background:linear-gradient(180deg,#083725 0%,#075530 35%,#075530 65%,#083725 100%);min-height:520px"
       >
         <!-- Líneas del campo -->
         <div class="absolute left-4 right-4 pointer-events-none" style="top:50%;height:1px;background:rgba(255,255,255,0.15)"></div>
@@ -66,8 +67,8 @@
         <div class="absolute pointer-events-none" style="top:50%;left:50%;transform:translate(-50%,-50%);width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.3)"></div>
         <div class="absolute left-1/2 pointer-events-none" style="top:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-top:none"></div>
         <div class="absolute left-1/2 pointer-events-none" style="bottom:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-bottom:none"></div>
-        <div class="absolute top-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(255,214,0,0.3),transparent)"></div>
-        <div class="absolute bottom-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(255,214,0,0.2),transparent)"></div>
+        <div class="absolute top-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(243,160,30,0.4),transparent)"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(243,160,30,0.25),transparent)"></div>
 
         <!-- Filas de jugadores -->
         <div class="relative z-10 flex flex-col justify-around py-xl" style="min-height:520px">
@@ -113,15 +114,15 @@
 
       <!-- ── Estadísticas de jugadores ── -->
       <div class="flex flex-col gap-sm">
-        <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
-          <span class="material-symbols-outlined text-[20px]">bar_chart</span>
-          Jugadores
-        </h2>
+        <div class="flex flex-col gap-1 mb-1">
+          <span class="kicker text-primary">Plantilla</span>
+          <h2 class="display-font text-on-background text-[20px] leading-none">Jugadores</h2>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
           @for (j of equipo()!.jugadores; track j.id) {
             <div
-              class="flex items-center gap-sm p-sm rounded"
-              style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.12);box-shadow:0 2px 8px rgba(0,0,0,0.04)"
+              class="flex items-center gap-sm p-sm rounded-lg bg-surface"
+              style="border: 1px solid rgba(12, 107, 61, 0.12); box-shadow: 0 1px 2px rgba(8, 55, 37, 0.04)"
             >
               <div
                 class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-[12px] shrink-0"

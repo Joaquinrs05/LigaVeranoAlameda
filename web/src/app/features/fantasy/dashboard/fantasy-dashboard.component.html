@@ -3,23 +3,19 @@
 @if (!enLiga()) {
   <!-- ══ EMPTY STATE: sin liga ══ -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: -1">
-    <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(192,85,42,0.14) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
-    <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(26,74,46,0.11) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
-    <div style="position:absolute;bottom:-18%;left:22%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,0,0.07) 0%,transparent 65%);animation:blob-drift-3 21s ease-in-out infinite"></div>
+    <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(224,97,11,0.1) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
+    <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(12,107,61,0.1) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
+    <div style="position:absolute;bottom:-18%;left:22%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(243,160,30,0.08) 0%,transparent 65%);animation:blob-drift-3 21s ease-in-out infinite"></div>
   </div>
 
   <main class="pt-24 pb-24 px-margin-mobile md:px-margin-desktop min-h-screen flex flex-col items-center justify-center max-w-2xl mx-auto">
 
     <!-- Icono + título -->
     <div class="flex flex-col items-center text-center gap-md mb-xl">
-      <div
-        class="w-20 h-20 rounded-full flex items-center justify-center"
-        style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%);box-shadow:0 8px 32px rgba(26,74,46,0.25)"
-      >
-        <span class="material-symbols-outlined text-secondary text-[40px]">shield</span>
-      </div>
-      <div>
-        <h1 class="text-display-lg font-bold text-on-background leading-tight">Bienvenido al Fantasy</h1>
+      <img src="escudo.png" alt="Liga de Verano Alameda" class="h-24 w-auto select-none" style="filter: drop-shadow(0 8px 24px rgba(8,55,37,0.3))" />
+      <div class="flex flex-col items-center gap-1.5">
+        <span class="kicker text-primary">Liga de Verano Alameda</span>
+        <h1 class="display-font text-on-background leading-tight text-[32px] md:text-[44px]">Bienvenido al Fantasy</h1>
         <p class="text-body-lg text-on-background/50 mt-sm">Todavía no perteneces a ninguna liga. Crea la tuya o únete con un código.</p>
       </div>
     </div>
@@ -29,8 +25,8 @@
 
       <!-- Crear liga -->
       <div
-        class="rounded-xl p-lg flex flex-col gap-md transition-shadow"
-        style="background:rgba(255,255,255,0.82);backdrop-filter:blur(14px);border:1px solid rgba(192,85,42,0.18);box-shadow:0 4px 24px rgba(192,85,42,0.08)"
+        class="card-pro p-lg flex flex-col gap-md"
+        style="border-color:rgba(224,97,11,0.2)"
       >
         <div class="flex items-center gap-sm">
           <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -45,8 +41,8 @@
         @if (modoOnboarding() !== 'crear') {
           <button
             (click)="modoOnboarding.set('crear')"
-            class="w-full py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 active:scale-[0.98]"
-            style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%);box-shadow:0 4px 16px rgba(192,85,42,0.3)"
+            class="w-full py-sm rounded-lg font-bold text-label-bold text-surface transition-all hover:opacity-90 active:scale-[0.98]"
+            style="background:linear-gradient(135deg,#e0610b 0%,#a34708 100%);box-shadow:0 4px 16px rgba(224,97,11,0.3)"
           >
             Crear liga
           </button>
@@ -56,13 +52,13 @@
               [(ngModel)]="nombreLigaNueva"
               placeholder="Nombre de la liga…"
               class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors"
-              style="border-color:rgba(192,85,42,0.25);background:rgba(255,255,255,0.9)"
+              style="border-color:rgba(224,97,11,0.25);background:rgba(255,255,255,0.9)"
             />
             <input
               [(ngModel)]="nombreEquipoNuevo"
               placeholder="Nombre de tu equipo…"
               class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-primary transition-colors"
-              style="border-color:rgba(192,85,42,0.25);background:rgba(255,255,255,0.9)"
+              style="border-color:rgba(224,97,11,0.25);background:rgba(255,255,255,0.9)"
             />
             <div class="flex gap-sm">
               <button
@@ -74,8 +70,8 @@
               <button
                 (click)="crearLiga()"
                 [disabled]="!nombreLigaNueva.trim() || !nombreEquipoNuevo.trim()"
-                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-                style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%)"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-surface transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                style="background:linear-gradient(135deg,#e0610b 0%,#a34708 100%)"
               >
                 Confirmar
               </button>
@@ -85,10 +81,7 @@
       </div>
 
       <!-- Unirse a una liga -->
-      <div
-        class="rounded-xl p-lg flex flex-col gap-md transition-shadow"
-        style="background:rgba(255,255,255,0.82);backdrop-filter:blur(14px);border:1px solid rgba(26,74,46,0.18);box-shadow:0 4px 24px rgba(26,74,46,0.08)"
-      >
+      <div class="card-pro p-lg flex flex-col gap-md">
         <div class="flex items-center gap-sm">
           <div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center">
             <span class="material-symbols-outlined text-tertiary text-[22px]">group_add</span>
@@ -102,8 +95,8 @@
         @if (modoOnboarding() !== 'unirse') {
           <button
             (click)="modoOnboarding.set('unirse')"
-            class="w-full py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 active:scale-[0.98]"
-            style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%);box-shadow:0 4px 16px rgba(26,74,46,0.25)"
+            class="w-full py-sm rounded-lg font-bold text-label-bold text-surface transition-all hover:opacity-90 active:scale-[0.98]"
+            style="background:linear-gradient(135deg,#0c6b3d 0%,#083725 100%);box-shadow:0 4px 16px rgba(12,107,61,0.3)"
           >
             Unirse
           </button>
@@ -114,13 +107,13 @@
               placeholder="Código de invitación…"
               maxlength="6"
               class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors font-mono tracking-wider uppercase"
-              style="border-color:rgba(26,74,46,0.25);background:rgba(255,255,255,0.9)"
+              style="border-color:rgba(12,107,61,0.25);background:rgba(255,255,255,0.9)"
             />
             <input
               [(ngModel)]="nombreEquipo"
               placeholder="Nombre de tu equipo…"
               class="w-full px-md py-sm rounded-lg border text-body-md text-on-background placeholder:text-on-background/30 outline-none focus:border-tertiary transition-colors"
-              style="border-color:rgba(26,74,46,0.25);background:rgba(255,255,255,0.9)"
+              style="border-color:rgba(12,107,61,0.25);background:rgba(255,255,255,0.9)"
             />
             <div class="flex gap-sm">
               <button
@@ -132,8 +125,8 @@
               <button
                 (click)="unirseALiga()"
                 [disabled]="!codigoInvitacion.trim() || !nombreEquipo.trim()"
-                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-                style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%)"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-surface transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                style="background:linear-gradient(135deg,#0c6b3d 0%,#083725 100%)"
               >
                 Entrar
               </button>
@@ -149,9 +142,9 @@
 
 <!-- Blobs decorativos (mismos que home) -->
 <div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: -1">
-  <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(192,85,42,0.14) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
-  <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(26,74,46,0.11) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
-  <div style="position:absolute;bottom:-18%;left:22%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,0,0.07) 0%,transparent 65%);animation:blob-drift-3 21s ease-in-out infinite"></div>
+  <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(224,97,11,0.1) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
+  <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(12,107,61,0.1) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
+  <div style="position:absolute;bottom:-18%;left:22%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(243,160,30,0.08) 0%,transparent 65%);animation:blob-drift-3 21s ease-in-out infinite"></div>
 </div>
 
 <main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
@@ -161,14 +154,32 @@
     <section
       data-anim="hero"
       class="relative overflow-hidden rounded"
-      style="background: linear-gradient(135deg, #1a4a2e 0%, #0e2c1a 55%, #091b10 100%)"
+      style="background: linear-gradient(135deg, #0c7344 0%, #075530 45%, #083725 100%)"
     >
       <!-- Trama de puntos -->
-      <div class="absolute inset-0 opacity-[0.07] pointer-events-none" style="background-image:radial-gradient(#ffd600 1px,transparent 1px);background-size:24px 24px"></div>
+      <div class="absolute inset-0 opacity-[0.08] pointer-events-none" style="background-image:radial-gradient(rgba(255,255,255,0.5) 1px,transparent 1px);background-size:24px 24px"></div>
+      <!-- Líneas de campo de fútbol -->
+      <svg class="absolute inset-0 w-full h-full pointer-events-none" style="opacity:0.1" viewBox="0 0 400 200" preserveAspectRatio="none" fill="none" aria-hidden="true">
+        <line x1="200" y1="0" x2="200" y2="200" stroke="#F5F0E8" stroke-width="1.5" />
+        <circle cx="200" cy="100" r="44" stroke="#F5F0E8" stroke-width="1.5" />
+        <circle cx="200" cy="100" r="2.5" fill="#F5F0E8" />
+        <rect x="0" y="52" width="46" height="96" stroke="#F5F0E8" stroke-width="1.5" />
+        <rect x="354" y="52" width="46" height="96" stroke="#F5F0E8" stroke-width="1.5" />
+      </svg>
       <!-- Halo central -->
-      <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 90% 55% at 50% 115%,rgba(192,85,42,0.4) 0%,transparent 100%)"></div>
+      <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 90% 55% at 50% 115%,rgba(224,97,11,0.32) 0%,transparent 100%)"></div>
       <!-- Shimmer superior -->
-      <div class="absolute top-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent 0%,rgba(255,214,0,0.5) 50%,transparent 100%)"></div>
+      <div class="absolute top-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.4) 50%,transparent 100%)"></div>
+      <!-- Rayos de marca -->
+      <div class="brand-rays" style="right:0;bottom:0;width:160px;height:110px;opacity:0.45"></div>
+      <!-- Escudo como marca de agua -->
+      <img
+        src="escudo.png"
+        alt=""
+        aria-hidden="true"
+        class="absolute pointer-events-none select-none"
+        style="right: 4%; top: 50%; transform: translateY(-50%) rotate(8deg); height: 130%; opacity: 0.08; filter: grayscale(0.3) brightness(1.6)"
+      />
 
       <div class="relative z-10 w-full px-lg py-lg flex flex-col md:flex-row md:items-center md:justify-between gap-lg">
 
@@ -176,9 +187,9 @@
         <div class="flex flex-col gap-sm">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-secondary text-[18px]">bolt</span>
-            <span class="text-background/50 text-[11px] font-bold uppercase tracking-widest">Fantasy · Jornada 12</span>
+            <span class="kicker text-secondary">Fantasy · Jornada 12</span>
           </div>
-          <h1 class="text-display-lg font-bold text-background leading-tight">{{ equipo.nombre }}</h1>
+          <h1 class="display-font text-surface leading-tight text-[32px] md:text-[44px]">{{ equipo.nombre }}</h1>
           <span class="text-background/60 text-body-md">{{ posicionLabel }} en la liga fantasy</span>
           <!-- Código de invitación -->
           @if (fantasy.ligaActiva()) {
@@ -188,8 +199,8 @@
               <button
                 (click)="copiarCodigo()"
                 class="flex items-center gap-1 px-sm py-0.75 rounded text-[10px] font-bold uppercase tracking-wider transition-all hover:opacity-80 active:scale-95"
-                [style.background]="codigoCopiado() ? 'rgba(26,74,46,0.5)' : 'rgba(255,255,255,0.12)'"
-                [style.color]="codigoCopiado() ? '#FFD600' : 'rgba(255,255,255,0.7)'"
+                [style.background]="codigoCopiado() ? 'rgba(12,107,61,0.5)' : 'rgba(255,255,255,0.12)'"
+                [style.color]="codigoCopiado() ? '#f3a01e' : 'rgba(255,255,255,0.7)'"
               >
                 <span class="material-symbols-outlined text-[12px]">{{ codigoCopiado() ? 'check' : 'content_copy' }}</span>
                 {{ codigoCopiado() ? 'Copiado' : 'Copiar' }}
@@ -211,33 +222,67 @@
           <!-- Puntos jornada -->
           <div class="flex flex-col items-center bg-on-background/30 rounded px-lg py-md border border-background/10">
             <span class="text-background/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Esta jornada</span>
-            <span class="font-bold leading-none text-secondary" style="font-size:3rem;text-shadow:0 0 24px rgba(255,214,0,0.5)">{{ equipo.puntuacionJornada }}</span>
+            <span class="display-font tabular leading-none text-secondary" style="font-size:2.75rem;text-shadow:0 0 24px rgba(243,160,30,0.5)">{{ equipo.puntuacionJornada }}</span>
             <span class="text-background/40 text-[11px] mt-xs">puntos</span>
           </div>
           <!-- Puntos totales -->
           <div class="flex flex-col items-center bg-on-background/20 rounded px-lg py-md border border-background/10">
             <span class="text-background/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Total</span>
-            <span class="font-bold text-background leading-none" style="font-size:3rem">{{ equipo.puntuacionTotal }}</span>
+            <span class="display-font tabular text-surface leading-none" style="font-size:2.75rem">{{ equipo.puntuacionTotal }}</span>
             <span class="text-background/40 text-[11px] mt-xs">puntos</span>
           </div>
           <!-- Presupuesto -->
           <div class="hidden md:flex flex-col items-center bg-on-background/20 rounded px-lg py-md border border-background/10">
             <span class="text-background/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Presupuesto</span>
-            <span class="font-bold text-background leading-none" style="font-size:2rem">{{ equipo.presupuesto }}M</span>
+            <span class="display-font tabular text-surface leading-none" style="font-size:1.75rem">{{ equipo.presupuesto }}M</span>
             <span class="text-background/40 text-[11px] mt-xs">disponible</span>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- ── ESTRELLA DE LA JORNADA ── -->
+    @if (estrella(); as mvp) {
+      <section
+        data-anim="estrella"
+        class="relative overflow-hidden rounded flex items-center gap-lg p-lg"
+        style="background:linear-gradient(120deg,#083725 0%,#075530 100%)"
+      >
+        <div class="absolute inset-0 opacity-[0.08] pointer-events-none" style="background-image:radial-gradient(rgba(255,255,255,0.5) 1px,transparent 1px);background-size:22px 22px"></div>
+        <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 60% 80% at 0% 50%,rgba(243,160,30,0.25) 0%,transparent 70%)"></div>
+
+        <div class="relative z-10 shrink-0">
+          <app-player-card
+            [nombre]="mvp.nombre"
+            [posicion]="posicionAbrev(mvp.posicion)"
+            [puntuacion]="mvp.puntuacionJornada"
+            [estado]="mvp.estado"
+            size="md"
+          />
+        </div>
+
+        <div class="relative z-10 flex flex-col gap-xs min-w-0">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-secondary text-[18px]" style="filter:drop-shadow(0 0 8px rgba(243,160,30,0.6))">star</span>
+            <span class="text-secondary text-[11px] font-bold uppercase tracking-widest">Estrella de la jornada</span>
+          </div>
+          <h2 class="display-font text-surface leading-tight truncate text-[26px] md:text-[34px]">{{ mvp.nombre }}</h2>
+          <span class="text-surface/60 text-body-md">{{ mvp.equipo }} · {{ posicionAbrev(mvp.posicion) }}</span>
+          <div class="flex items-baseline gap-1 mt-xs">
+            <span class="display-font tabular text-secondary leading-none text-[44px]" style="text-shadow:0 0 20px rgba(243,160,30,0.5)">{{ mvp.puntuacionJornada }}</span>
+            <span class="text-surface/50 text-body-md">pts esta jornada</span>
+          </div>
+        </div>
+      </section>
+    }
+
     <!-- ── PARTIDOS EN DIRECTO (reutilizado de home) ── -->
     <section data-anim="partidos" class="flex flex-col gap-md">
       <div class="flex items-center justify-between">
-        <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-          Partidos en Directo
-          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline">| Jornada 12</span>
-        </h2>
+        <div class="flex flex-col gap-1.5">
+          <span class="kicker text-primary">Jornada 12</span>
+          <h2 class="display-font text-on-background text-[22px] leading-none">Partidos en directo</h2>
+        </div>
         <a routerLink="/clasificacion" class="text-label-bold font-bold text-primary hover:underline text-[11px] uppercase tracking-wider hidden sm:block">
           Ver todos
         </a>
@@ -251,15 +296,11 @@
         >
           @for (partido of partidos; track $index) {
             <div
-              class="shrink-0 w-[85vw] md:w-[calc((100cqw-2rem)/3)] rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
-              [class.border]="true"
-              [class.border-primary]="partido.estado === 'live'"
-              [class.border-outline]="partido.estado !== 'live'"
+              class="shrink-0 w-[85vw] md:w-[calc((100cqw-2rem)/3)] rounded-lg p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer hover:-translate-y-0.5 bg-surface"
               [class.opacity-60]="partido.estado === 'finished'"
               [class.opacity-75]="partido.estado === 'upcoming'"
-              [style.background]="partido.estado === 'live' ? 'linear-gradient(145deg,rgba(255,252,250,0.92) 0%,rgba(255,245,240,0.92) 100%)' : 'rgba(255,255,255,0.88)'"
-              [style.backdrop-filter]="'blur(14px)'"
-              [style.box-shadow]="partido.estado === 'live' ? '0 4px 24px rgba(192,85,42,0.18),0 1px 4px rgba(0,0,0,0.06)' : '0 2px 12px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04)'"
+              [style.border]="partido.estado === 'live' ? '1px solid rgba(224,97,11,0.45)' : '1px solid rgba(12,107,61,0.12)'"
+              [style.box-shadow]="partido.estado === 'live' ? '0 4px 24px rgba(224,97,11,0.18),0 1px 4px rgba(0,0,0,0.06)' : '0 1px 2px rgba(8,55,37,0.05),0 8px 24px -8px rgba(8,55,37,0.1)'"
             >
               <div class="flex justify-between items-center text-[10px] uppercase tracking-widest font-bold">
                 <span class="text-on-background/50">{{ partido.estado === 'upcoming' ? partido.horaInicio : partido.minuto }}</span>
@@ -307,17 +348,14 @@
 
       <!-- Clasificación Fantasy (2/3) -->
       <div class="lg:col-span-2 flex flex-col gap-md" data-anim="clasificacion">
-        <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
-          <span class="material-symbols-outlined text-[20px]">leaderboard</span>
-          Liga Fantasy
-        </h2>
+        <div class="flex flex-col gap-1.5">
+          <span class="kicker text-primary">Clasificación</span>
+          <h2 class="display-font text-on-background text-[22px] leading-none">Liga Fantasy</h2>
+        </div>
 
-        <div
-          class="rounded overflow-hidden"
-          style="background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 4px 24px rgba(26,74,46,0.08),0 1px 4px rgba(0,0,0,0.04)"
-        >
+        <div class="card-pro">
           <!-- Cabecera tabla -->
-          <div class="px-md py-sm border-b" style="border-color:rgba(192,85,42,0.15);background:linear-gradient(90deg,rgba(26,74,46,0.07) 0%,transparent 100%)">
+          <div class="px-md py-sm border-b" style="border-color:rgba(12,107,61,0.12);background:linear-gradient(90deg,rgba(12,107,61,0.06) 0%,transparent 100%)">
             <div class="flex items-center text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
               <span class="w-8">#</span>
               <span class="flex-1">Equipo</span>
@@ -327,19 +365,19 @@
           </div>
 
           <div class="relative overflow-hidden">
-            <div class="divide-y" style="divide-color:rgba(192,85,42,0.08)">
+            <div class="divide-y" style="divide-color:rgba(12,107,61,0.08)">
               @for (entry of clasificacionVisible(); track entry.posicion) {
                 <div
                   class="flex items-center px-md py-md transition-colors hover:bg-primary/3"
                   [class.bg-tertiary/5]="entry.esUsuario"
-                  [style.background]="entry.posicion === 1 ? 'linear-gradient(90deg,rgba(192,85,42,0.06) 0%,transparent 60%)' : entry.esUsuario ? 'rgba(26,74,46,0.04)' : ''"
+                  [style.background]="entry.posicion === 1 ? 'linear-gradient(90deg,rgba(243,160,30,0.1) 0%,transparent 60%)' : entry.esUsuario ? 'rgba(12,107,61,0.04)' : ''"
                 >
                   <!-- Posición -->
                   <div class="w-8 shrink-0">
                     @if (entry.posicion === 1) {
-                      <span class="material-symbols-outlined text-secondary text-[18px]" style="filter:drop-shadow(0 0 6px rgba(255,214,0,0.5))">military_tech</span>
+                      <span class="material-symbols-outlined text-secondary text-[18px]" style="filter:drop-shadow(0 0 6px rgba(243,160,30,0.5))">military_tech</span>
                     } @else {
-                      <span class="font-bold text-data-mono text-on-background/40">{{ entry.posicion }}</span>
+                      <span class="display-font tabular text-[13px] text-on-background/40">{{ entry.posicion }}</span>
                     }
                   </div>
 
@@ -362,7 +400,7 @@
                       <span class="w-1.5 h-1.5 rounded-full bg-tertiary shrink-0"></span>
                     }
                     <span
-                      class="font-bold text-data-mono text-[16px]"
+                      class="display-font tabular text-[16px]"
                       [class.text-primary]="!entry.esUsuario"
                       [class.text-tertiary]="entry.esUsuario"
                     >{{ entry.puntos }}</span>
@@ -380,7 +418,7 @@
             <button
               (click)="mostrarTodaClasificacion.set(true)"
               class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
-              style="border-top: 1px solid rgba(192,85,42,0.12)"
+              style="border-top: 1px solid rgba(12,107,61,0.1)"
             >
               <span class="material-symbols-outlined text-[16px]">expand_more</span>
               Ver todos los equipos
@@ -389,7 +427,7 @@
             <button
               (click)="mostrarTodaClasificacion.set(false)"
               class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
-              style="border-top: 1px solid rgba(192,85,42,0.12)"
+              style="border-top: 1px solid rgba(12,107,61,0.1)"
             >
               <span class="material-symbols-outlined text-[16px]">expand_less</span>
               Ver menos
@@ -401,21 +439,21 @@
         <div class="flex gap-sm">
           <a
             routerLink="/fantasy/mercado"
-            class="flex-1 flex items-center gap-sm px-md py-sm rounded border border-outline hover:border-primary hover:bg-primary/5 transition-all"
-            style="background:rgba(255,255,255,0.7)"
+            class="flex-1 flex items-center gap-sm px-md py-sm rounded-lg bg-surface hover:-translate-y-0.5 hover:shadow-md transition-all group"
+            style="border:1px solid rgba(12,107,61,0.12);box-shadow:0 1px 2px rgba(8,55,37,0.05)"
           >
             <span class="material-symbols-outlined text-primary text-[20px]">shopping_cart</span>
-            <span class="font-bold text-body-md text-on-background">Mercado</span>
-            <span class="ml-auto material-symbols-outlined text-on-background/30 text-[18px]">chevron_right</span>
+            <span class="font-bold text-body-md text-on-background group-hover:text-tertiary transition-colors">Mercado</span>
+            <span class="ml-auto material-symbols-outlined text-on-background/30 text-[18px] transition-transform group-hover:translate-x-0.5">arrow_forward</span>
           </a>
           <a
             routerLink="/fantasy/mi-equipo"
-            class="flex-1 flex items-center gap-sm px-md py-sm rounded border border-outline hover:border-primary hover:bg-primary/5 transition-all"
-            style="background:rgba(255,255,255,0.7)"
+            class="flex-1 flex items-center gap-sm px-md py-sm rounded-lg bg-surface hover:-translate-y-0.5 hover:shadow-md transition-all group"
+            style="border:1px solid rgba(12,107,61,0.12);box-shadow:0 1px 2px rgba(8,55,37,0.05)"
           >
             <span class="material-symbols-outlined text-primary text-[20px]">edit_square</span>
-            <span class="font-bold text-body-md text-on-background">Mi Equipo</span>
-            <span class="ml-auto material-symbols-outlined text-on-background/30 text-[18px]">chevron_right</span>
+            <span class="font-bold text-body-md text-on-background group-hover:text-tertiary transition-colors">Mi Equipo</span>
+            <span class="ml-auto material-symbols-outlined text-on-background/30 text-[18px] transition-transform group-hover:translate-x-0.5">arrow_forward</span>
           </a>
         </div>
       </div>
@@ -423,25 +461,22 @@
       <!-- Mis Jugadores (1/3) -->
       <div class="flex flex-col gap-md">
         <div class="flex items-center justify-between">
-          <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
-            <span class="material-symbols-outlined text-[20px]">group</span>
-            Mis Jugadores
-          </h2>
+          <div class="flex flex-col gap-1.5">
+            <span class="kicker text-primary">Plantilla</span>
+            <h2 class="display-font text-on-background text-[22px] leading-none">Mis Jugadores</h2>
+          </div>
           <a routerLink="/fantasy/mi-equipo" class="text-[11px] font-bold uppercase tracking-wider text-primary hover:underline">
             Ver todos
           </a>
         </div>
 
-        <div
-          class="rounded overflow-hidden"
-          style="background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 4px 24px rgba(26,74,46,0.08),0 1px 4px rgba(0,0,0,0.04)"
-        >
-          <div class="px-md py-sm border-b flex items-center gap-2" style="border-color:rgba(192,85,42,0.15);background:linear-gradient(90deg,rgba(26,74,46,0.07) 0%,transparent 100%)">
+        <div class="card-pro">
+          <div class="px-md py-sm border-b flex items-center gap-2" style="border-color:rgba(12,107,61,0.12);background:linear-gradient(90deg,rgba(12,107,61,0.06) 0%,transparent 100%)">
             <span class="material-symbols-outlined text-tertiary text-[16px]">star</span>
             <span class="text-label-bold font-bold text-tertiary">Titulares</span>
           </div>
           <div class="relative overflow-hidden">
-            <div class="divide-y" style="divide-color:rgba(192,85,42,0.08)">
+            <div class="divide-y" style="divide-color:rgba(12,107,61,0.08)">
               @for (jugador of jugadoresVisibles(); track jugador.id) {
                 <div
                   class="flex items-center justify-between px-md py-sm hover:bg-primary/3 transition-colors"
@@ -450,7 +485,7 @@
                   <div class="flex items-center gap-sm min-w-0">
                     <div
                       class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold text-background"
-                      [style.background]="jugador.posicion === 'portero' ? '#1a4a2e' : jugador.posicion === 'defensa' ? '#c0552a' : jugador.posicion === 'centrocampista' ? '#0f5a8a' : '#7b2d8b'"
+                      [style.background]="jugador.posicion === 'portero' ? '#0c6b3d' : jugador.posicion === 'defensa' ? '#e0610b' : jugador.posicion === 'centrocampista' ? '#2f6f9f' : '#b23a48'"
                     >{{ posicionAbrev(jugador.posicion) }}</div>
                     <div class="flex flex-col min-w-0">
                       <span class="font-bold text-body-md text-on-background truncate">{{ jugador.nombre }}</span>
@@ -465,9 +500,9 @@
                     </div>
                   </div>
                   <div
-                    class="w-9 h-9 rounded flex items-center justify-center font-bold text-body-md shrink-0"
-                    [style.background]="jugador.puntuacionJornada >= 10 ? '#1a4a2e' : jugador.puntuacionJornada >= 6 ? 'rgba(26,74,46,0.12)' : 'rgba(192,85,42,0.08)'"
-                    [style.color]="jugador.puntuacionJornada >= 10 ? '#FFD600' : jugador.puntuacionJornada >= 6 ? '#1a4a2e' : '#c0552a'"
+                    class="w-9 h-9 rounded flex items-center justify-center shrink-0 display-font tabular text-[14px]"
+                    [style.background]="jugador.puntuacionJornada >= 10 ? '#075530' : jugador.puntuacionJornada >= 6 ? 'rgba(12,107,61,0.12)' : 'rgba(224,97,11,0.08)'"
+                    [style.color]="jugador.puntuacionJornada >= 10 ? '#f3a01e' : jugador.puntuacionJornada >= 6 ? '#0c6b3d' : '#e0610b'"
                   >{{ jugador.puntuacionJornada }}</div>
                 </div>
               }
@@ -482,7 +517,7 @@
             <button
               (click)="mostrarTodosJugadores.set(true)"
               class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
-              style="border-top: 1px solid rgba(192,85,42,0.12)"
+              style="border-top: 1px solid rgba(12,107,61,0.1)"
             >
               <span class="material-symbols-outlined text-[16px]">expand_more</span>
               Ver todos
@@ -491,7 +526,7 @@
             <button
               (click)="mostrarTodosJugadores.set(false)"
               class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
-              style="border-top: 1px solid rgba(192,85,42,0.12)"
+              style="border-top: 1px solid rgba(12,107,61,0.1)"
             >
               <span class="material-symbols-outlined text-[16px]">expand_less</span>
               Ver menos

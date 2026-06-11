@@ -79,6 +79,6 @@ export class MercadoComponent implements OnInit {
   }
 
   posicionColor(pos: IJugadorFantasy['posicion']): string {
-    return { portero: '#1a4a2e', defensa: '#c0552a', centrocampista: '#0f5a8a', delantero: '#7b2d8b' }[pos];
+    return { portero: '#0c6b3d', defensa: '#e0610b', centrocampista: '#2f6f9f', delantero: '#b23a48' }[pos];
   }
 }

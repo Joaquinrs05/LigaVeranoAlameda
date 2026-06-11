@@ -34,6 +34,7 @@ export class MiEquipoComponent implements OnInit {
   readonly errorSlot     = signal<string | null>(null);
   readonly formacion     = signal<Formacion>((localStorage.getItem('formacion') as Formacion) ?? '1-2-2-2');
   readonly movidos       = signal<string[]>([]);
+  readonly capitan       = signal<string | null>(localStorage.getItem('capitan'));
 
   readonly formaciones: Formacion[] = Object.keys(FORMACIONES) as Formacion[];
 
@@ -70,6 +71,26 @@ export class MiEquipoComponent implements OnInit {
     }
   }
 
+  // El capitán dobla su puntuación. Solo un titular puede llevar el brazalete.
+  toggleCapitan(id: string, ev: Event): void {
+    ev.stopPropagation();
+    const nuevo = this.capitan() === id ? null : id;
+    this.capitan.set(nuevo);
+    if (nuevo) {
+      localStorage.setItem('capitan', nuevo);
+    } else {
+      localStorage.removeItem('capitan');
+    }
+    this._persistirPlantilla(this.jugadores());
+  }
+
+  private _persistirPlantilla(jugadores: IJugadorFantasy[]): void {
+    const cap = this.capitan();
+    this.fantasy.actualizarPlantilla(
+      jugadores.map(j => ({ jugador_id: j.id, es_titular: j.titular, es_capitan: j.id === cap }))
+    );
+  }
+
   cambiarFormacion(f: Formacion): void {
     if (f === this.formacion()) return;
     const config = FORMACIONES[f];
@@ -90,6 +111,7 @@ export class MiEquipoComponent implements OnInit {
     }
 
     this.fantasy.miEquipo.set(updated);
+    this._sanearCapitan(updated);
     this.formacion.set(f);
     localStorage.setItem('formacion', f);
 
@@ -137,9 +159,8 @@ export class MiEquipoComponent implements OnInit {
     });
     this.fantasy.miEquipo.set(updated);
     this.seleccionado.set(null);
-    this.fantasy.actualizarPlantilla(
-      updated.map(j => ({ jugador_id: j.id, es_titular: j.titular, es_capitan: false }))
-    );
+    this._sanearCapitan(updated);
+    this._persistirPlantilla(updated);
   }
 
   seleccionarSlot(posicion: IJugadorFantasy['posicion']): void {
@@ -179,9 +200,16 @@ export class MiEquipoComponent implements OnInit {
     this.fantasy.miEquipo.set(updated);
     this.seleccionado.set(null);
     this.slotPendiente.set(null);
-    this.fantasy.actualizarPlantilla(
-      updated.map(p => ({ jugador_id: p.id, es_titular: p.titular, es_capitan: false }))
-    );
+    this._persistirPlantilla(updated);
+  }
+
+  // Si el capitán deja de ser titular, pierde el brazalete
+  private _sanearCapitan(jugadores: IJugadorFantasy[]): void {
+    const cap = this.capitan();
+    if (cap && !jugadores.some(j => j.id === cap && j.titular)) {
+      this.capitan.set(null);
+      localStorage.removeItem('capitan');
+    }
   }
 
   private _mostrarError(msg: string): void {
@@ -199,7 +227,7 @@ export class MiEquipoComponent implements OnInit {
   equipoAbrev(equipo: string): string  { return equipo.split(' ').map(p => p[0]).join('').slice(0, 3).toUpperCase(); }
 
   posicionColor(pos: IJugadorFantasy['posicion']): string {
-    return { portero: '#1a4a2e', defensa: '#c0552a', centrocampista: '#0f5a8a', delantero: '#7b2d8b' }[pos];
+    return { portero: '#0c6b3d', defensa: '#e0610b', centrocampista: '#2f6f9f', delantero: '#b23a48' }[pos];
   }
 
   posicionAbrev(pos: IJugadorFantasy['posicion']): string {

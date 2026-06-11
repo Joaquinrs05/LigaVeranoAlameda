@@ -5,7 +5,7 @@
   <!-- ── Banner mercado cerrado ── -->
   @if (!mercadoAbierto()) {
     <div class="mb-lg flex items-center gap-md px-md py-md rounded-lg border"
-      style="background:rgba(192,85,42,0.06);border-color:rgba(192,85,42,0.25)">
+      style="background:rgba(224,97,11,0.06);border-color:rgba(224,97,11,0.3)">
       <span class="material-symbols-outlined text-primary text-[24px] shrink-0">storefront</span>
       <div>
         <p class="font-bold text-body-md text-primary">Mercado cerrado</p>
@@ -16,18 +16,22 @@
 
   <!-- ── Cabecera ── -->
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-md pb-lg">
-    <div>
-      <h1 class="text-headline-lg font-bold text-primary">Mercado</h1>
-      <p class="text-body-md text-on-background/50">
+    <div class="flex flex-col gap-1.5">
+      <span class="kicker text-primary">Fantasy · Fichajes</span>
+      <h1 class="display-font text-on-background leading-none text-[30px] md:text-[40px]">Mercado</h1>
+      <p class="text-body-md text-on-background/50 mt-1">
         @if (mercadoAbierto()) { Ficha jugadores para tu equipo fantasy }
         @else { El mercado está cerrado actualmente }
       </p>
     </div>
-    <div class="flex items-center gap-sm bg-surface border border-outline rounded-lg px-md py-sm shrink-0">
+    <div
+      class="flex items-center gap-sm rounded-lg px-md py-sm shrink-0 bg-surface"
+      style="border: 1px solid rgba(12, 107, 61, 0.12); box-shadow: 0 1px 2px rgba(8, 55, 37, 0.05), 0 8px 24px -8px rgba(8, 55, 37, 0.1)"
+    >
       <span class="material-symbols-outlined text-tertiary text-[22px]">account_balance_wallet</span>
       <div>
-        <div class="text-[10px] text-on-background/40 uppercase tracking-widest font-bold">Presupuesto</div>
-        <div class="text-headline-md font-bold text-tertiary">{{ presupuesto() }}M €</div>
+        <div class="text-[9px] text-on-background/40 uppercase tracking-[0.2em] font-bold">Presupuesto</div>
+        <div class="display-font tabular text-tertiary text-[22px]">{{ presupuesto() }}M €</div>
       </div>
     </div>
   </div>
@@ -42,7 +46,8 @@
         type="text"
         placeholder="Buscar jugador o equipo..."
         (input)="onBusqueda($event)"
-        class="w-full bg-surface border border-outline rounded-lg py-sm pl-xl pr-sm text-on-background placeholder:text-on-background/30 focus:border-primary focus:outline-none transition-colors text-body-md"
+        class="w-full bg-surface rounded-full py-sm pl-xl pr-sm text-on-background placeholder:text-on-background/30 focus:border-tertiary focus:outline-none transition-colors text-body-md"
+        style="border: 1px solid rgba(12, 107, 61, 0.15)"
       />
     </div>
 
@@ -51,10 +56,10 @@
       @for (filtro of filtrosPosicion; track filtro.valor) {
         <button
           (click)="filtrarPosicion(filtro.valor)"
-          class="shrink-0 px-md py-1 rounded-full font-bold text-label-bold transition-colors"
+          class="shrink-0 px-md py-1.5 rounded-full font-bold text-label-bold transition-colors"
           [class]="posicion() === filtro.valor
-            ? 'bg-primary text-background'
-            : 'bg-surface border border-outline text-on-background/60 hover:border-primary hover:text-on-background'"
+            ? 'bg-tertiary text-surface shadow-sm'
+            : 'bg-surface border border-tertiary/15 text-on-background/60 hover:border-tertiary/40 hover:text-tertiary'"
         >
           {{ filtro.etiqueta }}
         </button>
@@ -73,10 +78,11 @@
       @for (j of jugadoresFiltrados(); track j.id) {
 
         <div
-          class="flex items-center gap-sm p-md bg-surface border border-outline rounded-lg transition-all duration-200 group"
+          class="flex items-center gap-sm p-md bg-surface rounded-lg transition-all duration-200 group"
+          style="border: 1px solid rgba(12, 107, 61, 0.12); box-shadow: 0 1px 2px rgba(8, 55, 37, 0.04)"
           [class.opacity-60]="j.estado !== 'disponible'"
           [class]="j.estado === 'disponible'
-            ? 'hover:border-primary/50 hover:shadow-sm'
+            ? 'hover:-translate-y-0.5 hover:shadow-md'
             : ''"
         >
           <!-- Avatar -->
@@ -95,7 +101,7 @@
 
           <!-- Nombre y equipo -->
           <div class="flex-1 min-w-0">
-            <div class="font-bold text-body-md text-on-background truncate group-hover:text-primary transition-colors">
+            <div class="font-bold text-body-md text-on-background truncate group-hover:text-tertiary transition-colors">
               {{ j.nombre }}
             </div>
             <div class="text-[11px] text-on-background/50">{{ j.equipo }}</div>
@@ -103,7 +109,7 @@
 
           <!-- Precio y estado -->
           <div class="text-right shrink-0 mr-sm">
-            <div class="font-bold text-on-background text-data-mono">{{ j.precio }}M</div>
+            <div class="display-font tabular text-on-background text-[15px]">{{ j.precio }}M</div>
             @if (j.estado === 'lesionado') {
               <div class="text-[9px] text-red-600 font-bold">Lesionado</div>
             } @else if (j.estado === 'sancionado') {
@@ -134,7 +140,7 @@
           } @else {
             <button
               (click)="fichar(j)"
-              class="shrink-0 px-sm py-1 rounded text-label-bold font-bold bg-primary text-background hover:bg-primary/90 transition-colors active:scale-95 whitespace-nowrap"
+              class="shrink-0 px-md py-1.5 rounded-full text-label-bold font-bold bg-primary text-surface hover:bg-primary/90 transition-colors active:scale-95 whitespace-nowrap shadow-sm"
             >Fichar</button>
           }
         </div>

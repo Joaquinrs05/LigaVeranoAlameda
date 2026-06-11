@@ -3,17 +3,20 @@
 <main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
 
   <!-- Header -->
-  <div class="mb-lg">
-    <h1 class="text-headline-lg font-bold text-primary">Equipos</h1>
-    <p class="text-body-md text-on-background/60 mt-xs">{{ equipos().length }} equipos en la liga · Temporada 2026</p>
+  <div class="mb-lg flex items-end justify-between gap-md">
+    <div class="flex flex-col gap-1.5">
+      <span class="kicker text-primary">{{ equipos().length }} equipos · Temporada 2026</span>
+      <h1 class="display-font text-on-background leading-none text-[30px] md:text-[40px]">Equipos</h1>
+    </div>
+    <img src="escudo.png" alt="" aria-hidden="true" class="h-14 w-auto hidden md:block select-none" style="filter: drop-shadow(0 2px 6px rgba(8,55,37,0.18))" />
   </div>
 
   <!-- Grid -->
   <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-md">
     @for (equipo of equipos(); track equipo.id) {
       <a
-                [routerLink]="['/equipos', equipo.id]"
-        class="bg-surface border border-outline rounded overflow-hidden flex flex-col cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+        [routerLink]="['/equipos', equipo.id]"
+        class="card-pro flex flex-col cursor-pointer hover:-translate-y-1 transition-all duration-200 group"
       >
         <!-- Escudo -->
         <div
@@ -24,18 +27,20 @@
             class="absolute inset-0 opacity-10 pointer-events-none"
             style="background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px); background-size: 18px 18px;"
           ></div>
+          <div class="brand-rays" style="right: 0; bottom: 0; width: 90px; height: 60px; opacity: 0.35"></div>
           @if (equipo.fotoUrl) {
-            <img [src]="equipo.fotoUrl" [alt]="equipo.nombre" class="relative z-10 h-20 w-20 object-contain drop-shadow" />
+            <img [src]="equipo.fotoUrl" [alt]="equipo.nombre" class="relative z-10 h-20 w-20 object-contain drop-shadow transition-transform duration-200 group-hover:scale-110" />
           } @else {
-            <span class="text-white font-bold text-[2rem] leading-none z-10 drop-shadow">{{ equipo.abrev }}</span>
+            <span class="display-font text-white text-[2rem] leading-none z-10 drop-shadow transition-transform duration-200 group-hover:scale-110">{{ equipo.abrev }}</span>
           }
         </div>
 
         <!-- Nombre -->
-        <div class="p-md">
-          <span class="font-bold text-body-lg text-on-background leading-tight group-hover:text-primary transition-colors">
+        <div class="p-md flex items-center justify-between gap-2">
+          <span class="font-bold text-body-lg text-on-background leading-tight group-hover:text-tertiary transition-colors">
             {{ equipo.nombre }}
           </span>
+          <span class="material-symbols-outlined text-on-background/25 text-[18px] transition-all group-hover:text-primary group-hover:translate-x-0.5">arrow_forward</span>
         </div>
       </a>
     }
