@@ -6,7 +6,9 @@
       "Read(//home/zudex/.claude/**)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:github.com)",
-      "Bash(npx ng *)"
+      "Bash(npx ng *)",
+      "Bash(ssh -i /home/zudex/.ssh/Vps_Delux root@141.11.100.166 \"cat /var/opt/Ligaverano/backend/.env | grep -v PASSWORD | grep -v SECRET | grep -v KEY | grep -v TOKEN\")",
+      "Bash(ssh -i /home/zudex/.ssh/Vps_Delux root@141.11.100.166 \"curl -s -o /dev/null -w '%{http_code}' --max-time 10 https://ffhvbtavztkqwoqukgav.supabase.co/rest/v1/ 2>&1\")"
     ]
   }
 }

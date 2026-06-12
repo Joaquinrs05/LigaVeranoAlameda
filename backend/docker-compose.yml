@@ -7,3 +7,28 @@ services:
       - "8004:8004"
     env_file:
       - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: liga-verano-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ligaverano
+      POSTGRES_USER: ligaverano
+      POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:-ligaverano_local}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./migrations/local_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ligaverano -d ligaverano"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  db_data:
