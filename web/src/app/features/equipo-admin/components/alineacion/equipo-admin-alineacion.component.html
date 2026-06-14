@@ -28,6 +28,24 @@
       </span>
     </div>
 
+    <!-- Banner estado / error -->
+    @if (errorSlot()) {
+      <div class="rounded p-sm flex items-center gap-2 border border-red-300 text-red-600" style="background:rgba(220,38,38,0.06)">
+        <span class="material-symbols-outlined text-[18px]">block</span>
+        <span class="text-body-md font-bold">{{ errorSlot() }}</span>
+      </div>
+    } @else if (seleccionado() || slotPendiente()) {
+      <div class="rounded p-sm flex items-center gap-2 border border-secondary/40" style="background:rgba(255,214,0,0.08)">
+        <span class="material-symbols-outlined text-[18px] text-on-background/60">{{ slotPendiente() && !seleccionado() ? 'person_add' : 'swap_horiz' }}</span>
+        @if (slotPendiente() && !seleccionado()) {
+          <span class="text-body-md text-on-background/70">Selecciona un <strong>{{ posAbrev(slotPendiente()!) }}</strong> para ocupar el hueco</span>
+        } @else {
+          <span class="text-body-md text-on-background/70">Selecciona otro jugador para hacer el cambio</span>
+        }
+        <button type="button" (click)="cancelar()" class="ml-auto text-[11px] font-bold text-on-background/40 hover:text-on-background transition-colors uppercase tracking-wider">Cancelar</button>
+      </div>
+    }
+
     <!-- Campo -->
     <div
       class="relative w-full rounded-lg overflow-hidden"
@@ -49,13 +67,18 @@
         <div class="flex justify-center gap-lg">
           @for (slot of slotsDelanteros(); track $index) {
             @if (slot.jugador; as j) {
-              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" size="md" />
-              </div>
+              <button type="button" (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" [seleccionado]="seleccionado() === j.id" size="md" />
+              </button>
             } @else {
-              <div class="flex flex-col items-center justify-center"
-                style="width:90px;height:122px;background:rgba(255,255,255,0.08);clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%);opacity:0.5">
-                <span class="material-symbols-outlined text-white/40 text-[24px]">person</span>
+              <div
+                (click)="seleccionarSlot(slot.posicion)"
+                class="flex flex-col items-center justify-center cursor-pointer transition-all duration-200"
+                [style.background]="slotPendiente() === slot.posicion ? 'rgba(255,214,0,0.18)' : 'rgba(255,255,255,0.08)'"
+                [style.opacity]="slotPendiente() === slot.posicion ? '1' : (slotPendiente() ? '0.3' : '0.6')"
+                style="width:90px;height:122px;clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%)"
+              >
+                <span class="material-symbols-outlined text-white/40 text-[28px]">person_add</span>
                 <span class="text-[9px] font-bold text-white/40 uppercase tracking-wider">{{ posAbrev(slot.posicion) }}</span>
               </div>
             }
@@ -66,13 +89,18 @@
         <div class="flex justify-center gap-md md:gap-lg">
           @for (slot of slotsCentrocampistas(); track $index) {
             @if (slot.jugador; as j) {
-              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" size="md" />
-              </div>
+              <button type="button" (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" [seleccionado]="seleccionado() === j.id" size="md" />
+              </button>
             } @else {
-              <div class="flex flex-col items-center justify-center"
-                style="width:90px;height:122px;background:rgba(255,255,255,0.08);clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%);opacity:0.5">
-                <span class="material-symbols-outlined text-white/40 text-[24px]">person</span>
+              <div
+                (click)="seleccionarSlot(slot.posicion)"
+                class="flex flex-col items-center justify-center cursor-pointer transition-all duration-200"
+                [style.background]="slotPendiente() === slot.posicion ? 'rgba(255,214,0,0.18)' : 'rgba(255,255,255,0.08)'"
+                [style.opacity]="slotPendiente() === slot.posicion ? '1' : (slotPendiente() ? '0.3' : '0.6')"
+                style="width:90px;height:122px;clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%)"
+              >
+                <span class="material-symbols-outlined text-white/40 text-[28px]">person_add</span>
                 <span class="text-[9px] font-bold text-white/40 uppercase tracking-wider">{{ posAbrev(slot.posicion) }}</span>
               </div>
             }
@@ -83,13 +111,18 @@
         <div class="flex justify-center gap-xl md:gap-2xl">
           @for (slot of slotsDefensas(); track $index) {
             @if (slot.jugador; as j) {
-              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" size="md" />
-              </div>
+              <button type="button" (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" [seleccionado]="seleccionado() === j.id" size="md" />
+              </button>
             } @else {
-              <div class="flex flex-col items-center justify-center"
-                style="width:90px;height:122px;background:rgba(255,255,255,0.08);clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%);opacity:0.5">
-                <span class="material-symbols-outlined text-white/40 text-[24px]">person</span>
+              <div
+                (click)="seleccionarSlot(slot.posicion)"
+                class="flex flex-col items-center justify-center cursor-pointer transition-all duration-200"
+                [style.background]="slotPendiente() === slot.posicion ? 'rgba(255,214,0,0.18)' : 'rgba(255,255,255,0.08)'"
+                [style.opacity]="slotPendiente() === slot.posicion ? '1' : (slotPendiente() ? '0.3' : '0.6')"
+                style="width:90px;height:122px;clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%)"
+              >
+                <span class="material-symbols-outlined text-white/40 text-[28px]">person_add</span>
                 <span class="text-[9px] font-bold text-white/40 uppercase tracking-wider">{{ posAbrev(slot.posicion) }}</span>
               </div>
             }
@@ -100,13 +133,18 @@
         <div class="flex justify-center">
           @for (slot of slotsPortero(); track $index) {
             @if (slot.jugador; as j) {
-              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" size="md" />
-              </div>
+              <button type="button" (click)="seleccionar(j.id)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" [seleccionado]="seleccionado() === j.id" size="md" />
+              </button>
             } @else {
-              <div class="flex flex-col items-center justify-center"
-                style="width:90px;height:122px;background:rgba(255,255,255,0.08);clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%);opacity:0.5">
-                <span class="material-symbols-outlined text-white/40 text-[24px]">person</span>
+              <div
+                (click)="seleccionarSlot(slot.posicion)"
+                class="flex flex-col items-center justify-center cursor-pointer transition-all duration-200"
+                [style.background]="slotPendiente() === slot.posicion ? 'rgba(255,214,0,0.18)' : 'rgba(255,255,255,0.08)'"
+                [style.opacity]="slotPendiente() === slot.posicion ? '1' : (slotPendiente() ? '0.3' : '0.6')"
+                style="width:90px;height:122px;clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%)"
+              >
+                <span class="material-symbols-outlined text-white/40 text-[28px]">person_add</span>
                 <span class="text-[9px] font-bold text-white/40 uppercase tracking-wider">{{ posAbrev(slot.posicion) }}</span>
               </div>
             }
@@ -125,22 +163,27 @@
         </h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-sm">
           @for (j of suplentes(); track j.id) {
-            <div
-              class="flex items-center gap-sm p-sm rounded border"
-              style="background:rgba(255,255,255,0.75);border-color:rgba(192,85,42,0.15);box-shadow:0 2px 8px rgba(0,0,0,0.04)"
+            <button
+              type="button"
+              (click)="seleccionar(j.id)"
+              class="flex items-center gap-sm p-sm rounded border transition-all duration-200 text-left outline-none"
+              [style.background]="seleccionado() === j.id ? 'rgba(255,214,0,0.08)' : 'rgba(255,255,255,0.75)'"
+              [style.border-color]="seleccionado() === j.id ? 'rgba(255,214,0,0.5)' : 'rgba(192,85,42,0.15)'"
+              [style.box-shadow]="seleccionado() === j.id ? '0 0 0 2px rgba(255,214,0,0.3)' : '0 2px 8px rgba(0,0,0,0.04)'"
             >
               <app-player-card
                 [nombre]="j.nombre"
                 [dorsal]="j.dorsal ?? 0"
                 [posicion]="posAbrev(normPos(j.posicion))"
                 [fotoUrl]="j.foto_url ?? undefined"
+                [seleccionado]="seleccionado() === j.id"
                 size="sm"
               />
               <div class="flex flex-col min-w-0">
                 <span class="font-bold text-body-md text-on-background truncate">{{ j.nombre.split(' ')[0] }}</span>
                 <span class="text-[11px] text-on-background/40">{{ posAbrev(normPos(j.posicion)) }}</span>
               </div>
-            </div>
+            </button>
           }
         </div>
       </div>
