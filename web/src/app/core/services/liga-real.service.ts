@@ -38,7 +38,7 @@ interface ApiEquipoOut {
 }
 interface ApiEquipoDetalle {
   id: string; nombre: string; abrev: string; color: string; foto_url: string | null;
-  jugadores: Array<{ id: string; nombre: string; dorsal: number | null; posicion: string }>;
+  jugadores: Array<{ id: string; nombre: string; dorsal: number | null; posicion: string; es_titular: boolean }>;
 }
 
 export interface CrucesPorFase {
@@ -148,6 +148,7 @@ export class LigaRealService {
             posicion:    this.normalizarPosicion(j.posicion),
             goles:       0,
             asistencias: 0,
+            esTitular:   j.es_titular ?? false,
           })),
         });
       },

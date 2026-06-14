@@ -1,0 +1,160 @@
+<!-- Toast feedback -->
+@if (exito()) {
+  <div class="mb-md px-md py-sm rounded-lg bg-tertiary/10 border border-tertiary/20 text-tertiary text-body-md font-medium flex items-center gap-sm">
+    <span class="material-symbols-outlined text-[18px]">check_circle</span>
+    {{ exito() }}
+  </div>
+}
+@if (error()) {
+  <div class="mb-md px-md py-sm rounded-lg bg-primary/10 border border-primary/20 text-primary text-body-md font-medium flex items-center gap-sm">
+    <span class="material-symbols-outlined text-[18px]">error</span>
+    {{ error() }}
+  </div>
+}
+
+@if (cargando()) {
+  <div class="flex items-center justify-center py-2xl">
+    <span class="material-symbols-outlined text-[32px] text-on-background/30 animate-spin">progress_activity</span>
+  </div>
+} @else if (jugadores().length === 0) {
+  <div class="flex flex-col items-center justify-center py-2xl gap-md text-center">
+    <span class="material-symbols-outlined text-[48px] text-on-background/20">group_off</span>
+    <p class="text-body-lg text-on-background/50">No hay jugadores en la plantilla.</p>
+  </div>
+} @else {
+  <div class="flex flex-col gap-sm">
+    @for (j of jugadores(); track j.id) {
+      <!-- Input oculto para el file picker -->
+      <input
+        type="file"
+        accept="image/*"
+        [id]="'foto-' + j.id"
+        class="hidden"
+        (change)="onFoto($event, j)"
+      />
+
+      <div
+        class="flex flex-col sm:flex-row sm:items-center gap-md p-md rounded-xl"
+        style="background:rgba(255,255,255,0.85);border:1px solid rgba(192,85,42,0.12);box-shadow:0 2px 8px rgba(0,0,0,0.04)"
+      >
+        <!-- Avatar clicable -->
+        <label
+          [for]="'foto-' + j.id"
+          class="relative shrink-0 w-16 h-16 rounded-xl overflow-hidden cursor-pointer group"
+          [title]="subiendoFoto()[j.id] ? 'Subiendo…' : 'Cambiar foto'"
+        >
+          @if (subiendoFoto()[j.id]) {
+            <div class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl z-10">
+              <span class="material-symbols-outlined text-white text-[20px] animate-spin">progress_activity</span>
+            </div>
+          }
+          @if (j.foto_url) {
+            <img [src]="j.foto_url" [alt]="j.nombre" class="w-full h-full object-cover" />
+          } @else {
+            <div class="w-full h-full flex items-center justify-center bg-on-background/8 text-on-background/40 font-bold text-lg">
+              {{ j.nombre.charAt(0).toUpperCase() }}
+            </div>
+          }
+          <!-- Overlay hover -->
+          <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+            <span class="material-symbols-outlined text-white text-[20px]">photo_camera</span>
+          </div>
+        </label>
+
+        <!-- Campos editables -->
+        <div class="flex flex-1 flex-col sm:flex-row gap-sm">
+          <!-- Nombre -->
+          <div class="flex flex-col gap-0.5 flex-1 min-w-0">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-on-background/40">Nombre</label>
+            <input
+              type="text"
+              [(ngModel)]="edits()[j.id].nombre"
+              (ngModelChange)="onCampoTexto(j.id)"
+              class="w-full px-sm py-1.5 rounded-lg border border-outline text-body-md text-on-background bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+              placeholder="Nombre del jugador"
+            />
+          </div>
+
+          <!-- Dorsal -->
+          <div class="flex flex-col gap-0.5 w-24 shrink-0">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-on-background/40">Dorsal</label>
+            <input
+              type="number"
+              [(ngModel)]="edits()[j.id].dorsal"
+              (ngModelChange)="onCampoTexto(j.id)"
+              min="1"
+              max="99"
+              class="w-full px-sm py-1.5 rounded-lg border border-outline text-body-md text-on-background bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors text-center"
+              placeholder="—"
+            />
+          </div>
+
+          <!-- Posición -->
+          <div class="flex flex-col gap-0.5 w-44 shrink-0">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-on-background/40">Posición</label>
+            <select
+              [ngModel]="edits()[j.id].posicion"
+              (ngModelChange)="onPosicionCambia(j.id, $event)"
+              [disabled]="guardando()[j.id]"
+              class="w-full px-sm py-1.5 rounded-lg border border-outline text-body-md text-on-background bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors disabled:opacity-50 capitalize"
+            >
+              @for (pos of posiciones; track pos) {
+                <option [value]="pos" class="capitalize">{{ pos }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Toggle titular -->
+        <div class="shrink-0 flex flex-col items-center gap-0.5">
+          <button
+            type="button"
+            (click)="toggleTitular(j)"
+            [disabled]="guardando()[j.id]"
+            class="relative w-12 h-6 rounded-full transition-colors disabled:opacity-50 focus:outline-none"
+            [class.bg-tertiary]="j.es_titular"
+            [class.bg-on-background/20]="!j.es_titular"
+            [title]="j.es_titular ? 'Quitar de titulares' : 'Poner de titular'"
+          >
+            <span
+              class="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all"
+              [class.left-6]="j.es_titular"
+              [class.left-0.5]="!j.es_titular"
+            ></span>
+          </button>
+          <span class="text-[9px] font-bold uppercase tracking-wider"
+            [class.text-tertiary]="j.es_titular"
+            [class.text-on-background/30]="!j.es_titular"
+          >{{ j.es_titular ? 'Titular' : 'Suplente' }}</span>
+        </div>
+
+        <!-- Botón guardar (solo visible cuando hay cambios en nombre/dorsal) -->
+        <div class="shrink-0 flex items-end sm:items-center">
+          @if (esSucio(j.id)) {
+            <button
+              type="button"
+              (click)="guardarJugador(j.id)"
+              [disabled]="guardando()[j.id]"
+              class="flex items-center gap-1.5 px-md py-1.5 rounded-lg bg-primary text-white text-body-md font-semibold transition-opacity disabled:opacity-60"
+            >
+              @if (guardando()[j.id]) {
+                <span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
+              } @else {
+                <span class="material-symbols-outlined text-[16px]">save</span>
+              }
+              Guardar
+            </button>
+          } @else {
+            <div class="w-22.5 flex items-center justify-center">
+              @if (guardando()[j.id]) {
+                <span class="material-symbols-outlined text-[18px] text-on-background/30 animate-spin">progress_activity</span>
+              } @else {
+                <span class="material-symbols-outlined text-[18px] text-tertiary/50">check_circle</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

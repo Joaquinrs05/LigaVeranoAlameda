@@ -78,6 +78,11 @@ export interface AdminParticipante {
   presupuesto: number;
 }
 
+export interface AdminPerfil {
+  id: string;
+  nombre: string;
+}
+
 export interface AdminLiga {
   id: string;
   nombre: string;
@@ -165,6 +170,11 @@ export class SuperadminService {
     return this.http
       .post<ApiResp<{ miembros_calculados: number; jornada: number }>>(`${this.base}/puntuaciones/calcular/${jornadaNumero}`, {})
       .pipe(map(r => r.data!));
+  }
+
+  // Perfiles
+  getPerfiles(): Observable<AdminPerfil[]> {
+    return this.http.get<ApiResp<AdminPerfil[]>>(`${this.base}/perfiles`).pipe(map(r => r.data ?? []));
   }
 
   // Ligas fantasy

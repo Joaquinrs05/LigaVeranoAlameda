@@ -17,10 +17,12 @@ export class EquipoDetalleComponent {
 
   readonly equipo = this.liga.equipoDetalle;
 
-  readonly porteros        = computed(() => this.equipo()?.jugadores.filter(j => j.posicion === 'POR') ?? []);
-  readonly defensas        = computed(() => this.equipo()?.jugadores.filter(j => j.posicion === 'DEF') ?? []);
-  readonly centrocampistas = computed(() => this.equipo()?.jugadores.filter(j => j.posicion === 'MC')  ?? []);
-  readonly delanteros      = computed(() => this.equipo()?.jugadores.filter(j => j.posicion === 'DEL') ?? []);
+  private readonly titulares = computed(() => this.equipo()?.jugadores.filter(j => j.esTitular) ?? []);
+
+  readonly porteros        = computed(() => this.titulares().filter(j => j.posicion === 'POR'));
+  readonly defensas        = computed(() => this.titulares().filter(j => j.posicion === 'DEF'));
+  readonly centrocampistas = computed(() => this.titulares().filter(j => j.posicion === 'MC'));
+  readonly delanteros      = computed(() => this.titulares().filter(j => j.posicion === 'DEL'));
 
   constructor() {
     const id = inject(ActivatedRoute).snapshot.paramMap.get('id')!;

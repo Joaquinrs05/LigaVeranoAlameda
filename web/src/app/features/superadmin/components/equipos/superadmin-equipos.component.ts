@@ -1,13 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AdminEquipo, SuperadminService } from '../../../../core/services/superadmin.service';
+import { AdminEquipo, AdminPerfil, SuperadminService } from '../../../../core/services/superadmin.service';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 
 interface EquipoEditable extends AdminEquipo {
   editando: boolean;
   nombreEdit: string;
   escudoEdit: string;
-  entrenadorEdit: string;
+  entrenadorIdEdit: string;
   subiendoEscudo: boolean;
 }
 
@@ -22,16 +22,46 @@ export class SuperadminEquiposComponent implements OnInit {
   private readonly cloudinary = inject(CloudinaryService);
 
   readonly equipos = signal<EquipoEditable[]>([]);
+  readonly perfiles = signal<AdminPerfil[]>([]);
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
   readonly exito = signal<string | null>(null);
   readonly mostrarFormulario = signal(false);
   readonly subiendoNuevoEscudo = signal(false);
 
+  readonly busquedaEntrenador = signal<Record<string, string>>({});
+  readonly focusedEquipoId = signal<string | null>(null);
+
   nuevoEquipo = { nombre: '', foto_url: '' };
 
   ngOnInit(): void {
     this.cargar();
+    this.svc.getPerfiles().subscribe({ next: p => this.perfiles.set(p) });
+  }
+
+  perfilesPara(equipoId: string): AdminPerfil[] {
+    const q = (this.busquedaEntrenador()[equipoId] || '').trim().toLowerCase();
+    if (!q) return this.perfiles();
+    return this.perfiles().filter(p => p.nombre.toLowerCase().includes(q));
+  }
+
+  onFocusEntrenador(equipoId: string): void {
+    this.focusedEquipoId.set(equipoId);
+  }
+
+  onBlurEntrenador(): void {
+    // Pequeño delay para que el click en una opción se procese antes de cerrar
+    setTimeout(() => this.focusedEquipoId.set(null), 150);
+  }
+
+  onBusquedaEntrenador(equipoId: string, valor: string): void {
+    this.busquedaEntrenador.update(m => ({ ...m, [equipoId]: valor }));
+  }
+
+  seleccionarEntrenador(e: EquipoEditable, perfil: AdminPerfil | null): void {
+    e.entrenadorIdEdit = perfil?.id ?? '';
+    this.busquedaEntrenador.update(m => ({ ...m, [e.id]: perfil?.nombre ?? '' }));
+    this.focusedEquipoId.set(null);
   }
 
   cargar(): void {
@@ -102,7 +132,7 @@ export class SuperadminEquiposComponent implements OnInit {
     const body: Partial<Pick<AdminEquipo, 'nombre' | 'foto_url' | 'entrenador_id'>> = {};
     if (e.nombreEdit !== e.nombre) body.nombre = e.nombreEdit;
     if (e.escudoEdit !== (e.foto_url ?? '')) body.foto_url = e.escudoEdit || null;
-    if (e.entrenadorEdit !== (e.entrenador_id ?? '')) body.entrenador_id = e.entrenadorEdit || null;
+    if (e.entrenadorIdEdit !== (e.entrenador_id ?? '')) body.entrenador_id = e.entrenadorIdEdit || null;
 
     if (Object.keys(body).length === 0) { e.editando = false; return; }
 
@@ -119,11 +149,19 @@ export class SuperadminEquiposComponent implements OnInit {
     e.editando = false;
     e.nombreEdit = e.nombre;
     e.escudoEdit = e.foto_url ?? '';
-    e.entrenadorEdit = e.entrenador_id ?? '';
+    e.entrenadorIdEdit = e.entrenador_id ?? '';
+    this.busquedaEntrenador.update(m => ({ ...m, [e.id]: '' }));
   }
 
   private toEditable(e: AdminEquipo): EquipoEditable {
-    return { ...e, editando: false, nombreEdit: e.nombre, escudoEdit: e.foto_url ?? '', entrenadorEdit: e.entrenador_id ?? '', subiendoEscudo: false, entrenador: e.entrenador };
+    return {
+      ...e,
+      editando: false,
+      nombreEdit: e.nombre,
+      escudoEdit: e.foto_url ?? '',
+      entrenadorIdEdit: e.entrenador_id ?? '',
+      subiendoEscudo: false,
+    };
   }
 
   private flash(msg: string): void {

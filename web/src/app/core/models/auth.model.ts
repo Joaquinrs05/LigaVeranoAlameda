@@ -6,6 +6,7 @@ export interface IUsuario {
   proveedor: 'email' | 'google';
   nombreEquipoFantasy: string | null;
   esAdmin: boolean;
+  esEntrenador: boolean;
 }
 
 export interface ICredencialesLogin {

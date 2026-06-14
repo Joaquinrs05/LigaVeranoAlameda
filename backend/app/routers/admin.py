@@ -214,6 +214,14 @@ def actualizar_equipo(equipo_id: UUID, body: ActualizarEquipoIn) -> dict:
     return {"data": result.data[0]}
 
 
+# ---- Perfiles (para asignar entrenadores) ----
+
+@router.get("/perfiles", response_model=ApiResponse[list[dict]])
+def listar_perfiles() -> dict:
+    result = supabase_admin.table("perfiles").select("id, nombre").order("nombre").execute()
+    return {"data": result.data or []}
+
+
 # ---- Ligas fantasy (para participantes) ----
 
 @router.get("/ligas", response_model=ApiResponse[list[dict]])

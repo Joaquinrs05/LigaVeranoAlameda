@@ -17,9 +17,10 @@ export class CloudinaryService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/admin`;
 
-  subirImagen(file: File, folder: string = 'liga'): Observable<string> {
+  subirImagen(file: File, folder: string = 'liga', signatureBase?: string): Observable<string> {
+    const base = signatureBase ?? this.base;
     return this.http
-      .get<{ data: UploadSignature }>(`${this.base}/upload-signature?folder=${folder}`)
+      .get<{ data: UploadSignature }>(`${base}/upload-signature?folder=${folder}`)
       .pipe(
         switchMap(({ data: sig }) => {
           const form = new FormData();

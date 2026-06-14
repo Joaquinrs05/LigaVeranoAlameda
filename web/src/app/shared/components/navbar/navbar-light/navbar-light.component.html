@@ -78,6 +78,12 @@
       <span>Ajustes</span>
     </a>
   }
+  @if (auth.usuario()?.esEntrenador) {
+    <a routerLink="/equipo/admin" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
+      <span class="material-symbols-outlined text-[22px]">manage_accounts</span>
+      <span>Mi Equipo</span>
+    </a>
+  }
   @if (auth.usuario()?.esAdmin) {
     <a routerLink="/superadmin" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
       <span class="material-symbols-outlined text-[22px]">admin_panel_settings</span>
@@ -149,6 +155,14 @@
       <a routerLink="/ajustes" routerLinkActive="nav-active" class="nav-link">
         <span class="material-symbols-outlined text-[20px]">settings</span>
         Ajustes
+      </a>
+    }
+
+    @if (auth.usuario()?.esEntrenador) {
+      <div class="border-t border-outline my-sm"></div>
+      <a routerLink="/equipo/admin" routerLinkActive="nav-active" class="nav-link">
+        <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
+        Mi Equipo Real
       </a>
     }
 

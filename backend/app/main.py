@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 
 from app.auth import get_current_user
 from app.config import settings
-from app.routers import admin, fantasy, liga_real
+from app.routers import admin, equipo_admin, fantasy, liga_real
 
 app = FastAPI(title="Liga Verano Alameda API", version="0.2.0")
 
@@ -37,6 +37,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
 app.include_router(liga_real.router)
 app.include_router(fantasy.router)
 app.include_router(admin.router)
+app.include_router(equipo_admin.router)
 
 
 @app.get("/health")

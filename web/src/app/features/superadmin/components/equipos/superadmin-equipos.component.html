@@ -89,9 +89,40 @@
                     class="w-full border border-outline rounded px-xs py-0.5 text-body-md" />
                 </td>
                 <td class="px-md py-sm">
-                  <input type="text" [(ngModel)]="e.entrenadorEdit"
-                    [placeholder]="e.entrenador?.nombre ? 'UUID (' + e.entrenador!.nombre + ')' : 'UUID del entrenador'"
-                    class="w-full border border-outline rounded px-xs py-0.5 text-body-md font-mono text-xs" />
+                  <div class="relative">
+                    <input
+                      type="text"
+                      [value]="busquedaEntrenador()[e.id] || e.entrenador?.nombre || ''"
+                      (focus)="onFocusEntrenador(e.id)"
+                      (blur)="onBlurEntrenador()"
+                      (input)="onBusquedaEntrenador(e.id, $any($event.target).value)"
+                      placeholder="Buscar usuario…"
+                      class="w-full border border-outline rounded px-xs py-0.5 text-body-md min-w-48"
+                    />
+                    @if (focusedEquipoId() === e.id && perfiles().length > 0) {
+                      <div class="absolute z-20 top-full left-0 right-0 mt-0.5 bg-surface border border-outline rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        <button
+                          type="button"
+                          (mousedown)="seleccionarEntrenador(e, null)"
+                          class="w-full text-left px-sm py-1.5 text-xs text-on-background/50 hover:bg-background transition-colors border-b border-outline"
+                        >
+                          — Sin entrenador
+                        </button>
+                        @for (p of perfilesPara(e.id); track p.id) {
+                          <button
+                            type="button"
+                            (mousedown)="seleccionarEntrenador(e, p)"
+                            class="w-full text-left px-sm py-1.5 text-body-md hover:bg-background transition-colors"
+                          >
+                            {{ p.nombre }}
+                          </button>
+                        }
+                        @if (perfilesPara(e.id).length === 0) {
+                          <p class="px-sm py-1.5 text-xs text-on-background/40 italic">Sin resultados</p>
+                        }
+                      </div>
+                    }
+                  </div>
                 </td>
                 <td class="px-md py-sm">
                   <div class="flex gap-xs justify-end">

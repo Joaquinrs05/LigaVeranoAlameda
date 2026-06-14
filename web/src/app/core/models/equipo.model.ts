@@ -5,6 +5,7 @@ export interface IJugadorEquipo {
   posicion: 'POR' | 'DEF' | 'MC' | 'DEL';
   goles: number;
   asistencias: number;
+  esTitular: boolean;
 }
 
 export interface IEquipoStats {

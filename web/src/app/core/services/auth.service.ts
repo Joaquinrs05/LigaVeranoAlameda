@@ -109,12 +109,20 @@ export class AuthService {
   }
 
   private async fetchPerfil(uid: string): Promise<void> {
-    const { data } = await this.supabase
-      .from('perfiles')
-      .select('nombre, foto_perfil, nombre_equipo_fantasy, is_superadmin')
-      .eq('id', uid)
-      .single();
+    const [perfilRes, equipoRes] = await Promise.all([
+      this.supabase
+        .from('perfiles')
+        .select('nombre, foto_perfil, nombre_equipo_fantasy, is_superadmin')
+        .eq('id', uid)
+        .single(),
+      this.supabase
+        .from('equipos')
+        .select('id')
+        .eq('entrenador_id', uid)
+        .maybeSingle(),
+    ]);
 
+    const data = perfilRes.data;
     if (data) {
       this.usuario.update(u => u ? {
         ...u,
@@ -122,6 +130,7 @@ export class AuthService {
         fotoPerfil: data['foto_perfil'] ?? u.fotoPerfil,
         nombreEquipoFantasy: data['nombre_equipo_fantasy'] ?? null,
         esAdmin: data['is_superadmin'] === true,
+        esEntrenador: !!equipoRes.data,
       } : null);
     }
   }
@@ -140,6 +149,7 @@ export class AuthService {
       proveedor: u.app_metadata['provider'] === 'google' ? 'google' : 'email',
       nombreEquipoFantasy: null,
       esAdmin: false,
+      esEntrenador: false,
     });
   }
 
