@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AdminEquipo, AdminPerfil, SuperadminService } from '../../../../core/services/superadmin.service';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 
@@ -15,7 +16,7 @@ interface EquipoEditable extends AdminEquipo {
   selector: 'app-superadmin-equipos',
   standalone: true,
   templateUrl: './superadmin-equipos.component.html',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
 })
 export class SuperadminEquiposComponent implements OnInit {
   private readonly svc = inject(SuperadminService);

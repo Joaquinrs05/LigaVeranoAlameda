@@ -32,4 +32,42 @@ export class EntrenadorService {
       .patch<ApiResp<IEntrenadorJugador>>(`${this.base}/jugadores/${id}`, body)
       .pipe(map(r => r.data!));
   }
+
+  getEquipoById(equipoId: string): Observable<IEntrenadorEquipo> {
+    return this.http
+      .get<ApiResp<IEntrenadorEquipo>>(`${this.base}/equipo/${equipoId}`)
+      .pipe(map(r => r.data!));
+  }
+
+  getJugadoresByEquipoId(equipoId: string): Observable<IEntrenadorJugador[]> {
+    return this.http
+      .get<ApiResp<IEntrenadorJugador[]>>(`${this.base}/equipo/${equipoId}/jugadores`)
+      .pipe(map(r => r.data ?? []));
+  }
+
+  actualizarJugadorEnEquipo(
+    equipoId: string,
+    jugadorId: string,
+    body: Partial<Pick<IEntrenadorJugador, 'nombre' | 'dorsal' | 'posicion' | 'foto_url' | 'es_titular'>>,
+  ): Observable<IEntrenadorJugador> {
+    return this.http
+      .patch<ApiResp<IEntrenadorJugador>>(`${this.base}/equipo/${equipoId}/jugadores/${jugadorId}`, body)
+      .pipe(map(r => r.data!));
+  }
+
+  baseEquipo(equipoId: string): string {
+    return `${this.base}/equipo/${equipoId}`;
+  }
+
+  actualizarMiEquipo(foto_url: string): Observable<IEntrenadorEquipo> {
+    return this.http
+      .patch<ApiResp<IEntrenadorEquipo>>(`${this.base}/mi-equipo`, { foto_url })
+      .pipe(map(r => r.data!));
+  }
+
+  actualizarEquipoById(equipoId: string, foto_url: string): Observable<IEntrenadorEquipo> {
+    return this.http
+      .patch<ApiResp<IEntrenadorEquipo>>(`${this.base}/equipo/${equipoId}`, { foto_url })
+      .pipe(map(r => r.data!));
+  }
 }

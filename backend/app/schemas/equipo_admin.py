@@ -9,3 +9,7 @@ class ActualizarJugadorEntrenadorIn(BaseModel):
     posicion: str | None = None
     foto_url: str | None = None
     es_titular: bool | None = None
+
+
+class ActualizarEquipoEntrenadorIn(BaseModel):
+    foto_url: str | None = None

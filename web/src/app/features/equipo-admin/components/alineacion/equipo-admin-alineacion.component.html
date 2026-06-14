@@ -1,0 +1,150 @@
+@if (cargando()) {
+  <div class="flex items-center justify-center py-2xl">
+    <span class="material-symbols-outlined text-[32px] text-on-background/30 animate-spin">progress_activity</span>
+  </div>
+} @else if (sinData()) {
+  <div class="flex flex-col items-center justify-center py-2xl gap-md text-center">
+    <span class="material-symbols-outlined text-[48px] text-on-background/20">group_off</span>
+    <p class="text-body-lg text-on-background/50">Sin jugadores en la plantilla.</p>
+  </div>
+} @else {
+  <div class="flex flex-col gap-lg">
+
+    <!-- Selector de formación -->
+    <div class="flex items-center gap-xs flex-wrap">
+      <span class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">Formación:</span>
+      @for (f of formaciones; track f) {
+        <button
+          type="button"
+          (click)="cambiarFormacion(f)"
+          class="px-sm py-0.5 rounded text-[11px] font-bold transition-all"
+          [style.background]="formacion() === f ? '#C0552A' : 'rgba(255,255,255,0.75)'"
+          [style.color]="formacion() === f ? '#F5F0E8' : 'rgba(15,25,35,0.65)'"
+          style="border:1px solid rgba(192,85,42,0.2)"
+        >{{ f }}</button>
+      }
+      <span class="ml-auto text-[11px] text-on-background/40">
+        {{ titulares().length }} titular{{ titulares().length !== 1 ? 'es' : '' }}
+      </span>
+    </div>
+
+    <!-- Campo -->
+    <div
+      class="relative w-full rounded-lg overflow-hidden"
+      style="background:linear-gradient(180deg,#0e2c1a 0%,#1a4a2e 35%,#1a4a2e 65%,#0e2c1a 100%);min-height:520px"
+    >
+      <!-- Líneas -->
+      <div class="absolute left-4 right-4 pointer-events-none" style="top:50%;height:1px;background:rgba(255,255,255,0.15)"></div>
+      <div class="absolute pointer-events-none" style="top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;border:1px solid rgba(255,255,255,0.15)"></div>
+      <div class="absolute pointer-events-none" style="top:50%;left:50%;transform:translate(-50%,-50%);width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.3)"></div>
+      <div class="absolute left-1/2 pointer-events-none" style="top:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-top:none"></div>
+      <div class="absolute left-1/2 pointer-events-none" style="bottom:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-bottom:none"></div>
+      <div class="absolute top-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(255,214,0,0.3),transparent)"></div>
+      <div class="absolute bottom-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(255,214,0,0.2),transparent)"></div>
+
+      <!-- Jugadores en campo -->
+      <div class="relative z-10 flex flex-col justify-around py-xl" style="min-height:520px">
+
+        <!-- Delanteros -->
+        <div class="flex justify-center gap-lg">
+          @for (slot of slotsDelanteros(); track $index) {
+            @if (slot.jugador; as j) {
+              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" size="md" />
+              </div>
+            } @else {
+              <div class="flex flex-col items-center justify-center"
+                style="width:90px;height:122px;background:rgba(255,255,255,0.08);clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%);opacity:0.5">
+                <span class="material-symbols-outlined text-white/40 text-[24px]">person</span>
+                <span class="text-[9px] font-bold text-white/40 uppercase tracking-wider">{{ posAbrev(slot.posicion) }}</span>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Centrocampistas -->
+        <div class="flex justify-center gap-md md:gap-lg">
+          @for (slot of slotsCentrocampistas(); track $index) {
+            @if (slot.jugador; as j) {
+              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" size="md" />
+              </div>
+            } @else {
+              <div class="flex flex-col items-center justify-center"
+                style="width:90px;height:122px;background:rgba(255,255,255,0.08);clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%);opacity:0.5">
+                <span class="material-symbols-outlined text-white/40 text-[24px]">person</span>
+                <span class="text-[9px] font-bold text-white/40 uppercase tracking-wider">{{ posAbrev(slot.posicion) }}</span>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Defensas -->
+        <div class="flex justify-center gap-xl md:gap-2xl">
+          @for (slot of slotsDefensas(); track $index) {
+            @if (slot.jugador; as j) {
+              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" size="md" />
+              </div>
+            } @else {
+              <div class="flex flex-col items-center justify-center"
+                style="width:90px;height:122px;background:rgba(255,255,255,0.08);clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%);opacity:0.5">
+                <span class="material-symbols-outlined text-white/40 text-[24px]">person</span>
+                <span class="text-[9px] font-bold text-white/40 uppercase tracking-wider">{{ posAbrev(slot.posicion) }}</span>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Portero -->
+        <div class="flex justify-center">
+          @for (slot of slotsPortero(); track $index) {
+            @if (slot.jugador; as j) {
+              <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal ?? 0" [posicion]="posAbrev(slot.posicion)" [fotoUrl]="j.foto_url ?? undefined" size="md" />
+              </div>
+            } @else {
+              <div class="flex flex-col items-center justify-center"
+                style="width:90px;height:122px;background:rgba(255,255,255,0.08);clip-path:polygon(10% 2%,44% 2%,50% 0%,56% 2%,90% 2%,100% 10%,100% 86%,95% 100%,5% 100%,0% 86%,0% 10%);opacity:0.5">
+                <span class="material-symbols-outlined text-white/40 text-[24px]">person</span>
+                <span class="text-[9px] font-bold text-white/40 uppercase tracking-wider">{{ posAbrev(slot.posicion) }}</span>
+              </div>
+            }
+          }
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Suplentes -->
+    @if (suplentes().length > 0) {
+      <div class="flex flex-col gap-sm">
+        <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">people_outline</span>
+          Suplentes
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-sm">
+          @for (j of suplentes(); track j.id) {
+            <div
+              class="flex items-center gap-sm p-sm rounded border"
+              style="background:rgba(255,255,255,0.75);border-color:rgba(192,85,42,0.15);box-shadow:0 2px 8px rgba(0,0,0,0.04)"
+            >
+              <app-player-card
+                [nombre]="j.nombre"
+                [dorsal]="j.dorsal ?? 0"
+                [posicion]="posAbrev(normPos(j.posicion))"
+                [fotoUrl]="j.foto_url ?? undefined"
+                size="sm"
+              />
+              <div class="flex flex-col min-w-0">
+                <span class="font-bold text-body-md text-on-background truncate">{{ j.nombre.split(' ')[0] }}</span>
+                <span class="text-[11px] text-on-background/40">{{ posAbrev(normPos(j.posicion)) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+}

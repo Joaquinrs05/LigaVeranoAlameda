@@ -145,8 +145,15 @@
                 <td class="px-md py-sm font-medium">{{ e.nombre }}</td>
                 <td class="px-md py-sm text-body-md">{{ e.entrenador?.nombre ?? '—' }}</td>
                 <td class="px-md py-sm text-right">
-                  <button type="button" (click)="editar(e)"
-                    class="px-sm py-0.5 rounded text-xs border border-outline hover:bg-background">Editar</button>
+                  <div class="flex gap-xs justify-end">
+                    <a [routerLink]="['/equipo/admin', e.id]"
+                      class="px-sm py-0.5 rounded text-xs border border-outline hover:bg-background flex items-center gap-0.5">
+                      <span class="material-symbols-outlined text-[12px]">manage_accounts</span>
+                      Plantilla
+                    </a>
+                    <button type="button" (click)="editar(e)"
+                      class="px-sm py-0.5 rounded text-xs border border-outline hover:bg-background">Editar</button>
+                  </div>
                 </td>
               }
             </tr>

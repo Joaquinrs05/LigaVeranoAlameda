@@ -25,6 +25,7 @@ class JugadorOut(BaseModel):
     precio_fantasy: Decimal
     estado_fantasy: str
     activo: bool
+    es_titular: bool = False
 
 
 class JornadaOut(BaseModel):

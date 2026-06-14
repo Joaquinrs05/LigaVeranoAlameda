@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 import { EntrenadorService } from '../../../../core/services/entrenador.service';
 import { IEntrenadorJugador } from '../../../../core/models/equipo-admin.model';
@@ -22,19 +23,17 @@ export class EquipoAdminPlantillaComponent implements OnInit {
   private readonly svc = inject(EntrenadorService);
   private readonly cloudinary = inject(CloudinaryService);
 
+  readonly equipoId = input<string | null>(null);
+
   readonly posiciones = POSICIONES;
   readonly jugadores = signal<IEntrenadorJugador[]>([]);
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
   readonly exito = signal<string | null>(null);
 
-  // Edits locales pendientes de guardar (nombre y dorsal)
   readonly edits = signal<Record<string, JugadorEdit>>({});
-  // Jugadores con cambios pendientes (nombre/dorsal)
   readonly sucios = signal<Set<string>>(new Set());
-  // Jugadores subiendo foto
   readonly subiendoFoto = signal<Record<string, boolean>>({});
-  // Jugadores guardando cambios
   readonly guardando = signal<Record<string, boolean>>({});
 
   ngOnInit(): void {
@@ -43,10 +42,9 @@ export class EquipoAdminPlantillaComponent implements OnInit {
 
   cargar(): void {
     this.cargando.set(true);
-    this.svc.getJugadores().subscribe({
+    this.getJugadores$().subscribe({
       next: jugadores => {
         this.jugadores.set(jugadores);
-        // Inicializar edits con los valores actuales
         const editsMap: Record<string, JugadorEdit> = {};
         for (const j of jugadores) {
           editsMap[j.id] = { nombre: j.nombre, dorsal: j.dorsal, posicion: j.posicion };
@@ -68,7 +66,7 @@ export class EquipoAdminPlantillaComponent implements OnInit {
   onPosicionCambia(jugadorId: string, posicion: string): void {
     this.edits.update(m => ({ ...m, [jugadorId]: { ...m[jugadorId], posicion } }));
     this.guardando.update(m => ({ ...m, [jugadorId]: true }));
-    this.svc.actualizarJugador(jugadorId, { posicion }).subscribe({
+    this.patch$(jugadorId, { posicion }).subscribe({
       next: updated => {
         this.actualizarLocal(updated);
         this.guardando.update(m => ({ ...m, [jugadorId]: false }));
@@ -84,7 +82,7 @@ export class EquipoAdminPlantillaComponent implements OnInit {
   toggleTitular(jugador: IEntrenadorJugador): void {
     const es_titular = !jugador.es_titular;
     this.guardando.update(m => ({ ...m, [jugador.id]: true }));
-    this.svc.actualizarJugador(jugador.id, { es_titular }).subscribe({
+    this.patch$(jugador.id, { es_titular }).subscribe({
       next: updated => {
         this.actualizarLocal(updated);
         this.guardando.update(m => ({ ...m, [jugador.id]: false }));
@@ -102,7 +100,7 @@ export class EquipoAdminPlantillaComponent implements OnInit {
     if (!edit) return;
 
     this.guardando.update(m => ({ ...m, [jugadorId]: true }));
-    this.svc.actualizarJugador(jugadorId, { nombre: edit.nombre, dorsal: edit.dorsal ?? undefined }).subscribe({
+    this.patch$(jugadorId, { nombre: edit.nombre, dorsal: edit.dorsal ?? undefined }).subscribe({
       next: updated => {
         this.actualizarLocal(updated);
         this.sucios.update(s => { const next = new Set(s); next.delete(jugadorId); return next; });
@@ -120,10 +118,13 @@ export class EquipoAdminPlantillaComponent implements OnInit {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
 
+    const id = this.equipoId();
+    const signatureBase = id ? this.svc.baseEquipo(id) : this.svc.base;
+
     this.subiendoFoto.update(m => ({ ...m, [jugador.id]: true }));
-    this.cloudinary.subirImagen(file, 'jugadores', this.svc.base).subscribe({
+    this.cloudinary.subirImagen(file, 'jugadores', signatureBase).subscribe({
       next: url => {
-        this.svc.actualizarJugador(jugador.id, { foto_url: url }).subscribe({
+        this.patch$(jugador.id, { foto_url: url }).subscribe({
           next: updated => {
             this.actualizarLocal(updated);
             this.subiendoFoto.update(m => ({ ...m, [jugador.id]: false }));
@@ -144,6 +145,21 @@ export class EquipoAdminPlantillaComponent implements OnInit {
 
   esSucio(jugadorId: string): boolean {
     return this.sucios().has(jugadorId);
+  }
+
+  private getJugadores$(): Observable<IEntrenadorJugador[]> {
+    const id = this.equipoId();
+    return id ? this.svc.getJugadoresByEquipoId(id) : this.svc.getJugadores();
+  }
+
+  private patch$(
+    jugadorId: string,
+    body: Partial<Pick<IEntrenadorJugador, 'nombre' | 'dorsal' | 'posicion' | 'foto_url' | 'es_titular'>>,
+  ): Observable<IEntrenadorJugador> {
+    const id = this.equipoId();
+    return id
+      ? this.svc.actualizarJugadorEnEquipo(id, jugadorId, body)
+      : this.svc.actualizarJugador(jugadorId, body);
   }
 
   private actualizarLocal(updated: IEntrenadorJugador): void {
