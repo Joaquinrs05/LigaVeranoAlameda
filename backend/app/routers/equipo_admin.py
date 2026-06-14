@@ -124,7 +124,6 @@ def get_jugadores_admin(equipo: dict = Depends(get_equipo_por_id_con_acceso)) ->
 
 @router.patch("/equipo/{equipo_id}/jugadores/{jugador_id}", response_model=ApiResponse[dict])
 def actualizar_jugador_admin(
-    _equipo_id: UUID,
     jugador_id: UUID,
     body: ActualizarJugadorEntrenadorIn,
     equipo: dict = Depends(get_equipo_por_id_con_acceso),
