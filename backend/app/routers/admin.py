@@ -186,7 +186,15 @@ def eliminar_foto_jugador(jugador_id: UUID) -> dict:
 @router.get("/equipos", response_model=ApiResponse[list[dict]])
 def listar_equipos_admin() -> dict:
     result = supabase_admin.table("equipos").select("*").order("nombre").execute()
-    return {"data": result.data}
+    equipos = result.data or []
+    ids = [e["entrenador_id"] for e in equipos if e.get("entrenador_id")]
+    nombres: dict[str, str] = {}
+    if ids:
+        pres = supabase_admin.table("perfiles").select("id, nombre").in_("id", ids).execute()
+        nombres = {str(p["id"]): str(p["nombre"]) for p in (pres.data or []) if isinstance(p, dict)}
+    for e in equipos:
+        e["entrenador"] = {"nombre": nombres[e["entrenador_id"]]} if e.get("entrenador_id") and e["entrenador_id"] in nombres else None
+    return {"data": equipos}
 
 
 @router.post("/equipos", response_model=ApiResponse[dict], status_code=201)

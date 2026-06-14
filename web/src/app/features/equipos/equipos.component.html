@@ -9,7 +9,7 @@
   </div>
 
   <!-- Grid -->
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-md">
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-md">
     @for (equipo of equipos(); track equipo.id) {
       <a
                 [routerLink]="['/equipos', equipo.id]"
@@ -17,7 +17,7 @@
       >
         <!-- Escudo -->
         <div
-          class="h-36 flex items-center justify-center relative overflow-hidden"
+          class="h-44 flex items-center justify-center relative overflow-hidden"
           [style.backgroundColor]="equipo.color"
         >
           <div
@@ -25,9 +25,9 @@
             style="background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px); background-size: 18px 18px;"
           ></div>
           @if (equipo.fotoUrl) {
-            <img [src]="equipo.fotoUrl" [alt]="equipo.nombre" class="relative z-10 h-20 w-20 object-contain drop-shadow" />
+            <img [src]="equipo.fotoUrl" [alt]="equipo.nombre" class="relative z-10 h-28 w-28 object-contain drop-shadow" />
           } @else {
-            <span class="text-white font-bold text-[2rem] leading-none z-10 drop-shadow">{{ equipo.abrev }}</span>
+            <span class="text-white font-bold text-[2.5rem] leading-none z-10 drop-shadow">{{ equipo.abrev }}</span>
           }
         </div>
 

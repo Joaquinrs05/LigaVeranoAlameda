@@ -58,7 +58,7 @@
           <tr>
             <th class="text-left px-md py-sm text-label-bold">Escudo</th>
             <th class="text-left px-md py-sm text-label-bold">Nombre</th>
-            <th class="text-left px-md py-sm text-label-bold">Entrenador ID</th>
+            <th class="text-left px-md py-sm text-label-bold">Entrenador</th>
             <th class="px-md py-sm text-label-bold">Acciones</th>
           </tr>
         </thead>
@@ -89,7 +89,8 @@
                     class="w-full border border-outline rounded px-xs py-0.5 text-body-md" />
                 </td>
                 <td class="px-md py-sm">
-                  <input type="text" [(ngModel)]="e.entrenadorEdit" placeholder="UUID del entrenador"
+                  <input type="text" [(ngModel)]="e.entrenadorEdit"
+                    [placeholder]="e.entrenador?.nombre ? 'UUID (' + e.entrenador!.nombre + ')' : 'UUID del entrenador'"
                     class="w-full border border-outline rounded px-xs py-0.5 text-body-md font-mono text-xs" />
                 </td>
                 <td class="px-md py-sm">
@@ -111,7 +112,7 @@
                   }
                 </td>
                 <td class="px-md py-sm font-medium">{{ e.nombre }}</td>
-                <td class="px-md py-sm opacity-50 text-xs font-mono truncate max-w-48">{{ e.entrenador_id ?? '—' }}</td>
+                <td class="px-md py-sm text-body-md">{{ e.entrenador?.nombre ?? '—' }}</td>
                 <td class="px-md py-sm text-right">
                   <button type="button" (click)="editar(e)"
                     class="px-sm py-0.5 rounded text-xs border border-outline hover:bg-background">Editar</button>

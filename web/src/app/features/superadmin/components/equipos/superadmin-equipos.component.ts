@@ -123,7 +123,7 @@ export class SuperadminEquiposComponent implements OnInit {
   }
 
   private toEditable(e: AdminEquipo): EquipoEditable {
-    return { ...e, editando: false, nombreEdit: e.nombre, escudoEdit: e.foto_url ?? '', entrenadorEdit: e.entrenador_id ?? '', subiendoEscudo: false };
+    return { ...e, editando: false, nombreEdit: e.nombre, escudoEdit: e.foto_url ?? '', entrenadorEdit: e.entrenador_id ?? '', subiendoEscudo: false, entrenador: e.entrenador };
   }
 
   private flash(msg: string): void {

@@ -44,6 +44,7 @@ export interface AdminEquipo {
   nombre: string;
   foto_url: string | null;
   entrenador_id: string | null;
+  entrenador: { nombre: string } | null;
 }
 
 export interface AdminEstadistica {
