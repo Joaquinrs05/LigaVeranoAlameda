@@ -2,11 +2,11 @@
 
 ## Metadata
 
-| Campo | Valor |
-|---|---|
-| **ID** | `00-architecture` |
-| **Status** | `done` |
-| **Tipo** | Decisiones de arquitectura — implementar ANTES que cualquier feature |
+| Campo      | Valor                                                                |
+| ---------- | -------------------------------------------------------------------- |
+| **ID**     | `00-architecture`                                                    |
+| **Status** | `done`                                                               |
+| **Tipo**   | Decisiones de arquitectura — implementar ANTES que cualquier feature |
 
 ---
 
@@ -14,10 +14,10 @@
 
 ### 1. Dos módulos, dos temas visuales
 
-| Módulo | Modo | Clase en `<body>` | Ruta base |
-|---|---|---|---|
-| Web informativa | Claro | `theme-light` | `/` |
-| Fantasy | Oscuro | `theme-dark` | `/fantasy` |
+| Módulo          | Modo   | Clase en `<body>` | Ruta base  |
+| --------------- | ------ | ----------------- | ---------- |
+| Web informativa | Claro  | `theme-light`     | `/`        |
+| Fantasy         | Oscuro | `theme-dark`      | `/fantasy` |
 
 El cambio de tema lo gestiona el `AppComponent` en función de la ruta activa. Tailwind usa `darkMode: 'class'`, aplicado en el elemento raíz del módulo.
 
@@ -86,6 +86,7 @@ web/src/
 Tailwind v4 usa configuración basada en CSS, no `tailwind.config.js`. Los tokens están en `web/src/styles.css` dentro del bloque `@theme`.
 
 Archivo: `web/postcss.config.mjs`
+
 ```js
 export default {
   plugins: { '@tailwindcss/postcss': {} },
@@ -93,29 +94,30 @@ export default {
 ```
 
 Archivo: `web/src/styles.css` (extracto de tokens clave):
+
 ```css
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "@tailwindcss/forms";
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary:       #C0552A;
-  --color-secondary:     #FFD600;
-  --color-tertiary:      #1A4A2E;
-  --color-background:    #F5F0E8;
-  --color-on-background: #0F1923;
-  --color-surface:       #ffffff;
-  --color-outline:       rgba(192, 85, 42, 0.3);
+  --color-primary: #c0552a;
+  --color-secondary: #ffd600;
+  --color-tertiary: #1a4a2e;
+  --color-background: #f5f0e8;
+  --color-on-background: #0f1923;
+  --color-surface: #ffffff;
+  --color-outline: rgba(192, 85, 42, 0.3);
 
   --font-sans: 'Chivo', sans-serif;
 
-  --text-display-lg: 3rem;       /* → text-display-lg */
-  --text-headline-lg: 2rem;      /* → text-headline-lg */
-  --text-headline-md: 1.25rem;   /* → text-headline-md */
-  --text-body-lg: 1rem;          /* → text-body-lg */
-  --text-body-md: 0.875rem;      /* → text-body-md */
-  --text-label-bold: 0.75rem;    /* → text-label-bold */
-  --text-data-mono: 0.875rem;    /* → text-data-mono */
+  --text-display-lg: 3rem; /* → text-display-lg */
+  --text-headline-lg: 2rem; /* → text-headline-lg */
+  --text-headline-md: 1.25rem; /* → text-headline-md */
+  --text-body-lg: 1rem; /* → text-body-lg */
+  --text-body-md: 0.875rem; /* → text-body-md */
+  --text-label-bold: 0.75rem; /* → text-label-bold */
+  --text-data-mono: 0.875rem; /* → text-data-mono */
 
   --radius-DEFAULT: 0.25rem;
   --spacing-xs: 0.25rem;
@@ -129,6 +131,7 @@ Archivo: `web/src/styles.css` (extracto de tokens clave):
 ```
 
 **Cómo usar los tokens en templates Angular:**
+
 - Colores: `bg-primary`, `text-secondary`, `border-tertiary`, `bg-background`
 - Tipografía: `text-headline-lg font-bold`, `text-body-md font-normal`
 - Espaciado: `p-md`, `px-margin-desktop`, `gap-sm`
@@ -138,11 +141,15 @@ Archivo: `web/src/styles.css` (extracto de tokens clave):
 
 ```html
 <!-- Google Fonts: Chivo -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;600;700&display=swap"
+  rel="stylesheet" />
 <!-- Material Symbols -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+  rel="stylesheet" />
 ```
 
 ### 6. `styles.css` — globals
@@ -153,12 +160,22 @@ Archivo: `web/src/styles.css` (extracto de tokens clave):
 @tailwind utilities;
 
 /* Scrollbar custom */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #C0552A; border-radius: 3px; }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c0552a;
+  border-radius: 3px;
+}
 
 /* Glow utility reutilizable */
-.glow-active { box-shadow: 0 4px 20px rgba(192, 85, 42, 0.1); }
+.glow-active {
+  box-shadow: 0 4px 20px rgba(192, 85, 42, 0.1);
+}
 ```
 
 ### 7. Servicios de datos (mock)
@@ -169,7 +186,7 @@ Patrón de servicio — latencia simulada de 300ms para testear estados de carga
 @Injectable({ providedIn: 'root' })
 export class JugadoresService {
   readonly jugadores = signal<IJugador[]>([]);
-  readonly loading   = signal(false);
+  readonly loading = signal(false);
 
   load(): void {
     this.loading.set(true);
@@ -183,12 +200,12 @@ export class JugadoresService {
 
 ### 8. Componentes shared — implementar en sprint 0
 
-| Componente | Pantallas | Mockup referencia |
-|---|---|---|
-| `NavbarLightComponent` | Home, Clasificación | `screens/dashboard-escritorio-2.html` |
-| `NavbarDarkComponent` | Fantasy (todas) | `screens/dashboard-fantasy-league-escritorio.html` |
-| `FooterComponent` | Todas | Cualquier mockup |
-| `PlayerCardComponent` | Mercado, Mi Equipo | `screens/mercado-escritorio.html` |
+| Componente             | Pantallas           | Mockup referencia                                  |
+| ---------------------- | ------------------- | -------------------------------------------------- |
+| `NavbarLightComponent` | Home, Clasificación | `screens/dashboard-escritorio-2.html`              |
+| `NavbarDarkComponent`  | Fantasy (todas)     | `screens/dashboard-fantasy-league-escritorio.html` |
+| `FooterComponent`      | Todas               | Cualquier mockup                                   |
+| `PlayerCardComponent`  | Mercado, Mi Equipo  | `screens/mercado-escritorio.html`                  |
 
 ### 9. Animaciones (roadmap futuro)
 
