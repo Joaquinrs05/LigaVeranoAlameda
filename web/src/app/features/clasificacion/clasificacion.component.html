@@ -16,7 +16,7 @@
           (click)="setFase(fase.tipo)"
           class="px-md py-sm rounded border text-[11px] font-bold uppercase tracking-wider transition-all shrink-0"
           [class.bg-primary]="faseActiva() === fase.tipo"
-          [class.text-background]="faseActiva() === fase.tipo"
+          [class.text-on-accent]="faseActiva() === fase.tipo"
           [class.border-primary]="faseActiva() === fase.tipo"
           [class.text-on-background/50]="faseActiva() !== fase.tipo"
           [class.border-outline]="faseActiva() !== fase.tipo"
@@ -187,7 +187,7 @@
                         <div class="flex items-center gap-2 min-w-0 flex-1">
                           <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
                             [class.bg-primary]="finalMatch.equipoLocal !== null"
-                            [class.text-background]="finalMatch.equipoLocal !== null"
+                            [class.text-on-accent]="finalMatch.equipoLocal !== null"
                             [class.bg-outline/30]="finalMatch.equipoLocal === null"
                             [class.text-on-background/50]="finalMatch.equipoLocal === null"
                           >{{ finalMatch.equipoLocal ? abrev(finalMatch.equipoLocal) : '?' }}</div>
@@ -207,7 +207,7 @@
                         <div class="flex items-center gap-2 min-w-0 flex-1">
                           <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
                             [class.bg-tertiary]="finalMatch.equipoVisitante !== null"
-                            [class.text-background]="finalMatch.equipoVisitante !== null"
+                            [class.text-on-accent]="finalMatch.equipoVisitante !== null"
                             [class.bg-outline/30]="finalMatch.equipoVisitante === null"
                             [class.text-on-background/50]="finalMatch.equipoVisitante === null"
                           >{{ finalMatch.equipoVisitante ? abrev(finalMatch.equipoVisitante) : '?' }}</div>
@@ -259,7 +259,7 @@
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
             [class.bg-primary]="cruce.equipoLocal !== null"
-            [class.text-background]="cruce.equipoLocal !== null"
+            [class.text-on-accent]="cruce.equipoLocal !== null"
             [class.bg-outline/30]="cruce.equipoLocal === null"
             [class.text-on-background/50]="cruce.equipoLocal === null"
           >{{ cruce.equipoLocal ? abrev(cruce.equipoLocal) : '?' }}</div>
@@ -280,7 +280,7 @@
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
             [class.bg-tertiary]="cruce.equipoVisitante !== null"
-            [class.text-background]="cruce.equipoVisitante !== null"
+            [class.text-on-accent]="cruce.equipoVisitante !== null"
             [class.bg-outline/30]="cruce.equipoVisitante === null"
             [class.text-on-background/50]="cruce.equipoVisitante === null"
           >{{ cruce.equipoVisitante ? abrev(cruce.equipoVisitante) : '?' }}</div>

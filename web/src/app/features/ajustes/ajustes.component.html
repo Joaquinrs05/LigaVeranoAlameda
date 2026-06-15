@@ -10,6 +10,35 @@
 
   <div class="flex flex-col gap-lg max-w-3xl mx-auto">
 
+    <!-- ── APARIENCIA ── -->
+    <section class="bg-surface border border-outline rounded-lg overflow-hidden">
+      <div class="px-lg py-md border-b border-outline flex items-center gap-sm">
+        <span class="material-symbols-outlined text-primary text-[20px]">contrast</span>
+        <h2 class="font-bold text-headline-md text-on-background">Apariencia</h2>
+      </div>
+
+      <div class="p-lg">
+        <div class="flex items-center justify-between p-md border border-outline rounded-lg hover:border-primary/40 transition-colors group">
+          <div class="flex items-center gap-md">
+            <span class="material-symbols-outlined text-on-background/40 group-hover:text-primary transition-colors text-[22px]">
+              {{ theme.tema() === 'oscuro' ? 'dark_mode' : 'light_mode' }}
+            </span>
+            <div>
+              <p class="font-bold text-body-md text-on-background">Modo oscuro</p>
+              <p class="text-[12px] text-on-background/40">Cambia entre tema claro y oscuro</p>
+            </div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer shrink-0">
+            <input type="checkbox" class="sr-only peer" [checked]="theme.tema() === 'oscuro'" (change)="theme.toggle()">
+            <div class="w-10 h-6 rounded-full bg-outline peer-checked:bg-primary transition-colors relative
+                        after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                        after:w-5 after:h-5 after:rounded-full after:bg-white after:shadow
+                        after:transition-all peer-checked:after:translate-x-4"></div>
+          </label>
+        </div>
+      </div>
+    </section>
+
     <!-- ── PERFIL ── -->
     <section class="bg-surface border border-outline rounded-lg overflow-hidden">
       <div class="px-lg py-md border-b border-outline flex items-center gap-sm">
@@ -21,7 +50,7 @@
 
         <!-- Avatar + nombre de equipo -->
         <div class="flex items-center gap-lg">
-          <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center font-bold text-background text-headline-md shrink-0 select-none">
+          <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center font-bold text-on-accent text-headline-md shrink-0 select-none">
             {{ iniciales() }}
           </div>
           <div class="flex-1 min-w-0">
@@ -248,7 +277,7 @@
                   <button
                     (click)="confirmarSalirDeLiga()"
                     [disabled]="saliendoDeLiga()"
-                    class="px-md py-sm rounded font-bold text-label-bold text-background bg-red-600 hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-xs"
+                    class="px-md py-sm rounded font-bold text-label-bold text-on-accent bg-red-600 hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-xs"
                   >
                     @if (saliendoDeLiga()) {
                       <span class="material-symbols-outlined text-[16px] animate-spin">refresh</span>
@@ -274,12 +303,12 @@
       </button>
 
       @if (guardando()) {
-        <button disabled class="px-lg py-sm bg-primary/60 text-background font-bold text-label-bold rounded cursor-not-allowed flex items-center gap-xs">
+        <button disabled class="px-lg py-sm bg-primary/60 text-on-accent font-bold text-label-bold rounded cursor-not-allowed flex items-center gap-xs">
           <span class="material-symbols-outlined text-[16px] animate-spin">refresh</span>
           Guardando…
         </button>
       } @else if (guardado()) {
-        <button disabled class="px-lg py-sm bg-tertiary text-background font-bold text-label-bold rounded flex items-center gap-xs">
+        <button disabled class="px-lg py-sm bg-tertiary text-on-accent font-bold text-label-bold rounded flex items-center gap-xs">
           <span class="material-symbols-outlined text-[16px]">check</span>
           Guardado
         </button>
@@ -287,7 +316,7 @@
         <button
           (click)="guardar()"
           [disabled]="!formularioValido()"
-          class="px-lg py-sm bg-primary text-background font-bold text-label-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          class="px-lg py-sm bg-primary text-on-accent font-bold text-label-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Guardar cambios
         </button>

@@ -19,8 +19,8 @@ interface ApiClasificacion {
 interface ApiPartido {
   id: string;
   jornada_id: string | null;
-  equipo_local:     { nombre: string; abrev: string } | null;
-  equipo_visitante: { nombre: string; abrev: string } | null;
+  equipo_local:     { nombre: string; abrev: string; color: string; foto_url: string | null } | null;
+  equipo_visitante: { nombre: string; abrev: string; color: string; foto_url: string | null } | null;
   goles_local: number | null; goles_visitante: number | null;
   estado: string; hora_inicio: string; minuto: string | null;
 }
@@ -183,8 +183,12 @@ export class LigaRealService {
       id: p.id,
       equipoLocal:      p.equipo_local?.nombre      ?? '',
       abrevLocal:       p.equipo_local?.abrev        ?? '',
+      colorLocal:       p.equipo_local?.color        ?? '#C0552A',
+      fotoLocal:        p.equipo_local?.foto_url     ?? undefined,
       equipoVisitante:  p.equipo_visitante?.nombre   ?? '',
       abrevVisitante:   p.equipo_visitante?.abrev    ?? '',
+      colorVisitante:   p.equipo_visitante?.color    ?? '#1A4A2E',
+      fotoVisitante:    p.equipo_visitante?.foto_url ?? undefined,
       golesLocal:       p.goles_local,
       golesVisitante:   p.goles_visitante,
       minuto:           p.minuto,

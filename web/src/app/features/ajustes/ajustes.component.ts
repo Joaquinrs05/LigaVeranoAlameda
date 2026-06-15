@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { FantasyService } from '../../core/services/fantasy.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-ajustes',
@@ -14,6 +15,7 @@ import { FantasyService } from '../../core/services/fantasy.service';
 export class AjustesComponent {
   private readonly fantasy = inject(FantasyService);
   private readonly router  = inject(Router);
+  readonly theme = inject(ThemeService);
   readonly nombre        = signal('');
   readonly email         = signal('');
   readonly nombreEquipo  = signal('');

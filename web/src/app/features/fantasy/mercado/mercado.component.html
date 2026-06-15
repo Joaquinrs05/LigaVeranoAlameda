@@ -53,7 +53,7 @@
           (click)="filtrarPosicion(filtro.valor)"
           class="shrink-0 px-md py-1 rounded-full font-bold text-label-bold transition-colors"
           [class]="posicion() === filtro.valor
-            ? 'bg-primary text-background'
+            ? 'bg-primary text-on-accent'
             : 'bg-surface border border-outline text-on-background/60 hover:border-primary hover:text-on-background'"
         >
           {{ filtro.etiqueta }}
@@ -82,13 +82,13 @@
           <!-- Avatar -->
           <div class="relative shrink-0">
             <div
-              class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-background text-body-md"
+              class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-on-accent text-body-md"
               [style.background]="posicionColor(j.posicion)"
             >
               {{ iniciales(j.nombre) }}
             </div>
             <span
-              class="absolute -bottom-1 -right-1 text-[8px] font-bold px-1 rounded text-background leading-tight"
+              class="absolute -bottom-1 -right-1 text-[8px] font-bold px-1 rounded text-on-accent leading-tight"
               [style.background]="posicionColor(j.posicion)"
             >{{ posicionAbrev(j.posicion) }}</span>
           </div>
@@ -134,7 +134,7 @@
           } @else {
             <button
               (click)="fichar(j)"
-              class="shrink-0 px-sm py-1 rounded text-label-bold font-bold bg-primary text-background hover:bg-primary/90 transition-colors active:scale-95 whitespace-nowrap"
+              class="shrink-0 px-sm py-1 rounded text-label-bold font-bold bg-primary text-on-accent hover:bg-primary/90 transition-colors active:scale-95 whitespace-nowrap"
             >Fichar</button>
           }
         </div>
