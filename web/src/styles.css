@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* ── Colores ── */
   --color-primary: #c0552a;
@@ -11,6 +14,8 @@
   --color-outline: rgba(192, 85, 42, 0.3);
   --color-error: #93000a;
   --color-surface-container: #f5f0e8;
+  /* Texto/iconos claros sobre superficies de color (navbar, botones). No se invierte en oscuro. */
+  --color-on-accent: #f5f0e8;
 
   /* ── Tipografía ── */
   --font-sans: 'Chivo', sans-serif;
@@ -59,6 +64,46 @@
   --spacing-margin-mobile: 1rem;
   --spacing-margin-desktop: 2rem;
   --spacing-gutter: 1rem;
+}
+
+/* Superficies "glass" hardcodeadas — versión clara (valores originales). Debe ir ANTES de .dark */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --card-bg-live: linear-gradient(145deg, rgba(255, 252, 250, 0.92) 0%, rgba(255, 245, 240, 0.92) 100%);
+  --fade-surface: rgba(255, 255, 255, 0.97);
+}
+
+/* ── Modo oscuro — solo se redefinen los tokens; los componentes usan las mismas clases ── */
+.dark {
+  --color-background: #0f1923;
+  --color-on-background: #f5f0e8;
+  --color-surface: #16212c;
+  --color-on-surface: #f5f0e8;
+  --color-outline: rgba(245, 240, 232, 0.14);
+  --color-surface-container: #1b2733;
+  --color-primary: #e0a04a;   /* naranja más claro y amarillento */
+  --color-tertiary: #1e40af;  /* azul oscuro y brillante en vez de verde */
+
+  /* Superficies "glass" hardcodeadas (estilos inline) — versión oscura */
+  --glass-bg: rgba(22, 33, 44, 0.8);
+  --glass-border: rgba(245, 240, 232, 0.12);
+  --card-bg: rgba(22, 33, 44, 0.88);
+  --card-bg-live: linear-gradient(145deg, rgba(36, 52, 68, 0.92) 0%, rgba(22, 33, 44, 0.92) 100%);
+  --fade-surface: rgba(15, 25, 35, 0.97);
+}
+
+/* El footer es siempre oscuro: en modo oscuro el token on-background se invierte a claro,
+   así que dentro del footer lo fijamos de nuevo a oscuro para que el texto claro se lea */
+.dark footer {
+  --color-on-background: #0f1923;
+  --color-background: #0f1923;
+}
+
+/* El hero del home tiene el degradado verde en estilo inline: en oscuro lo pasamos a azul */
+.dark [data-anim="match-hero"] {
+  background: linear-gradient(135deg, #1e40af 0%, #142a73 55%, #0b1640 100%) !important;
 }
 
 /* ── Fondo con rayas diagonales ── */
@@ -144,7 +189,7 @@ body::after {
   font-size: 0.75rem;
   letter-spacing: 0.05em;
   transition: all 150ms ease;
-  color: rgba(15, 25, 35, 0.7);
+  color: color-mix(in srgb, var(--color-on-background) 70%, transparent);
   text-decoration: none;
 }
 .nav-link:hover {
@@ -168,7 +213,7 @@ body::after {
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: rgba(15, 25, 35, 0.45);
+  color: color-mix(in srgb, var(--color-on-background) 55%, transparent);
   text-decoration: none;
   transition: color 150ms ease;
   padding-bottom: env(safe-area-inset-bottom);

@@ -45,7 +45,7 @@
                 <div class="flex items-center gap-sm">
                   <span class="font-bold text-body-lg text-on-background truncate">{{ liga.nombre }}</span>
                   @if (esActiva(liga)) {
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-background bg-tertiary px-sm py-[2px] rounded-full shrink-0">Activa</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-on-accent bg-tertiary px-sm py-[2px] rounded-full shrink-0">Activa</span>
                   }
                 </div>
                 <!-- Código de invitación -->
@@ -88,7 +88,7 @@
         <div class="flex flex-col gap-sm">
           <button
             (click)="modo.set('crear'); codigoGenerado.set(null); errorMsg.set(null)"
-            class="w-full flex items-center justify-center gap-sm py-sm rounded-xl font-bold text-label-bold text-background transition-all hover:opacity-90 active:scale-[0.98]"
+            class="w-full flex items-center justify-center gap-sm py-sm rounded-xl font-bold text-label-bold text-on-accent transition-all hover:opacity-90 active:scale-[0.98]"
             style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%);box-shadow:0 4px 16px rgba(192,85,42,0.25)"
           >
             <span class="material-symbols-outlined text-[20px]">add_circle</span>
@@ -140,7 +140,7 @@
             </div>
             <button
               (click)="modo.set('idle'); codigoGenerado.set(null)"
-              class="w-full py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90"
+              class="w-full py-sm rounded-lg font-bold text-label-bold text-on-accent transition-all hover:opacity-90"
               style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%)"
             >
               Ir al dashboard
@@ -172,7 +172,7 @@
                 <button
                   (click)="crear()"
                   [disabled]="!nombreLiga.trim() || !nombreEquipo.trim() || guardando()"
-                  class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                  class="flex-1 py-sm rounded-lg font-bold text-label-bold text-on-accent transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                   style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%)"
                 >
                   @if (guardando()) { Creando… } @else { Crear }
@@ -223,7 +223,7 @@
               <button
                 (click)="unirse()"
                 [disabled]="!codigoUnirse.trim() || !nombreEquipoUnirse.trim() || guardando()"
-                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-on-accent transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                 style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%)"
               >
                 @if (guardando()) { Entrando… } @else { Entrar }

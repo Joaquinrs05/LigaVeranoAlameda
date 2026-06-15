@@ -45,7 +45,7 @@
         @if (modoOnboarding() !== 'crear') {
           <button
             (click)="modoOnboarding.set('crear')"
-            class="w-full py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 active:scale-[0.98]"
+            class="w-full py-sm rounded-lg font-bold text-label-bold text-on-accent transition-all hover:opacity-90 active:scale-[0.98]"
             style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%);box-shadow:0 4px 16px rgba(192,85,42,0.3)"
           >
             Crear liga
@@ -74,7 +74,7 @@
               <button
                 (click)="crearLiga()"
                 [disabled]="!nombreLigaNueva.trim() || !nombreEquipoNuevo.trim()"
-                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-on-accent transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                 style="background:linear-gradient(135deg,#c0552a 0%,#a03e1c 100%)"
               >
                 Confirmar
@@ -102,7 +102,7 @@
         @if (modoOnboarding() !== 'unirse') {
           <button
             (click)="modoOnboarding.set('unirse')"
-            class="w-full py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 active:scale-[0.98]"
+            class="w-full py-sm rounded-lg font-bold text-label-bold text-on-accent transition-all hover:opacity-90 active:scale-[0.98]"
             style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%);box-shadow:0 4px 16px rgba(26,74,46,0.25)"
           >
             Unirse
@@ -132,7 +132,7 @@
               <button
                 (click)="unirseALiga()"
                 [disabled]="!codigoInvitacion.trim() || !nombreEquipo.trim()"
-                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-background transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                class="flex-1 py-sm rounded-lg font-bold text-label-bold text-on-accent transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                 style="background:linear-gradient(135deg,#1a4a2e 0%,#0e2c1a 100%)"
               >
                 Entrar
@@ -176,14 +176,14 @@
         <div class="flex flex-col gap-sm">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-secondary text-[18px]">bolt</span>
-            <span class="text-background/50 text-[11px] font-bold uppercase tracking-widest">Fantasy · Jornada 12</span>
+            <span class="text-on-accent/50 text-[11px] font-bold uppercase tracking-widest">Fantasy · Jornada 12</span>
           </div>
-          <h1 class="text-display-lg font-bold text-background leading-tight">{{ equipo.nombre }}</h1>
-          <span class="text-background/60 text-body-md">{{ posicionLabel }} en la liga fantasy</span>
+          <h1 class="text-display-lg font-bold text-on-accent leading-tight">{{ equipo.nombre }}</h1>
+          <span class="text-on-accent/60 text-body-md">{{ posicionLabel }} en la liga fantasy</span>
           <!-- Código de invitación -->
           @if (fantasy.ligaActiva()) {
             <div class="flex items-center gap-sm mt-xs flex-wrap">
-              <span class="text-background/40 text-[11px]">Código liga:</span>
+              <span class="text-on-accent/40 text-[11px]">Código liga:</span>
               <span class="font-mono font-bold text-[14px] text-secondary tracking-[0.2em]">{{ fantasy.ligaActiva()!.codigo_invitacion }}</span>
               <button
                 (click)="copiarCodigo()"
@@ -210,21 +210,21 @@
         <div class="flex gap-md md:gap-lg">
           <!-- Puntos jornada -->
           <div class="flex flex-col items-center bg-on-background/30 rounded px-lg py-md border border-background/10">
-            <span class="text-background/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Esta jornada</span>
+            <span class="text-on-accent/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Esta jornada</span>
             <span class="font-bold leading-none text-secondary" style="font-size:3rem;text-shadow:0 0 24px rgba(255,214,0,0.5)">{{ equipo.puntuacionJornada }}</span>
-            <span class="text-background/40 text-[11px] mt-xs">puntos</span>
+            <span class="text-on-accent/40 text-[11px] mt-xs">puntos</span>
           </div>
           <!-- Puntos totales -->
           <div class="flex flex-col items-center bg-on-background/20 rounded px-lg py-md border border-background/10">
-            <span class="text-background/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Total</span>
-            <span class="font-bold text-background leading-none" style="font-size:3rem">{{ equipo.puntuacionTotal }}</span>
-            <span class="text-background/40 text-[11px] mt-xs">puntos</span>
+            <span class="text-on-accent/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Total</span>
+            <span class="font-bold text-on-accent leading-none" style="font-size:3rem">{{ equipo.puntuacionTotal }}</span>
+            <span class="text-on-accent/40 text-[11px] mt-xs">puntos</span>
           </div>
           <!-- Presupuesto -->
           <div class="hidden md:flex flex-col items-center bg-on-background/20 rounded px-lg py-md border border-background/10">
-            <span class="text-background/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Presupuesto</span>
-            <span class="font-bold text-background leading-none" style="font-size:2rem">{{ equipo.presupuesto }}M</span>
-            <span class="text-background/40 text-[11px] mt-xs">disponible</span>
+            <span class="text-on-accent/50 text-[10px] font-bold uppercase tracking-widest mb-xs">Presupuesto</span>
+            <span class="font-bold text-on-accent leading-none" style="font-size:2rem">{{ equipo.presupuesto }}M</span>
+            <span class="text-on-accent/40 text-[11px] mt-xs">disponible</span>
           </div>
         </div>
       </div>
@@ -276,7 +276,7 @@
               </div>
               <div class="flex justify-between items-center text-data-mono font-semibold">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-background text-[10px] font-bold shrink-0">{{ partido.abrevLocal }}</div>
+                  <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-accent text-[10px] font-bold shrink-0">{{ partido.abrevLocal }}</div>
                   <span>{{ partido.equipoLocal }}</span>
                 </div>
                 @if (partido.golesLocal !== null) {
@@ -287,7 +287,7 @@
               </div>
               <div class="flex justify-between items-center text-data-mono">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-background text-[10px] font-bold shrink-0">{{ partido.abrevVisitante }}</div>
+                  <div class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-on-accent text-[10px] font-bold shrink-0">{{ partido.abrevVisitante }}</div>
                   <span class="text-on-background/70">{{ partido.equipoVisitante }}</span>
                 </div>
                 @if (partido.golesVisitante !== null) {
@@ -449,7 +449,7 @@
                 >
                   <div class="flex items-center gap-sm min-w-0">
                     <div
-                      class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold text-background"
+                      class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold text-on-accent"
                       [style.background]="jugador.posicion === 'portero' ? '#1a4a2e' : jugador.posicion === 'defensa' ? '#c0552a' : jugador.posicion === 'centrocampista' ? '#0f5a8a' : '#7b2d8b'"
                     >{{ posicionAbrev(jugador.posicion) }}</div>
                     <div class="flex flex-col min-w-0">

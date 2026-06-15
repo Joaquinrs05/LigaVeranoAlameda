@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return lista.find(p => p.estado === 'live')
         ?? lista.find(p => p.estado === 'upcoming')
         ?? lista[0]
-        ?? { id: '', equipoLocal: '—', abrevLocal: '—', equipoVisitante: '—', abrevVisitante: '—', golesLocal: null, golesVisitante: null, minuto: null, estado: 'upcoming', horaInicio: null };
+        ?? { id: '', equipoLocal: '—', abrevLocal: '—', colorLocal: '#C0552A', equipoVisitante: '—', abrevVisitante: '—', colorVisitante: '#1A4A2E', golesLocal: null, golesVisitante: null, minuto: null, estado: 'upcoming', horaInicio: null };
   }
 
   // Jornada número desde la primera jornada activa

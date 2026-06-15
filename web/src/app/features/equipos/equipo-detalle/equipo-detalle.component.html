@@ -45,7 +45,7 @@
         ]; track stat.label) {
           <div
             class="rounded p-sm text-center"
-            style="background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.7);box-shadow:0 2px 8px rgba(0,0,0,0.05)"
+            style="background:var(--glass-bg);backdrop-filter:blur(12px);border:1px solid var(--glass-border);box-shadow:0 2px 8px rgba(0,0,0,0.05)"
           >
             <span class="block text-[10px] font-bold uppercase tracking-wider text-on-background/40">{{ stat.label }}</span>
             <span class="block text-headline-md font-bold mt-0.5" [class]="stat.color">{{ stat.value }}</span>
@@ -117,27 +117,33 @@
           <span class="material-symbols-outlined text-[20px]">bar_chart</span>
           Jugadores
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+        <div class="grid grid-cols-1 gap-md">
           @for (j of equipo()!.jugadores; track j.id) {
             <div
-              class="flex items-center gap-sm p-sm rounded"
-              style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.12);box-shadow:0 2px 8px rgba(0,0,0,0.04)"
+              class="flex items-center gap-md p-md rounded-lg"
+              style="background:var(--glass-bg);border:1px solid rgba(192,85,42,0.12);box-shadow:0 2px 8px rgba(0,0,0,0.04)"
             >
               <div
-                class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-[12px] shrink-0"
+                class="w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-headline-md shrink-0 overflow-hidden relative"
                 [style.background]="equipo()!.color"
-              >{{ j.dorsal }}</div>
-              <div class="flex flex-col min-w-0 flex-1">
-                <span class="font-bold text-body-md text-on-background truncate">{{ j.nombre }}</span>
-                <span class="text-[11px] text-on-background/40">{{ j.posicion }}</span>
+              >
+                @if (j.fotoUrl) {
+                  <img [src]="j.fotoUrl" [alt]="j.nombre" class="w-full h-full object-cover" />
+                } @else {
+                  {{ j.dorsal }}
+                }
               </div>
-              <div class="flex items-center gap-sm text-[11px] font-bold shrink-0">
-                <span class="flex items-center gap-0.5 text-primary">
-                  <span class="material-symbols-outlined text-[14px]">sports_soccer</span>
+              <div class="flex flex-col min-w-0 flex-1">
+                <span class="font-bold text-headline-md text-on-background truncate">{{ j.nombre }}</span>
+                <span class="text-body-md text-on-background/40">{{ j.posicion }}</span>
+              </div>
+              <div class="flex items-center gap-md text-body-md font-bold shrink-0">
+                <span class="flex items-center gap-1 text-primary">
+                  <span class="material-symbols-outlined text-[20px]">sports_soccer</span>
                   {{ j.goles }}
                 </span>
-                <span class="flex items-center gap-0.5 text-tertiary">
-                  <span class="material-symbols-outlined text-[14px]">assistant</span>
+                <span class="flex items-center gap-1 text-tertiary">
+                  <span class="material-symbols-outlined text-[20px]">assistant</span>
                   {{ j.asistencias }}
                 </span>
               </div>

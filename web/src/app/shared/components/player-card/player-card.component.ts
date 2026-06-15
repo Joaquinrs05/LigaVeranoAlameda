@@ -17,7 +17,7 @@ export class PlayerCardComponent {
 
   get w(): number { return this.size === 'sm' ? 80 : 90; }
   get h(): number { return this.size === 'sm' ? 108 : 122; }
-  get avatarSize(): number { return this.size === 'sm' ? 48 : 54; }
+  get avatarSize(): number { return this.size === 'sm' ? 58 : 68; }
   get dorsalSize(): number { return this.size === 'sm' ? 13 : 15; }
   get posSize(): number { return this.size === 'sm' ? 9 : 10; }
   get nameSize(): number { return this.size === 'sm' ? 9 : 10; }

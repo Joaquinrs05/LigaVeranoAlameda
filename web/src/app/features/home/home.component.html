@@ -97,7 +97,7 @@
           @if (partidoDestacado.estado === 'live') {
             <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
           }
-          <span class="text-background/50 text-[11px] font-bold uppercase tracking-widest">
+          <span class="text-on-accent/50 text-[11px] font-bold uppercase tracking-widest">
             {{ partidoDestacado.estado === 'live' ? 'En Vivo' : 'Partido del Día' }}
             &nbsp;·&nbsp;Jornada {{ jornadaNumero }}
           </span>
@@ -106,16 +106,21 @@
         <div class="flex items-center justify-between gap-md">
           <div class="flex flex-col items-center gap-sm flex-1">
             <div
-              class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-background text-[13px] font-bold shrink-0"
+              class="w-20 h-20 rounded-full flex items-center justify-center text-on-accent text-[15px] font-bold shrink-0 overflow-hidden"
+              [style.background]="partidoDestacado.colorLocal"
               style="
                 box-shadow:
                   0 0 24px rgba(192, 85, 42, 0.6),
                   0 0 8px rgba(192, 85, 42, 0.4);
               "
             >
-              {{ partidoDestacado.abrevLocal }}
+              @if (partidoDestacado.fotoLocal) {
+                <img [src]="partidoDestacado.fotoLocal" [alt]="partidoDestacado.equipoLocal" class="w-full h-full object-contain p-1" />
+              } @else {
+                {{ partidoDestacado.abrevLocal }}
+              }
             </div>
-            <span class="text-background font-bold text-headline-md text-center leading-tight">
+            <span class="text-on-accent font-bold text-headline-md text-center leading-tight">
               {{ partidoDestacado.equipoLocal }}
             </span>
           </div>
@@ -123,26 +128,31 @@
           <div class="flex flex-col items-center gap-1 shrink-0">
             @if (partidoDestacado.golesLocal !== null) {
               <div class="flex items-center gap-3">
-                <span class="text-display-lg font-bold text-background leading-none">{{
+                <span class="text-display-lg font-bold text-on-accent leading-none">{{
                   partidoDestacado.golesLocal
                 }}</span>
-                <span class="text-background/30 text-3xl font-light leading-none">—</span>
-                <span class="text-display-lg font-bold text-background leading-none">{{
+                <span class="text-on-accent/30 text-3xl font-light leading-none">—</span>
+                <span class="text-display-lg font-bold text-on-accent leading-none">{{
                   partidoDestacado.golesVisitante
                 }}</span>
               </div>
             } @else {
-              <span class="text-display-lg font-bold text-background/25 leading-none">VS</span>
+              <span class="text-display-lg font-bold text-on-accent/25 leading-none">VS</span>
             }
           </div>
 
           <div class="flex flex-col items-center gap-sm flex-1">
             <div
-              class="w-14 h-14 rounded-full bg-background/15 border border-background/20 flex items-center justify-center text-background text-[13px] font-bold shrink-0"
+              class="w-20 h-20 rounded-full border border-background/20 flex items-center justify-center text-on-accent text-[15px] font-bold shrink-0 overflow-hidden"
+              [style.background]="partidoDestacado.colorVisitante"
             >
-              {{ partidoDestacado.abrevVisitante }}
+              @if (partidoDestacado.fotoVisitante) {
+                <img [src]="partidoDestacado.fotoVisitante" [alt]="partidoDestacado.equipoVisitante" class="w-full h-full object-contain p-1" />
+              } @else {
+                {{ partidoDestacado.abrevVisitante }}
+              }
             </div>
-            <span class="text-background/80 font-bold text-headline-md text-center leading-tight">
+            <span class="text-on-accent/80 font-bold text-headline-md text-center leading-tight">
               {{ partidoDestacado.equipoVisitante }}
             </span>
           </div>
@@ -191,8 +201,8 @@
                 [class.opacity-75]="partido.estado === 'upcoming'"
                 [style.background]="
                   partido.estado === 'live'
-                    ? 'linear-gradient(145deg, rgba(255,252,250,0.92) 0%, rgba(255,245,240,0.92) 100%)'
-                    : 'rgba(255,255,255,0.88)'
+                    ? 'var(--card-bg-live)'
+                    : 'var(--card-bg)'
                 "
                 [style.backdrop-filter]="'blur(14px)'"
                 [style.-webkit-backdrop-filter]="'blur(14px)'"
@@ -225,9 +235,14 @@
                 <div class="flex justify-between items-center text-data-mono font-semibold">
                   <div class="flex items-center gap-2">
                     <div
-                      class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-background text-[10px] font-bold shrink-0"
+                      class="w-10 h-10 rounded-full flex items-center justify-center text-on-accent text-[11px] font-bold shrink-0 overflow-hidden"
+                      [style.background]="partido.colorLocal"
                     >
-                      {{ partido.abrevLocal }}
+                      @if (partido.fotoLocal) {
+                        <img [src]="partido.fotoLocal" [alt]="partido.equipoLocal" class="w-full h-full object-contain p-0.5" />
+                      } @else {
+                        {{ partido.abrevLocal }}
+                      }
                     </div>
                     <span>{{ partido.equipoLocal }}</span>
                   </div>
@@ -241,9 +256,14 @@
                 <div class="flex justify-between items-center text-data-mono">
                   <div class="flex items-center gap-2">
                     <div
-                      class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-background text-[10px] font-bold shrink-0"
+                      class="w-10 h-10 rounded-full flex items-center justify-center text-on-accent text-[11px] font-bold shrink-0 overflow-hidden"
+                      [style.background]="partido.colorVisitante"
                     >
-                      {{ partido.abrevVisitante }}
+                      @if (partido.fotoVisitante) {
+                        <img [src]="partido.fotoVisitante" [alt]="partido.equipoVisitante" class="w-full h-full object-contain p-0.5" />
+                      } @else {
+                        {{ partido.abrevVisitante }}
+                      }
                     </div>
                     <span class="text-on-background/70">{{ partido.equipoVisitante }}</span>
                   </div>
@@ -273,10 +293,10 @@
         data-anim="clasificacion"
         class="flex flex-col overflow-hidden rounded"
         style="
-          background: rgba(255, 255, 255, 0.75);
+          background: var(--glass-bg);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.7);
+          border: 1px solid var(--glass-border);
           box-shadow:
             0 4px 24px rgba(26, 74, 46, 0.08),
             0 1px 4px rgba(0, 0, 0, 0.04);
@@ -367,7 +387,7 @@
         @if (totalEquipos() > 6 && !mostrarTodosClasificacion()) {
           <div
             class="h-12 -mt-12 pointer-events-none relative z-10"
-            style="background: linear-gradient(to top, rgba(255, 255, 255, 0.97) 0%, transparent 100%);"
+            style="background: linear-gradient(to top, var(--fade-surface) 0%, transparent 100%);"
           ></div>
         }
 
@@ -400,10 +420,10 @@
         data-anim="goleadores"
         class="flex flex-col overflow-hidden rounded"
         style="
-          background: rgba(255, 255, 255, 0.75);
+          background: var(--glass-bg);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.7);
+          border: 1px solid var(--glass-border);
           box-shadow:
             0 4px 24px rgba(26, 74, 46, 0.08),
             0 1px 4px rgba(0, 0, 0, 0.04);
@@ -497,7 +517,7 @@
         @if (totalGoleadores() > 5 && !mostrarTodosGoleadores()) {
           <div
             class="h-12 -mt-12 pointer-events-none relative z-10"
-            style="background: linear-gradient(to top, rgba(255, 255, 255, 0.97) 0%, transparent 100%);"
+            style="background: linear-gradient(to top, var(--fade-surface) 0%, transparent 100%);"
           ></div>
         }
 
