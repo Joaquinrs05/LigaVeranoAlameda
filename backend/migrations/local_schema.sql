@@ -1,16 +1,28 @@
--- Schema para el PostgreSQL local del VPS (caché de liga real).
--- Sin RLS, sin auth.users — solo tablas de liga real + vista clasificacion.
+-- Schema para el PostgreSQL local (Docker).
+-- Sin RLS — stub de auth.users para satisfacer las FK de tablas fantasy.
 -- Se carga automáticamente vía docker-entrypoint-initdb.d al primer arranque.
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- ─── Stub auth ───────────────────────────────────────────────────────────────
+
+CREATE SCHEMA IF NOT EXISTS auth;
+
+CREATE TABLE IF NOT EXISTS auth.users (
+  id    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email text
+);
+
+-- ─── LIGA REAL ───────────────────────────────────────────────────────────────
+
 CREATE TABLE IF NOT EXISTS equipos (
-  id         uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
-  nombre     text        NOT NULL,
-  abrev      text        NOT NULL CHECK (char_length(abrev) BETWEEN 2 AND 4),
-  color      text        NOT NULL DEFAULT '#888888',
-  foto_url   text,
-  created_at timestamptz NOT NULL DEFAULT now()
+  id            uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  nombre        text        NOT NULL,
+  abrev         text        NOT NULL CHECK (char_length(abrev) BETWEEN 2 AND 4),
+  color         text        NOT NULL DEFAULT '#888888',
+  foto_url      text,
+  entrenador_id uuid        REFERENCES auth.users(id) ON DELETE SET NULL,
+  created_at    timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS jugadores (
@@ -22,7 +34,8 @@ CREATE TABLE IF NOT EXISTS jugadores (
   precio_fantasy numeric NOT NULL DEFAULT 5.0,
   estado_fantasy text    NOT NULL DEFAULT 'disponible'
                          CHECK (estado_fantasy IN ('disponible','lesionado','sancionado')),
-  activo         bool    NOT NULL DEFAULT true
+  activo         bool    NOT NULL DEFAULT true,
+  foto_url       text
 );
 
 CREATE TABLE IF NOT EXISTS jornadas (
@@ -74,11 +87,61 @@ CREATE TABLE IF NOT EXISTS cruces (
                            CHECK (estado IN ('pendiente','live','finished'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_jugadores_equipo  ON jugadores(equipo_id);
-CREATE INDEX IF NOT EXISTS idx_partidos_jornada  ON partidos(jornada_id);
-CREATE INDEX IF NOT EXISTS idx_partidos_equipos  ON partidos(equipo_local_id, equipo_visitante_id);
-CREATE INDEX IF NOT EXISTS idx_stats_partido     ON estadisticas_jugador(partido_id);
-CREATE INDEX IF NOT EXISTS idx_stats_jugador     ON estadisticas_jugador(jugador_id);
+-- ─── FANTASY ─────────────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS ligas_fantasy (
+  id                uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  nombre            text        NOT NULL,
+  codigo_invitacion text        UNIQUE NOT NULL,
+  creador_id        uuid        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  jornada_inicio    int         NOT NULL DEFAULT 1,
+  created_at        timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS miembros_liga_fantasy (
+  id            uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  liga_id       uuid        NOT NULL REFERENCES ligas_fantasy(id) ON DELETE CASCADE,
+  usuario_id    uuid        NOT NULL REFERENCES auth.users(id)    ON DELETE CASCADE,
+  nombre_equipo text        NOT NULL,
+  presupuesto   numeric     NOT NULL DEFAULT 100.0,
+  puntos_total  int         NOT NULL DEFAULT 0,
+  joined_at     timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (liga_id, usuario_id)
+);
+
+CREATE TABLE IF NOT EXISTS plantilla_fantasy (
+  id            uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  miembro_id    uuid        NOT NULL REFERENCES miembros_liga_fantasy(id) ON DELETE CASCADE,
+  jugador_id    uuid        NOT NULL REFERENCES jugadores(id)             ON DELETE CASCADE,
+  es_titular    bool        NOT NULL DEFAULT true,
+  es_capitan    bool        NOT NULL DEFAULT false,
+  precio_compra numeric     NOT NULL,
+  fichado_at    timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (miembro_id, jugador_id)
+);
+
+CREATE TABLE IF NOT EXISTS puntuaciones_fantasy (
+  id             uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  miembro_id     uuid        NOT NULL REFERENCES miembros_liga_fantasy(id) ON DELETE CASCADE,
+  jornada_numero int         NOT NULL,
+  puntos         int         NOT NULL DEFAULT 0,
+  calculado_at   timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (miembro_id, jornada_numero)
+);
+
+-- ─── ÍNDICES ─────────────────────────────────────────────────────────────────
+
+CREATE INDEX IF NOT EXISTS idx_jugadores_equipo      ON jugadores(equipo_id);
+CREATE INDEX IF NOT EXISTS idx_partidos_jornada      ON partidos(jornada_id);
+CREATE INDEX IF NOT EXISTS idx_partidos_equipos      ON partidos(equipo_local_id, equipo_visitante_id);
+CREATE INDEX IF NOT EXISTS idx_stats_partido         ON estadisticas_jugador(partido_id);
+CREATE INDEX IF NOT EXISTS idx_stats_jugador         ON estadisticas_jugador(jugador_id);
+CREATE INDEX IF NOT EXISTS idx_miembros_liga         ON miembros_liga_fantasy(liga_id);
+CREATE INDEX IF NOT EXISTS idx_miembros_usuario      ON miembros_liga_fantasy(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_plantilla_miembro     ON plantilla_fantasy(miembro_id);
+CREATE INDEX IF NOT EXISTS idx_puntuaciones_miembro  ON puntuaciones_fantasy(miembro_id);
+
+-- ─── VISTAS ──────────────────────────────────────────────────────────────────
 
 CREATE OR REPLACE VIEW clasificacion AS
 WITH resultados AS (
@@ -121,7 +184,19 @@ ORDER  BY puntos DESC,
           (COALESCE(SUM(r.gf), 0) - COALESCE(SUM(r.gc), 0)) DESC,
           COALESCE(SUM(r.gf), 0) DESC;
 
--- ── Seed data (mismos IDs que en Supabase para que el sync sea idempotente) ──
+CREATE OR REPLACE VIEW clasificacion_fantasy AS
+SELECT
+  m.liga_id,
+  m.id            AS miembro_id,
+  m.usuario_id,
+  m.nombre_equipo,
+  m.puntos_total,
+  m.presupuesto,
+  RANK() OVER (PARTITION BY m.liga_id ORDER BY m.puntos_total DESC)::int AS posicion
+FROM   miembros_liga_fantasy m
+ORDER  BY m.liga_id, m.puntos_total DESC;
+
+-- ─── SEED (mismos IDs que Supabase — idempotente con ON CONFLICT) ─────────────
 
 INSERT INTO equipos (id, nombre, abrev, color) VALUES
   ('00000001-0000-0000-0000-000000000001', 'FC Alameda',      'FCA', '#C0552A'),
