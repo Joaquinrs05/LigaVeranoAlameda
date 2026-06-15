@@ -11,4 +11,5 @@ export interface IPartido {
   minuto: string | null;
   estado: EstadoPartido;
   horaInicio: string | null;
+  jornadaId?: string | null;
 }

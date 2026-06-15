@@ -26,6 +26,7 @@ class JugadorOut(BaseModel):
     estado_fantasy: str
     activo: bool
     es_titular: bool = False
+    foto_url: str | None = None
 
 
 class JornadaOut(BaseModel):

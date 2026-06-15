@@ -76,7 +76,7 @@
           <div class="flex justify-center gap-lg">
             @for (j of delanteros(); track j.id) {
               <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" [fotoUrl]="j.fotoUrl" size="md" />
               </div>
             }
           </div>
@@ -85,7 +85,7 @@
           <div class="flex justify-center gap-md md:gap-lg">
             @for (j of centrocampistas(); track j.id) {
               <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" [fotoUrl]="j.fotoUrl" size="md" />
               </div>
             }
           </div>
@@ -94,7 +94,7 @@
           <div class="flex justify-center gap-xl md:gap-2xl">
             @for (j of defensas(); track j.id) {
               <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" [fotoUrl]="j.fotoUrl" size="md" />
               </div>
             }
           </div>
@@ -103,7 +103,7 @@
           <div class="flex justify-center">
             @for (j of porteros(); track j.id) {
               <div style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
-                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" size="md" />
+                <app-player-card [nombre]="j.nombre" [dorsal]="j.dorsal" [posicion]="j.posicion" [fotoUrl]="j.fotoUrl" size="md" />
               </div>
             }
           </div>

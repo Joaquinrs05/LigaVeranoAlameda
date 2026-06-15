@@ -1,0 +1,161 @@
+<app-navbar-light />
+
+<main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
+
+  <!-- Header -->
+  <div class="mb-lg">
+    <h1 class="text-headline-lg font-bold text-primary">Horarios</h1>
+    <p class="text-body-md text-on-background/60 mt-xs">Próximos partidos de la liga · Temporada 2026</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-lg items-start">
+
+    <!-- ── Lista de partidos ── -->
+    <section class="flex flex-col gap-md order-2 lg:order-1">
+
+      @if (diaSeleccionado()) {
+        <div class="flex items-center justify-between bg-surface border border-outline rounded p-sm">
+          <span class="text-body-md text-on-background/70">Filtrando por día seleccionado</span>
+          <button
+            type="button"
+            (click)="limpiarSeleccion()"
+            class="text-[11px] font-bold uppercase tracking-wider text-primary hover:underline"
+          >
+            Ver todos
+          </button>
+        </div>
+      }
+
+      @if (grupos().length === 0) {
+        <div class="bg-surface border border-outline rounded p-lg text-center text-on-background/50">
+          @if (hayProximos()) {
+            No hay partidos por jugar este día.
+          } @else {
+            No hay próximos partidos programados.
+          }
+        </div>
+      }
+
+      @for (grupo of grupos(); track grupo.key) {
+        <div class="flex flex-col gap-sm">
+          <h2 class="text-label-bold font-bold uppercase tracking-wider text-on-background/50 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px] text-primary">calendar_today</span>
+            {{ grupo.label }}
+          </h2>
+
+          @for (partido of grupo.partidos; track partido.id) {
+            <div
+              class="bg-surface border rounded p-md flex items-center gap-md"
+              [class.border-primary]="partido.estado === 'live'"
+              [class.border-outline]="partido.estado !== 'live'"
+            >
+              <!-- Hora / Directo -->
+              <div class="w-16 shrink-0 text-center">
+                @if (partido.estado === 'live') {
+                  <span class="inline-flex items-center gap-1 text-[11px] font-bold uppercase text-primary">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                    Directo
+                  </span>
+                } @else {
+                  <span class="text-headline-md font-bold text-on-background">{{ hora(partido.horaInicio) }}</span>
+                }
+              </div>
+
+              <!-- Enfrentamiento -->
+              <div class="flex-1 flex items-center justify-center gap-sm min-w-0">
+                <span class="flex-1 text-right font-bold text-body-md text-on-background truncate">{{ partido.equipoLocal }}</span>
+                <div
+                  class="w-9 h-9 rounded-full border border-outline flex items-center justify-center overflow-hidden text-[11px] font-bold text-white shrink-0"
+                  [style.backgroundColor]="colorEquipo(partido.equipoLocal)"
+                >
+                  @if (escudo(partido.equipoLocal); as url) {
+                    <img [src]="url" [alt]="partido.equipoLocal" class="w-7 h-7 object-contain" />
+                  } @else {
+                    {{ partido.abrevLocal }}
+                  }
+                </div>
+                <span class="text-on-background/40 font-bold text-body-md shrink-0">vs</span>
+                <div
+                  class="w-9 h-9 rounded-full border border-outline flex items-center justify-center overflow-hidden text-[11px] font-bold text-white shrink-0"
+                  [style.backgroundColor]="colorEquipo(partido.equipoVisitante)"
+                >
+                  @if (escudo(partido.equipoVisitante); as url) {
+                    <img [src]="url" [alt]="partido.equipoVisitante" class="w-7 h-7 object-contain" />
+                  } @else {
+                    {{ partido.abrevVisitante }}
+                  }
+                </div>
+                <span class="flex-1 text-left font-bold text-body-md text-on-background truncate">{{ partido.equipoVisitante }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- ── Calendario ── -->
+    <aside class="bg-surface border border-outline rounded p-md lg:sticky lg:top-24 order-1 lg:order-2">
+      <div class="flex items-center justify-between mb-md">
+        <button
+          type="button"
+          (click)="mesAnterior()"
+          aria-label="Mes anterior"
+          class="w-9 h-9 rounded-full flex items-center justify-center text-primary hover:bg-background transition-colors"
+        >
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <span class="font-bold text-body-lg text-on-background capitalize">{{ etiquetaMes() }}</span>
+        <button
+          type="button"
+          (click)="mesSiguiente()"
+          aria-label="Mes siguiente"
+          class="w-9 h-9 rounded-full flex items-center justify-center text-primary hover:bg-background transition-colors"
+        >
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-7 gap-1 mb-1">
+        @for (dia of diasSemana; track dia) {
+          <span class="text-center text-[11px] font-bold uppercase text-on-background/40 py-1">{{ dia }}</span>
+        }
+      </div>
+
+      <div class="grid grid-cols-7 gap-1">
+        @for (semana of semanas(); track $index) {
+          @for (celda of semana; track celda.key) {
+            <button
+              type="button"
+              (click)="seleccionarDia(celda)"
+              [disabled]="!celda.conPartido"
+              class="relative aspect-square rounded flex items-center justify-center text-body-md transition-colors"
+              [ngClass]="{
+                'text-on-background': celda.enMes && !celda.esSeleccionado,
+                'opacity-30': !celda.enMes,
+                'font-bold cursor-pointer': celda.conPartido,
+                'cursor-default': !celda.conPartido,
+                'bg-primary text-white': celda.esSeleccionado,
+                'ring-1 ring-primary': celda.esHoy && !celda.esSeleccionado,
+                'hover:bg-background': celda.conPartido && !celda.esSeleccionado
+              }"
+            >
+              {{ celda.dia }}
+              @if (celda.conPartido && !celda.esSeleccionado) {
+                <span class="absolute bottom-1 w-1 h-1 rounded-full bg-primary"></span>
+              }
+            </button>
+          }
+        }
+      </div>
+
+      <div class="flex items-center gap-2 mt-md text-[11px] text-on-background/50">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        Días con partido
+      </div>
+    </aside>
+
+  </div>
+
+</main>
+
+<app-footer />

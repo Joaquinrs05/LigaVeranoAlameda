@@ -12,3 +12,11 @@ export interface INoticia {
   titulo: string;
   descripcion: string;
 }
+
+export interface IJornada {
+  id: string;
+  numero: number;
+  fechaInicio: string;
+  fechaFin: string;
+  estado: string;
+}

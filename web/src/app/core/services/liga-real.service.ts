@@ -8,6 +8,7 @@ import { IGoleadorJornada } from '../models/jugador.model';
 import { IPartido, EstadoPartido } from '../models/partido.model';
 import { ICruce } from '../models/torneo.model';
 import { IEquipo } from '../models/equipo.model';
+import { IJornada } from '../models/jornada.model';
 
 interface ApiResp<T> { data: T | null }
 
@@ -17,10 +18,14 @@ interface ApiClasificacion {
 }
 interface ApiPartido {
   id: string;
+  jornada_id: string | null;
   equipo_local:     { nombre: string; abrev: string } | null;
   equipo_visitante: { nombre: string; abrev: string } | null;
   goles_local: number | null; goles_visitante: number | null;
   estado: string; hora_inicio: string; minuto: string | null;
+}
+interface ApiJornada {
+  id: string; numero: number; fecha_inicio: string; fecha_fin: string; estado: string;
 }
 interface ApiCruce {
   id: string; fase: string;
@@ -38,7 +43,7 @@ interface ApiEquipoOut {
 }
 interface ApiEquipoDetalle {
   id: string; nombre: string; abrev: string; color: string; foto_url: string | null;
-  jugadores: Array<{ id: string; nombre: string; dorsal: number | null; posicion: string; es_titular: boolean }>;
+  jugadores: Array<{ id: string; nombre: string; dorsal: number | null; posicion: string; es_titular: boolean; foto_url: string | null }>;
 }
 
 export interface CrucesPorFase {
@@ -57,6 +62,7 @@ export class LigaRealService {
   readonly goleadores     = signal<IGoleadorJornada[]>([]);
   readonly cruces         = signal<CrucesPorFase>({ cuartos: [], semis: [], final: null });
   readonly jornadaActual  = signal<number>(0);
+  readonly jornadas       = signal<IJornada[]>([]);
   readonly equipos        = signal<IEquipo[]>([]);
   readonly equipoDetalle  = signal<IEquipo | null>(null);
 
@@ -73,9 +79,12 @@ export class LigaRealService {
         this.partidos.set(mapped);
       },
     });
-    this.http.get<ApiResp<Array<{ numero: number; estado: string }>>>(`${this.base}/jornadas`).subscribe({
+    this.http.get<ApiResp<ApiJornada[]>>(`${this.base}/jornadas`).subscribe({
       next: r => {
         const list = r.data ?? [];
+        this.jornadas.set(list.map(j => ({
+          id: j.id, numero: j.numero, fechaInicio: j.fecha_inicio, fechaFin: j.fecha_fin, estado: j.estado,
+        })));
         const activa = list.find(j => j.estado === 'en_curso')
                     ?? list.filter(j => j.estado === 'finalizada').at(-1);
         if (activa) this.jornadaActual.set(activa.numero);
@@ -149,6 +158,7 @@ export class LigaRealService {
             goles:       0,
             asistencias: 0,
             esTitular:   j.es_titular ?? false,
+            fotoUrl:     j.foto_url ?? undefined,
           })),
         });
       },
@@ -180,6 +190,7 @@ export class LigaRealService {
       minuto:           p.minuto,
       estado:           p.estado as EstadoPartido,
       horaInicio:       p.hora_inicio,
+      jornadaId:        p.jornada_id,
     };
   }
 

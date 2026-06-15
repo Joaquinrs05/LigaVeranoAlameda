@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/equipos/equipos.component').then(m => m.EquiposComponent),
   },
   {
+    path: 'horarios',
+    loadComponent: () => import('./features/horarios/horarios.component').then(m => m.HorariosComponent),
+  },
+  {
     path: 'equipos/:id',
     loadComponent: () => import('./features/equipos/equipo-detalle/equipo-detalle.component').then(m => m.EquipoDetalleComponent),
   },

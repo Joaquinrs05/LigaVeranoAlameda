@@ -6,6 +6,7 @@ export interface IJugadorEquipo {
   goles: number;
   asistencias: number;
   esTitular: boolean;
+  fotoUrl?: string;
 }
 
 export interface IEquipoStats {
