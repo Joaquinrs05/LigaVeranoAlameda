@@ -8,36 +8,95 @@
     <p class="text-body-md text-on-background/60 mt-xs">{{ equipos().length }} equipos en la liga · Temporada 2026</p>
   </div>
 
-  <!-- Grid -->
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-md">
-    @for (equipo of equipos(); track equipo.id) {
-      <a
-                [routerLink]="['/equipos', equipo.id]"
-        class="bg-surface border border-outline rounded overflow-hidden flex flex-col cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
-      >
-        <!-- Escudo -->
-        <div
-          class="h-44 flex items-center justify-center relative overflow-hidden"
-          [style.backgroundColor]="equipo.color"
-        >
-          <div
-            class="absolute inset-0 opacity-10 pointer-events-none"
-            style="background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px); background-size: 18px 18px;"
-          ></div>
-          @if (equipo.fotoUrl) {
-            <img [src]="equipo.fotoUrl" [alt]="equipo.nombre" class="relative z-10 h-28 w-28 object-contain drop-shadow" />
-          } @else {
-            <span class="text-white font-bold text-[2.5rem] leading-none z-10 drop-shadow">{{ equipo.abrev }}</span>
-          }
-        </div>
+  <!-- Carrusel -->
+  <div
+    (touchstart)="onTouchStart($event)"
+    (touchend)="onTouchEnd($event)"
+    (wheel)="onWheel($event)"
+    class="relative h-[440px] flex items-center justify-center select-none touch-pan-y"
+    style="perspective: 1400px; transform-style: preserve-3d;"
+  >
 
-        <!-- Nombre -->
-        <div class="p-md">
-          <span class="font-bold text-body-lg text-on-background leading-tight group-hover:text-primary transition-colors">
-            {{ equipo.nombre }}
-          </span>
+    <!-- Flecha izquierda -->
+    <button
+      type="button"
+      (click)="prev()"
+      aria-label="Equipo anterior"
+      class="absolute left-0 z-30 w-11 h-11 rounded-full bg-surface border border-outline shadow-md flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+    >
+      <span class="material-symbols-outlined">chevron_left</span>
+    </button>
+
+    <!-- Tarjetas -->
+    @for (equipo of equipos(); track equipo.id) {
+      <div
+        (click)="onCardClick($index)"
+        [style]="cardStyle($index)"
+        class="absolute left-1/2 top-1/2 -translate-y-1/2 w-60 cursor-pointer transition-all duration-500 ease-out"
+      >
+        <div
+          class="bg-surface border border-outline rounded-xl overflow-hidden flex flex-col shadow-lg"
+          [class.ring-2]="esActivo($index)"
+          [class.ring-primary]="esActivo($index)"
+        >
+          <!-- Escudo -->
+          <div
+            class="h-56 flex items-center justify-center relative overflow-hidden"
+            [style.backgroundColor]="equipo.color"
+          >
+            <div
+              class="absolute inset-0 opacity-10 pointer-events-none"
+              style="background-image: radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px); background-size: 18px 18px;"
+            ></div>
+            @if (tieneFoto(equipo.id, equipo.fotoUrl)) {
+              <img [src]="equipo.fotoUrl" [alt]="equipo.nombre" (error)="marcarFallo(equipo.id)" class="relative z-10 h-36 w-36 object-contain drop-shadow" />
+            } @else {
+              <span class="text-white font-bold text-[3rem] leading-none z-10 drop-shadow">{{ equipo.abrev }}</span>
+            }
+          </div>
+
+          <!-- Nombre -->
+          <div class="p-md flex items-center justify-between gap-sm">
+            <span class="font-bold text-body-lg text-on-background leading-tight">{{ equipo.nombre }}</span>
+            @if (esActivo($index)) {
+              <span class="material-symbols-outlined text-primary shrink-0">arrow_forward</span>
+            }
+          </div>
         </div>
-      </a>
+      </div>
+    }
+
+    <!-- Flecha derecha -->
+    <button
+      type="button"
+      (click)="next()"
+      aria-label="Equipo siguiente"
+      class="absolute right-0 z-30 w-11 h-11 rounded-full bg-surface border border-outline shadow-md flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+    >
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  </div>
+
+  <!-- Menú de escudos -->
+  <div class="mt-lg flex items-center justify-start md:justify-center gap-sm overflow-x-auto px-sm pt-md pb-sm">
+    @for (equipo of equipos(); track equipo.id) {
+      <button
+        type="button"
+        (click)="irA($index)"
+        [attr.aria-label]="equipo.nombre"
+        class="shrink-0 w-12 h-12 rounded-full flex items-center justify-center overflow-hidden transition-all duration-300"
+        [class.scale-125]="esActivo($index)"
+        [class.ring-2]="esActivo($index)"
+        [class.ring-primary]="esActivo($index)"
+        [class.opacity-40]="!esActivo($index)"
+        [style.backgroundColor]="equipo.color"
+      >
+        @if (tieneFoto(equipo.id, equipo.fotoUrl)) {
+          <img [src]="equipo.fotoUrl" [alt]="equipo.nombre" (error)="marcarFallo(equipo.id)" class="w-8 h-8 object-contain" />
+        } @else {
+          <span class="text-white font-bold text-[11px]">{{ equipo.abrev }}</span>
+        }
+      </button>
     }
   </div>
 

@@ -156,15 +156,17 @@
         <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
           Partidos en Directo
-          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline"
-            >| Jornada {{ jornadaNumero }}</span
+          <a
+            routerLink="/horarios"
+            class="text-on-background/40 font-normal ml-1 hidden sm:inline hover:text-primary hover:underline transition-colors"
+            >| Jornada {{ jornadaNumero }}</a
           >
         </h2>
         <a
-          routerLink="/clasificacion"
+          routerLink="/horarios"
           class="text-label-bold font-bold text-primary hover:underline transition-colors text-[11px] uppercase tracking-wider hidden sm:block"
         >
-          Ver todos
+          Ver horarios
         </a>
       </div>
 

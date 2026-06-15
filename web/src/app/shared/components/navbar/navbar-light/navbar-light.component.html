@@ -68,6 +68,10 @@
     <span class="material-symbols-outlined text-[22px]">shield</span>
     <span>Equipos</span>
   </a>
+  <a routerLink="/horarios" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
+    <span class="material-symbols-outlined text-[22px]">calendar_month</span>
+    <span>Horarios</span>
+  </a>
   <a routerLink="/fantasy/dashboard" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
     <span class="material-symbols-outlined text-[22px]">bolt</span>
     <span>Fantasy</span>
@@ -126,6 +130,10 @@
     <a routerLink="/equipos" routerLinkActive="nav-active" class="nav-link">
       <span class="material-symbols-outlined text-[20px]">shield</span>
       Equipos
+    </a>
+    <a routerLink="/horarios" routerLinkActive="nav-active" class="nav-link">
+      <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+      Horarios
     </a>
 
     @if (auth.autenticado()) {
