@@ -157,7 +157,7 @@ def get_mi_equipo(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict
     miembro = _verificar_miembro(str(liga_id), _uid(user))
     plantilla = (
         supabase_admin.table("plantilla_fantasy")
-        .select("*, jugador:jugadores(id, nombre, dorsal, posicion, precio_fantasy, estado_fantasy, activo, equipo:equipos(nombre, abrev))")
+        .select("*, jugador:jugadores(id, nombre, dorsal, posicion, precio_fantasy, estado_fantasy, activo, foto_url, equipo:equipos(nombre, abrev))")
         .eq("miembro_id", miembro["id"])
         .execute()
     )

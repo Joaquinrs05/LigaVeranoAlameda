@@ -82,10 +82,14 @@
           <!-- Avatar -->
           <div class="relative shrink-0">
             <div
-              class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-on-accent text-body-md"
+              class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-on-accent text-body-md overflow-hidden"
               [style.background]="posicionColor(j.posicion)"
             >
-              {{ iniciales(j.nombre) }}
+              @if (j.fotoUrl) {
+                <img [src]="j.fotoUrl" [alt]="j.nombre" class="w-full h-full object-cover" />
+              } @else {
+                {{ iniciales(j.nombre) }}
+              }
             </div>
             <span
               class="absolute -bottom-1 -right-1 text-[8px] font-bold px-1 rounded text-on-accent leading-tight"

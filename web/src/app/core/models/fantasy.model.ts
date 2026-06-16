@@ -8,6 +8,7 @@ export interface IJugadorFantasy {
   precio: number;
   estado: 'disponible' | 'lesionado' | 'sancionado';
   titular: boolean;
+  fotoUrl?: string;
 }
 
 export interface IEquipoFantasy {

@@ -28,6 +28,7 @@ interface ApiEquipo { nombre: string; abrev: string }
 interface ApiJugadorBase {
   id: string; nombre: string; posicion: string;
   precio_fantasy: number; estado_fantasy: string;
+  foto_url: string | null;
   equipo: ApiEquipo | null;
 }
 interface ApiPlantillaItem {
@@ -202,6 +203,7 @@ export class FantasyService {
       precio:           Number(item.precio_compra),
       estado:           (item.jugador?.estado_fantasy ?? 'disponible') as IJugadorFantasy['estado'],
       titular:          item.es_titular,
+      fotoUrl:          item.jugador?.foto_url ?? undefined,
     };
   }
 
@@ -216,6 +218,7 @@ export class FantasyService {
       precio:           Number(j.precio_fantasy),
       estado:           j.estado_fantasy as IJugadorFantasy['estado'],
       titular:          false,
+      fotoUrl:          j.foto_url ?? undefined,
     };
   }
 }

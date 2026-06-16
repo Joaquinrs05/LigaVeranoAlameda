@@ -97,6 +97,7 @@
                   <app-player-card
                     [nombre]="slot.jugador.nombre"
                     [posicion]="posicionAbrev(slot.jugador.posicion)"
+                    [fotoUrl]="slot.jugador.fotoUrl"
                     [estado]="slot.jugador.estado"
                     [seleccionado]="seleccionado() === slot.jugador.id"
                     size="md"
@@ -119,6 +120,7 @@
                   <app-player-card
                     [nombre]="slot.jugador.nombre"
                     [posicion]="posicionAbrev(slot.jugador.posicion)"
+                    [fotoUrl]="slot.jugador.fotoUrl"
                     [estado]="slot.jugador.estado"
                     [seleccionado]="seleccionado() === slot.jugador.id"
                     size="md"
@@ -141,6 +143,7 @@
                   <app-player-card
                     [nombre]="slot.jugador.nombre"
                     [posicion]="posicionAbrev(slot.jugador.posicion)"
+                    [fotoUrl]="slot.jugador.fotoUrl"
                     [estado]="slot.jugador.estado"
                     [seleccionado]="seleccionado() === slot.jugador.id"
                     size="md"
@@ -163,6 +166,7 @@
                   <app-player-card
                     [nombre]="slot.jugador.nombre"
                     [posicion]="posicionAbrev(slot.jugador.posicion)"
+                    [fotoUrl]="slot.jugador.fotoUrl"
                     [estado]="slot.jugador.estado"
                     [seleccionado]="seleccionado() === slot.jugador.id"
                     size="md"
@@ -200,6 +204,7 @@
               <app-player-card
                 [nombre]="j.nombre"
                 [posicion]="posicionAbrev(j.posicion)"
+                [fotoUrl]="j.fotoUrl"
                 [puntuacion]="j.puntuacionJornada"
                 [estado]="j.estado"
                 [seleccionado]="seleccionado() === j.id"
@@ -238,9 +243,13 @@
 
       <!-- Cabecera -->
       <div class="flex items-center gap-md p-lg" style="background:linear-gradient(135deg,rgba(26,74,46,0.55),rgba(15,25,35,0))">
-        <div class="flex items-center justify-center rounded-full font-bold text-background"
+        <div class="flex items-center justify-center rounded-full font-bold text-background overflow-hidden"
           style="width:52px;height:52px" [style.background]="posicionColor(j.posicion)">
-          {{ iniciales(j.nombre) }}
+          @if (j.fotoUrl) {
+            <img [src]="j.fotoUrl" [alt]="j.nombre" class="w-full h-full object-cover" />
+          } @else {
+            {{ iniciales(j.nombre) }}
+          }
         </div>
         <div class="flex flex-col min-w-0">
           <span class="text-headline-md font-bold text-background truncate">{{ j.nombre }}</span>
@@ -281,8 +290,14 @@
             <button (click)="sustituirPor(t.id)"
               class="flex items-center gap-sm w-full py-sm px-md rounded text-left transition-colors hover:bg-white/5"
               style="border:1px solid rgba(255,255,255,0.12)">
-              <span class="flex items-center justify-center rounded-full font-bold text-background text-[12px]"
-                style="width:34px;height:34px" [style.background]="posicionColor(t.posicion)">{{ iniciales(t.nombre) }}</span>
+              <span class="flex items-center justify-center rounded-full font-bold text-background text-[12px] overflow-hidden"
+                style="width:34px;height:34px" [style.background]="posicionColor(t.posicion)">
+                @if (t.fotoUrl) {
+                  <img [src]="t.fotoUrl" [alt]="t.nombre" class="w-full h-full object-cover" />
+                } @else {
+                  {{ iniciales(t.nombre) }}
+                }
+              </span>
               <div class="flex flex-col min-w-0">
                 <span class="text-body-md font-bold text-background truncate">{{ primerNombre(t.nombre) }}</span>
                 <span class="text-[11px] text-background/45">{{ t.puntuacionJornada }} pts · sale al banquillo</span>

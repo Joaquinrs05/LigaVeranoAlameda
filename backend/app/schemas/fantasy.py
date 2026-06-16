@@ -21,6 +21,7 @@ class JugadorPlantillaOut(BaseModel):
     precio_fantasy: Decimal
     estado_fantasy: str
     activo: bool
+    foto_url: str | None = None
     equipo: EquipoResumenOut | None = None
 
 
