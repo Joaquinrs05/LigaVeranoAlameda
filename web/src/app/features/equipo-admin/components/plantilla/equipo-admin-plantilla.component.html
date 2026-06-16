@@ -1,3 +1,12 @@
+<!-- Editor de recorte de foto -->
+@if (crop(); as c) {
+  <app-image-cropper
+    [src]="c.src"
+    (confirmar)="onCropConfirmar($event)"
+    (cancelar)="onCropCancelar()"
+  />
+}
+
 <!-- Toast feedback -->
 @if (exito()) {
   <div class="mb-md px-md py-sm rounded-lg bg-tertiary/10 border border-tertiary/20 text-tertiary text-body-md font-medium flex items-center gap-sm">
@@ -38,28 +47,40 @@
         style="background:rgba(255,255,255,0.85);border:1px solid rgba(192,85,42,0.12);box-shadow:0 2px 8px rgba(0,0,0,0.04)"
       >
         <!-- Avatar clicable -->
-        <label
-          [for]="'foto-' + j.id"
-          class="relative shrink-0 w-16 h-16 rounded-xl overflow-hidden cursor-pointer group"
-          [title]="subiendoFoto()[j.id] ? 'Subiendo…' : 'Cambiar foto'"
-        >
-          @if (subiendoFoto()[j.id]) {
-            <div class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl z-10">
-              <span class="material-symbols-outlined text-white text-[20px] animate-spin">progress_activity</span>
+        <div class="flex flex-col items-center gap-1 shrink-0">
+          <label
+            [for]="'foto-' + j.id"
+            class="relative w-16 h-16 rounded-xl overflow-hidden cursor-pointer group"
+            [title]="subiendoFoto()[j.id] ? 'Subiendo…' : 'Cambiar foto'"
+          >
+            @if (subiendoFoto()[j.id]) {
+              <div class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl z-10">
+                <span class="material-symbols-outlined text-white text-[20px] animate-spin">progress_activity</span>
+              </div>
+            }
+            @if (j.foto_url) {
+              <img [src]="j.foto_url" [alt]="j.nombre" class="w-full h-full object-cover" />
+            } @else {
+              <div class="w-full h-full flex items-center justify-center bg-on-background/8 text-on-background/40 font-bold text-lg">
+                {{ j.nombre.charAt(0).toUpperCase() }}
+              </div>
+            }
+            <!-- Overlay hover -->
+            <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+              <span class="material-symbols-outlined text-white text-[20px]">photo_camera</span>
             </div>
-          }
+          </label>
           @if (j.foto_url) {
-            <img [src]="j.foto_url" [alt]="j.nombre" class="w-full h-full object-cover" />
-          } @else {
-            <div class="w-full h-full flex items-center justify-center bg-on-background/8 text-on-background/40 font-bold text-lg">
-              {{ j.nombre.charAt(0).toUpperCase() }}
-            </div>
+            <button
+              type="button"
+              (click)="ajustarFoto(j)"
+              class="flex items-center gap-0.5 text-[10px] font-bold uppercase tracking-wider text-primary hover:underline"
+            >
+              <span class="material-symbols-outlined text-[13px]">crop</span>
+              Ajustar
+            </button>
           }
-          <!-- Overlay hover -->
-          <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
-            <span class="material-symbols-outlined text-white text-[20px]">photo_camera</span>
-          </div>
-        </label>
+        </div>
 
         <!-- Campos editables -->
         <div class="flex flex-1 flex-col sm:flex-row gap-sm">

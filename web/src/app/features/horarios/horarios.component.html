@@ -115,13 +115,13 @@
         </button>
       </div>
 
-      <div class="grid grid-cols-7 gap-1 mb-1">
+      <div class="grid grid-cols-7 gap-2 mb-1">
         @for (dia of diasSemana; track dia) {
           <span class="text-center text-[11px] font-bold uppercase text-on-background/40 py-1">{{ dia }}</span>
         }
       </div>
 
-      <div class="grid grid-cols-7 gap-1">
+      <div class="grid grid-cols-7 gap-2">
         @for (semana of semanas(); track $index) {
           @for (celda of semana; track celda.key) {
             <button
@@ -130,26 +130,22 @@
               [disabled]="!celda.conPartido"
               class="relative aspect-square rounded flex items-center justify-center text-body-md transition-colors"
               [ngClass]="{
-                'text-on-background': celda.enMes && !celda.esSeleccionado,
+                'text-on-background': celda.enMes && !celda.conPartido && !celda.esSeleccionado,
                 'opacity-30': !celda.enMes,
-                'font-bold cursor-pointer': celda.conPartido,
                 'cursor-default': !celda.conPartido,
-                'bg-primary text-white': celda.esSeleccionado,
-                'ring-1 ring-primary': celda.esHoy && !celda.esSeleccionado,
-                'hover:bg-background': celda.conPartido && !celda.esSeleccionado
+                'cursor-pointer font-bold bg-primary/12 text-primary ring-1 ring-primary/40 hover:bg-primary/25': celda.conPartido && !celda.esSeleccionado,
+                'font-bold bg-primary text-white ring-2 ring-primary': celda.esSeleccionado,
+                'ring-1 ring-primary/60': celda.esHoy && !celda.esSeleccionado && !celda.conPartido
               }"
             >
               {{ celda.dia }}
-              @if (celda.conPartido && !celda.esSeleccionado) {
-                <span class="absolute bottom-1 w-1 h-1 rounded-full bg-primary"></span>
-              }
             </button>
           }
         }
       </div>
 
       <div class="flex items-center gap-2 mt-md text-[11px] text-on-background/50">
-        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        <span class="w-4 h-4 rounded bg-primary/12 ring-1 ring-primary/40"></span>
         Días con partido
       </div>
     </aside>
