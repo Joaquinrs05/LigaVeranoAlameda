@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
 
@@ -15,27 +15,98 @@ import { IGoleadorJornada } from '../../core/models/jugador.model';
   imports: [NavbarLightComponent, FooterComponent, RouterLink],
   templateUrl: './home.component.html',
 })
-export class HomeComponent implements OnInit, AfterViewInit {
-  @ViewChild('cardsTrack') private cardsTrackRef!: ElementRef<HTMLElement>;
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('scroller') private scrollerRef!: ElementRef<HTMLElement>;
 
   private readonly ligaReal = inject(LigaRealService);
 
-  // Getters: leen signals — Angular los rastrea para change detection
-  get partidos(): IPartido[] {
-    const lista = this.ligaReal.partidos();
-    return [...lista, ...lista];
-  }
+  // Slide activo del carrusel de "Partido del Día" — rota cada 3s
+  readonly slideActual = signal(0);
+  private slideTimer?: ReturnType<typeof setInterval>;
+
+  private readonly partidoFallback: IPartido = {
+    id: '', equipoLocal: '—', abrevLocal: '—', colorLocal: '#C0552A',
+    equipoVisitante: '—', abrevVisitante: '—', colorVisitante: '#1A4A2E',
+    golesLocal: null, golesVisitante: null, minuto: null, estado: 'upcoming', horaInicio: null,
+  };
 
   get goleadores(): IGoleadorJornada[] {
     return this.ligaReal.goleadores();
   }
 
+  // Todos los partidos de la semana del partido ancla, duplicados para el scroll infinito
+  get partidosSemana(): IPartido[] {
+    const porHora = this.partidosOrdenados();
+    if (!porHora.length) return [];
+    const ancla = this.partidoAncla(porHora);
+    const semana = this.semanaKey(ancla?.horaInicio ?? null);
+    return porHora.filter(p => this.semanaKey(p.horaInicio) === semana);
+  }
+
+  get partidosSemanaLoop(): IPartido[] {
+    const lista = this.partidosSemana;
+    return [...lista, ...lista];
+  }
+
+  // Todos los partidos del día destacado (en vivo > próximo más cercano > último jugado)
+  get partidosDelDia(): IPartido[] {
+    const porHora = this.partidosOrdenados();
+    if (!porHora.length) return [];
+    const ancla = this.partidoAncla(porHora);
+    const dia = this.diaKey(ancla?.horaInicio ?? null);
+    return porHora.filter(p => this.diaKey(p.horaInicio) === dia);
+  }
+
   get partidoDestacado(): IPartido {
-    const lista = this.ligaReal.partidos();
-    return lista.find(p => p.estado === 'live')
-        ?? lista.find(p => p.estado === 'upcoming')
-        ?? lista[0]
-        ?? { id: '', equipoLocal: '—', abrevLocal: '—', colorLocal: '#C0552A', equipoVisitante: '—', abrevVisitante: '—', colorVisitante: '#1A4A2E', golesLocal: null, golesVisitante: null, minuto: null, estado: 'upcoming', horaInicio: null };
+    const dia = this.partidosDelDia;
+    if (!dia.length) return this.partidoFallback;
+    return dia[this.slideActual() % dia.length];
+  }
+
+  // Hora local del partido en formato HH:MM
+  horaPartido(partido: IPartido): string {
+    if (!partido.horaInicio) return '';
+    const fecha = new Date(partido.horaInicio);
+    if (Number.isNaN(fecha.getTime())) return partido.horaInicio;
+    return fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Día abreviado + hora, ej. "MIÉ 20:30"
+  diaHora(partido: IPartido): string {
+    if (!partido.horaInicio) return '';
+    const fecha = new Date(partido.horaInicio);
+    if (Number.isNaN(fecha.getTime())) return partido.horaInicio;
+    const dia = fecha.toLocaleDateString('es-ES', { weekday: 'short' }).toUpperCase();
+    return `${dia} ${this.horaPartido(partido)}`;
+  }
+
+  private partidosOrdenados(): IPartido[] {
+    return [...this.ligaReal.partidos()]
+      .sort((a, b) => (a.horaInicio ?? '').localeCompare(b.horaInicio ?? ''));
+  }
+
+  private partidoAncla(porHora: IPartido[]): IPartido | undefined {
+    return porHora.find(p => p.estado === 'live')
+        ?? porHora.find(p => p.estado === 'upcoming')
+        ?? porHora.at(-1);
+  }
+
+  private diaKey(iso: string | null): string {
+    if (!iso) return '';
+    const fecha = new Date(iso);
+    if (Number.isNaN(fecha.getTime())) return iso;
+    return `${fecha.getFullYear()}-${fecha.getMonth()}-${fecha.getDate()}`;
+  }
+
+  // Clave de la semana (lunes) que contiene la fecha dada
+  private semanaKey(iso: string | null): string {
+    if (!iso) return '';
+    const fecha = new Date(iso);
+    if (Number.isNaN(fecha.getTime())) return iso;
+    const diaSemana = (fecha.getDay() + 6) % 7; // lunes = 0
+    const lunes = new Date(fecha);
+    lunes.setDate(fecha.getDate() - diaSemana);
+    return `${lunes.getFullYear()}-${lunes.getMonth()}-${lunes.getDate()}`;
   }
 
   // Jornada número desde la primera jornada activa
@@ -63,14 +134,65 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.ligaReal.cargarClasificacion();
     this.ligaReal.cargarPartidos();
     this.ligaReal.cargarGoleadores();
+
+    this.slideTimer = setInterval(() => {
+      const total = this.partidosDelDia.length;
+      if (total > 1) this.slideActual.update(i => (i + 1) % total);
+    }, 5000);
   }
 
   ngAfterViewInit(): void {
     this.runEntryAnimation();
+    this.autoScroll();
   }
 
-  pauseScroll(): void  { this.cardsTrackRef.nativeElement.style.animationPlayState = 'paused'; }
-  resumeScroll(): void { this.cardsTrackRef.nativeElement.style.animationPlayState = 'running'; }
+  ngOnDestroy(): void {
+    if (this.slideTimer) clearInterval(this.slideTimer);
+    if (this.rafId !== undefined) cancelAnimationFrame(this.rafId);
+  }
+
+  // ── Carrusel: auto-scroll por JS + arrastre con dedo/ratón ──
+  private rafId?: number;
+  private autoPaused = true;
+  private arrastrando = false;
+  private dragInicioX = 0;
+  private dragInicioScroll = 0;
+
+  pauseScroll(): void  { this.autoPaused = true; }
+  resumeScroll(): void { this.autoPaused = false; }
+
+  private autoScroll(): void {
+    const el = this.scrollerRef.nativeElement;
+    const paso = () => {
+      if (!this.autoPaused && el.scrollWidth > el.clientWidth) {
+        const mitad = (el.scrollWidth + 16) / 2; // 16 = gap-md entre las dos copias
+        el.scrollLeft += 0.45;
+        if (el.scrollLeft >= mitad) el.scrollLeft -= mitad;
+      }
+      this.rafId = requestAnimationFrame(paso);
+    };
+    this.rafId = requestAnimationFrame(paso);
+  }
+
+  onPointerDown(e: PointerEvent): void {
+    this.pauseScroll();
+    if (e.pointerType !== 'mouse') return; // el táctil usa el scroll nativo
+    const el = this.scrollerRef.nativeElement;
+    this.arrastrando = true;
+    this.dragInicioX = e.clientX;
+    this.dragInicioScroll = el.scrollLeft;
+    el.setPointerCapture(e.pointerId);
+  }
+
+  onPointerMove(e: PointerEvent): void {
+    if (!this.arrastrando) return;
+    this.scrollerRef.nativeElement.scrollLeft = this.dragInicioScroll - (e.clientX - this.dragInicioX);
+  }
+
+  onPointerUp(): void {
+    this.arrastrando = false;
+    this.resumeScroll();
+  }
 
   private runEntryAnimation(): void {
     gsap
