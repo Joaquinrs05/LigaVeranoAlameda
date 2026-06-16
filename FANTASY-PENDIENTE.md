@@ -28,23 +28,26 @@ Sin esto, la propuesta de valor del fantasy (los puntos) no se ve en ninguna pan
 
 ---
 
-## 3. Vender jugador desde la UI 🟠
+## 3. Vender jugador desde la UI 🟠 ✅ (front hecho)
 
-`FantasyService.venderJugador()` existe y el endpoint `DELETE /fantasy/ligas/{id}/fichajes/{jugador_id}` funciona, pero **no se llama desde ningún componente**. No hay botón de vender en `mi-equipo`.
+`FantasyService.venderJugador()` existe y el endpoint `DELETE /fantasy/ligas/{id}/fichajes/{jugador_id}` funciona.
 
-- [ ] Añadir acción de vender en la card/detalle de jugador propio.
+- [x] Añadir acción de vender en la card/detalle de jugador propio → integrada en el modal de detalle (ver #4).
 
 ---
 
-## 4. Vista de detalle de jugador propio (FT1) 🟠
+## 4. Vista de detalle de jugador propio (FT1) 🟠 — front hecho, backend pendiente
 
-Al tocar un jugador en `mi-equipo` hoy solo se selecciona para intercambiar titular/reserva. Falta un modal de detalle (modo oscuro) con:
+Al tocar un jugador en `mi-equipo` ahora se abre un **modal de detalle (modo oscuro)** que actúa de hub: muestra puntos/valor/estado y reúne las acciones de alineación + gestión ([mi-equipo.component.ts](web/src/app/features/fantasy/mi-equipo/mi-equipo.component.ts)).
 
-- [ ] **Venta directa** al mercado (decidir si a `precio_compra` o `precio_fantasy` actual).
-- [ ] **Poner en venta a precio X** visible para la liga → requiere backend nuevo (tabla `mercado_listados`, endpoints crear/cancelar/comprar).
-- [ ] **Subir cláusula** + mecanismo de robo entre miembros → columna `clausula`, endpoints, y la feature acoplada de "pagar cláusula". Sin el robo, la cláusula no tiene función.
+- [x] **Modal de detalle** modo oscuro con datos del jugador.
+- [x] **Alineación desde el modal**: "Subir al once" / "Mover al banquillo" (sustituye al tap-to-swap anterior).
+- [x] **Vender instantáneamente**: funcional contra el `DELETE` existente, con paso de confirmación.
+- [ ] 🔴 **Backend — economía de venta**: hoy `vender_jugador` reembolsa `precio_compra` completo ([fantasy.py:317](backend/app/routers/fantasy.py#L317)). El diseño quiere **media cláusula**. Requiere columna `clausula` en `plantilla_fantasy`/`miembros_liga_fantasy` y cambiar el reembolso a `clausula / 2`. El front ya muestra "Recuperas X M" pero con el valor actual (precio_compra), no media cláusula.
+- [ ] **Poner en venta a precio X** (botón deshabilitado "Próximamente" en el modal) → requiere backend nuevo: tabla `mercado_listados`, endpoints crear/cancelar/comprar. El dinero NO se ingresa hasta que otro miembro compre.
+- [ ] **Subir cláusula** (botón deshabilitado "Próximamente" en el modal) → requiere columna `clausula`, endpoint para subirla, y el mecanismo de robo/"pagar cláusula" entre miembros. Sin el robo, la cláusula no tiene función.
 
-Las tres acciones deben deshabilitarse con el mercado cerrado (coherente con B3).
+Las acciones de venta deben deshabilitarse con el mercado cerrado (coherente con B3). Hoy el front delega en el backend (que rechaza con `detail`); el modal captura el error y lo muestra.
 
 ---
 
@@ -99,8 +102,9 @@ Las specs (03, 04, 05) piden skeleton de carga, estado vacío y estado de error.
 | 1 | Puntos reales de jugador (F7) | 🔴 |
 | 2 | Persistir formación + capitán (F2, F3, B16) | 🔴 |
 | 7 | Mercado coherente (B3) y recálculo idempotente (B1) | 🔴 |
-| 3 | Vender desde UI | 🟠 |
+| 3 | Vender desde UI | ✅ hecho |
+| 4 | Modal detalle + venta instantánea (FT1) | ✅ front hecho |
+| 4b | Economía media cláusula + mercado entre miembros + subir cláusula | 🔴/🟠 backend |
 | 5 | `/ajustes` real + guard (F5) | 🟠 |
 | 6 | Estados de carga/error (F8) | 🟠 |
-| 4 | Detalle de jugador / mercado entre miembros (FT1) | 🟠 |
 | 8 | Modo oscuro, tokens, limpieza | 🟡 |

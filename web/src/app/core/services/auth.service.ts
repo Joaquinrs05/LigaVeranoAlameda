@@ -117,7 +117,7 @@ export class AuthService {
         .single(),
       this.supabase
         .from('equipos')
-        .select('id')
+        .select('id, nombre')
         .eq('entrenador_id', uid)
         .maybeSingle(),
     ]);
@@ -131,6 +131,7 @@ export class AuthService {
         nombreEquipoFantasy: data['nombre_equipo_fantasy'] ?? null,
         esAdmin: data['is_superadmin'] === true,
         esEntrenador: !!equipoRes.data,
+        nombreEquipo: equipoRes.data?.['nombre'] ?? null,
       } : null);
     }
   }
@@ -150,6 +151,7 @@ export class AuthService {
       nombreEquipoFantasy: null,
       esAdmin: false,
       esEntrenador: false,
+      nombreEquipo: null,
     });
   }
 
