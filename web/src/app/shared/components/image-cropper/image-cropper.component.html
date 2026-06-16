@@ -1,0 +1,93 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center p-md"
+  style="background:rgba(15,25,35,0.7);backdrop-filter:blur(4px)"
+  (click)="cerrar()"
+>
+  <div
+    class="w-full max-w-sm rounded-2xl p-lg flex flex-col gap-md"
+    style="background:var(--color-surface);box-shadow:0 24px 60px rgba(0,0,0,0.4)"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-center justify-between">
+      <h3 class="text-headline-md font-bold text-on-surface">Ajustar foto</h3>
+      <button
+        type="button"
+        class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface/50 hover:text-primary hover:bg-primary/10 transition-colors"
+        (click)="cerrar()"
+      >
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Marco de recorte -->
+    <div
+      class="relative mx-auto overflow-hidden rounded-lg select-none touch-none"
+      [style.width.px]="frame"
+      [style.height.px]="frame"
+      style="background:#0f1923;cursor:grab"
+      (pointerdown)="onPointerDown($event)"
+      (wheel)="onWheel($event)"
+    >
+      @if (listo()) {
+        <img
+          [src]="src()"
+          alt=""
+          draggable="false"
+          class="absolute top-0 left-0 max-w-none pointer-events-none"
+          [style.width.px]="dispW()"
+          [style.height.px]="dispH()"
+          [style.transform]="'translate(' + offset().x + 'px,' + offset().y + 'px)'"
+        />
+        <!-- Guía circular (así se verá como avatar) -->
+        <div
+          class="absolute inset-0 pointer-events-none rounded-full"
+          style="box-shadow:0 0 0 9999px rgba(15,25,35,0.45);border:2px solid rgba(255,255,255,0.7)"
+        ></div>
+      } @else {
+        <div class="absolute inset-0 flex items-center justify-center text-white/60">
+          <span class="material-symbols-outlined text-[28px] animate-spin">progress_activity</span>
+        </div>
+      }
+    </div>
+
+    <!-- Control de zoom -->
+    <div class="flex items-center gap-sm">
+      <span class="material-symbols-outlined text-[18px] text-on-surface/40">zoom_out</span>
+      <input
+        type="range"
+        min="1"
+        [max]="maxZoom"
+        step="0.01"
+        [value]="zoom()"
+        (input)="onZoom($any($event.target).value)"
+        [disabled]="!listo()"
+        class="flex-1 accent-primary"
+      />
+      <span class="material-symbols-outlined text-[18px] text-on-surface/40">zoom_in</span>
+    </div>
+
+    <p class="text-[11px] text-on-surface/40 text-center -mt-1">Arrastra para mover · usa el control para acercar</p>
+
+    <!-- Acciones -->
+    <div class="flex gap-sm">
+      <button
+        type="button"
+        class="flex-1 py-sm rounded-lg font-bold text-body-md text-on-surface/60 border border-outline hover:bg-on-surface/5 transition-colors"
+        (click)="cerrar()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="flex-1 py-sm rounded-lg font-bold text-body-md text-white bg-primary hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-1.5"
+        [disabled]="!listo() || procesando()"
+        (click)="guardar()"
+      >
+        @if (procesando()) {
+          <span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+        }
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,9 +1,11 @@
 import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 import { EntrenadorService } from '../../../../core/services/entrenador.service';
 import { IEntrenadorJugador } from '../../../../core/models/equipo-admin.model';
+import { ImageCropperComponent } from '../../../../shared/components/image-cropper/image-cropper.component';
 
 const POSICIONES = ['portero', 'defensa', 'centrocampista', 'delantero'] as const;
 
@@ -13,11 +15,17 @@ interface JugadorEdit {
   posicion: string;
 }
 
+interface CropState {
+  jugadorId: string;
+  src: string;
+  objectUrl?: string;
+}
+
 @Component({
   selector: 'app-equipo-admin-plantilla',
   standalone: true,
   templateUrl: './equipo-admin-plantilla.component.html',
-  imports: [FormsModule],
+  imports: [FormsModule, ImageCropperComponent],
 })
 export class EquipoAdminPlantillaComponent implements OnInit {
   private readonly svc = inject(EntrenadorService);
@@ -35,6 +43,7 @@ export class EquipoAdminPlantillaComponent implements OnInit {
   readonly sucios = signal<Set<string>>(new Set());
   readonly subiendoFoto = signal<Record<string, boolean>>({});
   readonly guardando = signal<Record<string, boolean>>({});
+  readonly crop = signal<CropState | null>(null);
 
   ngOnInit(): void {
     this.cargar();
@@ -115,32 +124,68 @@ export class EquipoAdminPlantillaComponent implements OnInit {
   }
 
   onFoto(event: Event, jugador: IEntrenadorJugador): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
     if (!file) return;
 
+    const objectUrl = URL.createObjectURL(file);
+    this.crop.set({ jugadorId: jugador.id, src: objectUrl, objectUrl });
+  }
+
+  ajustarFoto(jugador: IEntrenadorJugador): void {
+    if (!jugador.foto_url) return;
+    this.crop.set({ jugadorId: jugador.id, src: jugador.foto_url });
+  }
+
+  onCropCancelar(): void {
+    const state = this.crop();
+    if (state?.objectUrl) URL.revokeObjectURL(state.objectUrl);
+    this.crop.set(null);
+  }
+
+  onCropConfirmar(blob: Blob): void {
+    const state = this.crop();
+    if (!state) return;
+    const { jugadorId } = state;
+    if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
+    this.crop.set(null);
+
+    const file = new File([blob], 'foto.png', { type: 'image/png' });
     const id = this.equipoId();
     const signatureBase = id ? this.svc.baseEquipo(id) : this.svc.base;
 
-    this.subiendoFoto.update(m => ({ ...m, [jugador.id]: true }));
+    this.subiendoFoto.update(m => ({ ...m, [jugadorId]: true }));
     this.cloudinary.subirImagen(file, 'jugadores', signatureBase).subscribe({
       next: url => {
-        this.patch$(jugador.id, { foto_url: url }).subscribe({
+        this.patch$(jugadorId, { foto_url: url }).subscribe({
           next: updated => {
             this.actualizarLocal(updated);
-            this.subiendoFoto.update(m => ({ ...m, [jugador.id]: false }));
+            this.subiendoFoto.update(m => ({ ...m, [jugadorId]: false }));
             this.flash('Foto actualizada');
           },
-          error: () => {
-            this.error.set('Error al guardar la foto');
-            this.subiendoFoto.update(m => ({ ...m, [jugador.id]: false }));
+          error: (err: HttpErrorResponse) => {
+            this.error.set(this.mensajeError('Error al guardar la foto', err));
+            this.subiendoFoto.update(m => ({ ...m, [jugadorId]: false }));
           },
         });
       },
-      error: () => {
-        this.error.set('Error al subir la foto');
-        this.subiendoFoto.update(m => ({ ...m, [jugador.id]: false }));
+      error: (err: HttpErrorResponse) => {
+        this.error.set(this.mensajeError('Error al subir la foto', err));
+        this.subiendoFoto.update(m => ({ ...m, [jugadorId]: false }));
       },
     });
+  }
+
+  private mensajeError(prefijo: string, err: HttpErrorResponse): string {
+    const detail = err?.error?.detail;
+    let detalle: string;
+    if (Array.isArray(detail)) {
+      detalle = detail.map(d => `${(d.loc ?? []).join('.')}: ${d.msg}`).join(' | ');
+    } else {
+      detalle = detail ?? err?.error?.error?.message ?? err?.message ?? '';
+    }
+    return detalle ? `${prefijo} (${err.status}): ${detalle}` : prefijo;
   }
 
   esSucio(jugadorId: string): boolean {
