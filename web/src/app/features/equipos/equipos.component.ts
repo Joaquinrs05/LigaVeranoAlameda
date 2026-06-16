@@ -80,7 +80,7 @@ export class EquiposComponent {
 
     if (abs > 2) {
       return {
-        transform: `translateX(calc(-50% + ${off * 300}px)) scale(0.4) rotateY(${off * -12}deg)`,
+        transform: `translateX(calc(-50% + ${off * 300}px)) scale(0.4)`,
         opacity: '0',
         zIndex: '0',
         'pointer-events': 'none',
@@ -89,10 +89,9 @@ export class EquiposComponent {
 
     const translate = off * 190;
     const scale = 1 - abs * 0.18;
-    const rotateY = off * -10;
 
     return {
-      transform: `translateX(calc(-50% + ${translate}px)) scale(${scale}) rotateY(${rotateY}deg)`,
+      transform: `translateX(calc(-50% + ${translate}px)) scale(${scale})`,
       opacity: `${1 - abs * 0.3}`,
       zIndex: `${10 - abs}`,
     };
