@@ -93,70 +93,98 @@
       ></div>
 
       <div class="relative z-10 w-full px-lg py-lg flex flex-col gap-md">
-        <div class="flex items-center gap-2">
-          @if (partidoDestacado.estado === 'live') {
-            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-          }
-          <span class="text-on-accent/50 text-[11px] font-bold uppercase tracking-widest">
-            {{ partidoDestacado.estado === 'live' ? 'En Vivo' : 'Partido del Día' }}
-            &nbsp;·&nbsp;Jornada {{ jornadaNumero }}
-          </span>
-        </div>
-
-        <div class="flex items-center justify-between gap-md">
-          <div class="flex flex-col items-center gap-sm flex-1">
-            <div
-              class="w-20 h-20 rounded-full flex items-center justify-center text-on-accent text-[15px] font-bold shrink-0 overflow-hidden"
-              [style.background]="partidoDestacado.colorLocal"
-              style="
-                box-shadow:
-                  0 0 24px rgba(192, 85, 42, 0.6),
-                  0 0 8px rgba(192, 85, 42, 0.4);
-              "
-            >
-              @if (partidoDestacado.fotoLocal) {
-                <img [src]="partidoDestacado.fotoLocal" [alt]="partidoDestacado.equipoLocal" class="w-full h-full object-contain p-1" />
-              } @else {
-                {{ partidoDestacado.abrevLocal }}
+        @for (p of [partidoDestacado]; track p.id) {
+          <div class="slide-swipe flex flex-col gap-md">
+            <div class="flex items-center gap-2">
+              @if (p.estado === 'live') {
+                <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
               }
+              <span class="text-on-accent/50 text-[11px] font-bold uppercase tracking-widest">
+                {{ p.estado === 'live' ? 'En Vivo' : 'Partido del Día' }}
+                &nbsp;·&nbsp;Jornada {{ jornadaNumero }}
+              </span>
             </div>
-            <span class="text-on-accent font-bold text-headline-md text-center leading-tight">
-              {{ partidoDestacado.equipoLocal }}
-            </span>
-          </div>
 
-          <div class="flex flex-col items-center gap-1 shrink-0">
-            @if (partidoDestacado.golesLocal !== null) {
-              <div class="flex items-center gap-3">
-                <span class="text-display-lg font-bold text-on-accent leading-none">{{
-                  partidoDestacado.golesLocal
-                }}</span>
-                <span class="text-on-accent/30 text-3xl font-light leading-none">—</span>
-                <span class="text-display-lg font-bold text-on-accent leading-none">{{
-                  partidoDestacado.golesVisitante
-                }}</span>
+            <div class="flex items-start justify-between gap-md">
+              <div class="flex flex-col items-center gap-sm flex-1 min-w-0">
+                <div
+                  class="w-20 h-20 rounded-full flex items-center justify-center text-on-accent text-[15px] font-bold shrink-0 overflow-hidden"
+                  [style.background]="p.colorLocal"
+                  style="
+                    box-shadow:
+                      0 0 24px rgba(192, 85, 42, 0.6),
+                      0 0 8px rgba(192, 85, 42, 0.4);
+                  "
+                >
+                  @if (p.fotoLocal) {
+                    <img [src]="p.fotoLocal" [alt]="p.equipoLocal" class="w-full h-full object-contain p-1" />
+                  } @else {
+                    {{ p.abrevLocal }}
+                  }
+                </div>
+                <span class="w-full text-on-accent font-bold text-body-md md:text-headline-md text-center leading-tight break-words">
+                  {{ p.equipoLocal }}
+                </span>
               </div>
-            } @else {
-              <span class="text-display-lg font-bold text-on-accent/25 leading-none">VS</span>
+
+              <div class="flex flex-col items-center justify-center gap-2 shrink-0 h-20">
+                @if (p.golesLocal !== null) {
+                  <div class="flex items-center gap-3">
+                    <span class="text-display-lg font-bold text-on-accent leading-none">{{
+                      p.golesLocal
+                    }}</span>
+                    <span class="text-on-accent/30 text-3xl font-light leading-none">—</span>
+                    <span class="text-display-lg font-bold text-on-accent leading-none">{{
+                      p.golesVisitante
+                    }}</span>
+                  </div>
+                } @else {
+                  <span class="text-display-lg font-bold text-on-accent/25 leading-none">VS</span>
+                }
+                @if (p.horaInicio) {
+                  <span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-on-background text-[11px] font-bold tracking-wider shrink-0">
+                    <span class="material-symbols-outlined text-[13px]">schedule</span>
+                    {{ p.estado === 'live' ? p.minuto : horaPartido(p) }}
+                  </span>
+                }
+              </div>
+
+              <div class="flex flex-col items-center gap-sm flex-1 min-w-0">
+                <div
+                  class="w-20 h-20 rounded-full border border-background/20 flex items-center justify-center text-on-accent text-[15px] font-bold shrink-0 overflow-hidden"
+                  [style.background]="p.colorVisitante"
+                >
+                  @if (p.fotoVisitante) {
+                    <img [src]="p.fotoVisitante" [alt]="p.equipoVisitante" class="w-full h-full object-contain p-1" />
+                  } @else {
+                    {{ p.abrevVisitante }}
+                  }
+                </div>
+                <span class="w-full text-on-accent/80 font-bold text-body-md md:text-headline-md text-center leading-tight break-words">
+                  {{ p.equipoVisitante }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (partidosDelDia.length > 1) {
+          <div class="flex items-center justify-center gap-1.5 pt-1">
+            @for (pd of partidosDelDia; track pd.id; let i = $index) {
+              <button
+                type="button"
+                (click)="slideActual.set(i)"
+                [attr.aria-label]="'Ver partido ' + (i + 1)"
+                class="h-1.5 rounded-full transition-all duration-300"
+                [class.w-5]="i === slideActual() % partidosDelDia.length"
+                [class.w-1.5]="i !== slideActual() % partidosDelDia.length"
+                [class.bg-secondary]="i === slideActual() % partidosDelDia.length"
+                [class.bg-on-accent]="i !== slideActual() % partidosDelDia.length"
+                [class.opacity-40]="i !== slideActual() % partidosDelDia.length"
+              ></button>
             }
           </div>
-
-          <div class="flex flex-col items-center gap-sm flex-1">
-            <div
-              class="w-20 h-20 rounded-full border border-background/20 flex items-center justify-center text-on-accent text-[15px] font-bold shrink-0 overflow-hidden"
-              [style.background]="partidoDestacado.colorVisitante"
-            >
-              @if (partidoDestacado.fotoVisitante) {
-                <img [src]="partidoDestacado.fotoVisitante" [alt]="partidoDestacado.equipoVisitante" class="w-full h-full object-contain p-1" />
-              } @else {
-                {{ partidoDestacado.abrevVisitante }}
-              }
-            </div>
-            <span class="text-on-accent/80 font-bold text-headline-md text-center leading-tight">
-              {{ partidoDestacado.equipoVisitante }}
-            </span>
-          </div>
-        </div>
+        }
       </div>
     </section>
 
@@ -164,8 +192,8 @@
     <section class="flex flex-col gap-md">
       <div data-anim="partidos-header" class="flex items-center justify-between">
         <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-          Partidos en Directo
+          <span class="w-2 h-2 rounded-full bg-primary"></span>
+          Partidos de la Semana
           <a
             routerLink="/horarios"
             class="text-on-background/40 font-normal ml-1 hidden sm:inline hover:text-primary hover:underline transition-colors"
@@ -180,18 +208,19 @@
         </a>
       </div>
 
-      <div data-anim="cards-scroll">
+      <div data-anim="cards-scroll" class="@container">
         <div
-          class="@container overflow-hidden"
+          #scroller
+          class="overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing select-none"
           (mouseenter)="pauseScroll()"
           (mouseleave)="resumeScroll()"
+          (pointerdown)="onPointerDown($event)"
+          (pointermove)="onPointerMove($event)"
+          (pointerup)="onPointerUp()"
+          (pointercancel)="onPointerUp()"
         >
-          <div
-            #cardsTrack
-            class="flex gap-md will-change-transform"
-            style="animation: scroll-cards 15s linear infinite; animation-play-state: paused"
-          >
-            @for (partido of partidos; track $index) {
+          <div class="flex gap-md w-max">
+            @for (partido of partidosSemanaLoop; track $index) {
               <div
                 class="shrink-0 w-[85vw] md:w-[calc((100cqw-2rem)/3)] rounded p-md flex flex-col gap-sm transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
                 [class.border]="true"
@@ -216,7 +245,7 @@
                   class="flex justify-between items-center text-[10px] uppercase tracking-widest font-bold"
                 >
                   <span class="text-on-background/50">{{
-                    partido.estado === 'upcoming' ? partido.horaInicio : partido.minuto
+                    partido.estado === 'live' ? partido.minuto : diaHora(partido)
                   }}</span>
                   @if (partido.estado === 'live') {
                     <span class="text-primary flex items-center gap-1">
