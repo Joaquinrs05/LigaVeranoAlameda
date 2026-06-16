@@ -95,7 +95,7 @@
   @if (auth.usuario()?.esEntrenador) {
     <a routerLink="/equipo/admin" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
       <span class="material-symbols-outlined text-[22px]">manage_accounts</span>
-      <span>Mi Equipo</span>
+      <span class="truncate max-w-18">{{ auth.usuario()?.nombreEquipo || 'Mi Equipo' }}</span>
     </a>
   }
   @if (auth.usuario()?.esAdmin) {
@@ -180,7 +180,7 @@
       <div class="border-t border-outline my-sm"></div>
       <a routerLink="/equipo/admin" routerLinkActive="nav-active" class="nav-link">
         <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
-        Mi Equipo Real
+        {{ auth.usuario()?.nombreEquipo || 'Mi Equipo Real' }}
       </a>
     }
 

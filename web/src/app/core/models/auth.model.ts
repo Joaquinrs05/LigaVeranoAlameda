@@ -7,6 +7,7 @@ export interface IUsuario {
   nombreEquipoFantasy: string | null;
   esAdmin: boolean;
   esEntrenador: boolean;
+  nombreEquipo: string | null;
 }
 
 export interface ICredencialesLogin {

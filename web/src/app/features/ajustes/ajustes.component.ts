@@ -1,10 +1,13 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, effect } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NavbarLightComponent } from '../../shared/components/navbar/navbar-light/navbar-light.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { FantasyService } from '../../core/services/fantasy.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { AuthService } from '../../core/services/auth.service';
+
+const PREFS_KEY = 'ajustes-liga-verano';
 
 @Component({
   selector: 'app-ajustes',
@@ -14,24 +17,26 @@ import { ThemeService } from '../../core/services/theme.service';
 })
 export class AjustesComponent {
   private readonly fantasy = inject(FantasyService);
+  private readonly auth    = inject(AuthService);
   private readonly router  = inject(Router);
   readonly theme = inject(ThemeService);
-  readonly nombre        = signal('');
-  readonly email         = signal('');
-  readonly nombreEquipo  = signal('');
+
+  readonly nombre       = signal('');
+  readonly nombreEquipo = signal('');
+  readonly email        = computed(() => this.auth.usuario()?.email ?? '');
 
   readonly notifJornada    = signal(true);
   readonly notifMercado    = signal(true);
   readonly notifAlineacion = signal(false);
-
-  readonly privacidad = signal('publica');
 
   readonly guardando = signal(false);
   readonly guardado  = signal(false);
   readonly copiado   = signal(false);
 
   readonly enLiga            = this.fantasy.enLiga;
-  readonly nombreLiga        = this.fantasy.ligaActiva;
+  readonly misLigas          = this.fantasy.misLigas;
+  readonly ligaActiva        = this.fantasy.ligaActiva;
+  readonly codigoInvitacion  = computed(() => this.fantasy.ligaActiva()?.codigo_invitacion ?? '');
   readonly confirmandoSalir  = signal(false);
   readonly saliendoDeLiga    = signal(false);
 
@@ -42,62 +47,68 @@ export class AjustesComponent {
   });
 
   readonly nombreValido     = computed(() => this.nombre().trim().length >= 2);
-  readonly emailValido      = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email()));
-  readonly formularioValido = computed(() => this.nombreValido() && this.emailValido());
+  readonly formularioValido = computed(() => this.nombreValido());
 
   constructor() {
-    this.cargar();
+    this.cargarPrefs();
+    if (this.fantasy.misLigas().length === 0) {
+      this.fantasy.inicializar();
+    }
+    effect(() => {
+      const u = this.auth.usuario();
+      if (u) {
+        this.nombre.set(u.nombre);
+        this.nombreEquipo.set(u.nombreEquipoFantasy ?? '');
+      }
+    });
   }
 
-  private cargar(): void {
+  private cargarPrefs(): void {
     try {
-      const raw = localStorage.getItem('ajustes-liga-verano');
-      if (raw) {
-        const d = JSON.parse(raw);
-        this.nombre.set(d.nombre             ?? 'Jugador Fantasy');
-        this.email.set(d.email              ?? 'jugador@liga-verano.es');
-        this.nombreEquipo.set(d.nombreEquipo ?? 'Los Cañoneros');
-        this.notifJornada.set(d.notifJornada    ?? true);
-        this.notifMercado.set(d.notifMercado    ?? true);
-        this.notifAlineacion.set(d.notifAlineacion ?? false);
-        this.privacidad.set(d.privacidad     ?? 'publica');
-      } else {
-        this.nombre.set('Jugador Fantasy');
-        this.email.set('jugador@liga-verano.es');
-        this.nombreEquipo.set('Los Cañoneros');
-      }
+      const raw = localStorage.getItem(PREFS_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      this.notifJornada.set(d.notifJornada       ?? true);
+      this.notifMercado.set(d.notifMercado       ?? true);
+      this.notifAlineacion.set(d.notifAlineacion ?? false);
     } catch {
-      this.nombre.set('Jugador Fantasy');
-      this.email.set('jugador@liga-verano.es');
-      this.nombreEquipo.set('Los Cañoneros');
+      // prefs corruptas — se ignoran y se usan los valores por defecto
     }
   }
 
-  guardar(): void {
+  async guardar(): Promise<void> {
     if (!this.formularioValido()) return;
     this.guardando.set(true);
-    localStorage.setItem('ajustes-liga-verano', JSON.stringify({
-      nombre:          this.nombre(),
-      email:           this.email(),
-      nombreEquipo:    this.nombreEquipo(),
+
+    localStorage.setItem(PREFS_KEY, JSON.stringify({
       notifJornada:    this.notifJornada(),
       notifMercado:    this.notifMercado(),
       notifAlineacion: this.notifAlineacion(),
-      privacidad:      this.privacidad(),
     }));
-    setTimeout(() => {
-      this.guardando.set(false);
-      this.guardado.set(true);
-      setTimeout(() => this.guardado.set(false), 2000);
-    }, 600);
+
+    await this.auth.actualizarPerfil({
+      nombre:              this.nombre().trim(),
+      nombreEquipoFantasy: this.nombreEquipo().trim(),
+    });
+
+    this.guardando.set(false);
+    this.guardado.set(true);
+    setTimeout(() => this.guardado.set(false), 2000);
   }
 
   descartar(): void {
-    this.cargar();
+    const u = this.auth.usuario();
+    if (u) {
+      this.nombre.set(u.nombre);
+      this.nombreEquipo.set(u.nombreEquipoFantasy ?? '');
+    }
+    this.cargarPrefs();
   }
 
   copiarEnlace(): void {
-    navigator.clipboard.writeText('liga-alameda.es/invite/alameda26').catch(() => {});
+    const codigo = this.codigoInvitacion();
+    if (!codigo) return;
+    navigator.clipboard.writeText(codigo).catch(() => {});
     this.copiado.set(true);
     setTimeout(() => this.copiado.set(false), 2000);
   }
@@ -107,9 +118,15 @@ export class AjustesComponent {
   toggleAlineacion(): void { this.notifAlineacion.update(v => !v); }
 
   onNombre(e: Event): void       { this.nombre.set((e.target as HTMLInputElement).value); }
-  onEmail(e: Event): void        { this.email.set((e.target as HTMLInputElement).value); }
   onNombreEquipo(e: Event): void { this.nombreEquipo.set((e.target as HTMLInputElement).value); }
-  onPrivacidad(e: Event): void   { this.privacidad.set((e.target as HTMLSelectElement).value); }
+
+  onSeleccionarLiga(e: Event): void {
+    const id = (e.target as HTMLSelectElement).value;
+    const liga = this.misLigas().find(l => l.id === id);
+    if (liga && liga.id !== this.ligaActiva()?.id) {
+      this.fantasy.seleccionarLiga(liga);
+    }
+  }
 
   async confirmarSalirDeLiga(): Promise<void> {
     this.saliendoDeLiga.set(true);

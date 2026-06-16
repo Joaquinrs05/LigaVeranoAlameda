@@ -58,7 +58,7 @@
           <span class="material-symbols-outlined text-[18px]">block</span>
           <span class="text-body-md font-bold">{{ errorSlot() }}</span>
         </div>
-      } @else if (seleccionado() || slotPendiente()) {
+      } @else if (!detalle() && (seleccionado() || slotPendiente())) {
         <div class="rounded p-sm flex items-center gap-2 border border-secondary/40" style="background:rgba(255,214,0,0.08)">
           <span class="material-symbols-outlined text-[18px] text-on-background/60">{{ slotPendiente() && !seleccionado() ? 'person_add' : 'swap_horiz' }}</span>
           @if (slotPendiente() && !seleccionado()) {
@@ -226,5 +226,128 @@
     </div>
   </div>
 </main>
+
+<!-- ── MODAL DETALLE JUGADOR (modo oscuro) ── -->
+@if (detalle(); as j) {
+  <div role="dialog" aria-modal="true"
+    style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem">
+    <div (click)="cerrarDetalle()" style="position:absolute;inset:0;background:rgba(7,12,18,0.78);backdrop-filter:blur(2px)"></div>
+
+    <div class="bg-on-background text-background rounded-lg overflow-hidden"
+      style="position:relative;width:100%;max-width:28rem;flex-shrink:0;--color-background:#f5f0e8;--color-on-background:#0f1923;border:1px solid rgba(255,214,0,0.18);box-shadow:0 20px 60px rgba(0,0,0,0.6)">
+
+      <!-- Cabecera -->
+      <div class="flex items-center gap-md p-lg" style="background:linear-gradient(135deg,rgba(26,74,46,0.55),rgba(15,25,35,0))">
+        <div class="flex items-center justify-center rounded-full font-bold text-background"
+          style="width:52px;height:52px" [style.background]="posicionColor(j.posicion)">
+          {{ iniciales(j.nombre) }}
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="text-headline-md font-bold text-background truncate">{{ j.nombre }}</span>
+          <span class="text-body-md text-background/55">{{ posicionAbrev(j.posicion) }} · {{ j.equipo }}</span>
+        </div>
+        <button (click)="cerrarDetalle()" class="ml-auto text-background/50 hover:text-background transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-3 gap-px px-lg pb-md">
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Puntos</span>
+          <span class="text-headline-md font-bold text-secondary">{{ j.puntuacionJornada }}</span>
+        </div>
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Valor</span>
+          <span class="text-headline-md font-bold text-background">{{ j.precio | number:'1.1-1' }}M</span>
+        </div>
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Estado</span>
+          <span class="text-body-lg font-bold"
+            [class.text-tertiary]="j.estado === 'disponible'"
+            [class.text-red-400]="j.estado === 'lesionado'"
+            [class.text-yellow-400]="j.estado === 'sancionado'">
+            {{ j.titular ? 'Titular' : 'Reserva' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="flex flex-col gap-sm p-lg pt-md" style="border-top:1px solid rgba(255,255,255,0.08)">
+
+        @if (sustituyendo()) {
+          <span class="text-body-md text-background/80">La posición <strong>{{ posicionAbrev(j.posicion) }}</strong> está completa. Elige a quién sustituye <strong>{{ primerNombre(j.nombre) }}</strong>:</span>
+          @for (t of titularesSustituibles(); track t.id) {
+            <button (click)="sustituirPor(t.id)"
+              class="flex items-center gap-sm w-full py-sm px-md rounded text-left transition-colors hover:bg-white/5"
+              style="border:1px solid rgba(255,255,255,0.12)">
+              <span class="flex items-center justify-center rounded-full font-bold text-background text-[12px]"
+                style="width:34px;height:34px" [style.background]="posicionColor(t.posicion)">{{ iniciales(t.nombre) }}</span>
+              <div class="flex flex-col min-w-0">
+                <span class="text-body-md font-bold text-background truncate">{{ primerNombre(t.nombre) }}</span>
+                <span class="text-[11px] text-background/45">{{ t.puntuacionJornada }} pts · sale al banquillo</span>
+              </div>
+              <span class="material-symbols-outlined text-[18px] text-secondary ml-auto">swap_horiz</span>
+            </button>
+          }
+          <button (click)="sustituyendo.set(false)"
+            class="py-sm rounded text-label-bold font-bold text-background/60 hover:text-background transition-colors"
+            style="border:1px solid rgba(255,255,255,0.12)">Cancelar</button>
+        } @else if (confirmandoVenta()) {
+          <div class="rounded p-md flex flex-col gap-sm" style="background:rgba(192,85,42,0.12);border:1px solid rgba(192,85,42,0.35)">
+            <span class="text-body-md text-background/80">¿Vender a <strong>{{ primerNombre(j.nombre) }}</strong>? Recuperas <strong class="text-secondary">{{ importeVenta() | number:'1.1-1' }}M</strong>.</span>
+            <div class="flex gap-sm">
+              <button (click)="confirmandoVenta.set(false)"
+                class="flex-1 py-sm rounded text-label-bold font-bold text-background/70 hover:text-background transition-colors"
+                style="border:1px solid rgba(255,255,255,0.15)">Cancelar</button>
+              <button (click)="venderInstantaneamente()" [disabled]="vendiendo()"
+                class="flex-1 py-sm rounded text-label-bold font-bold bg-primary text-on-accent hover:bg-primary/90 transition-colors disabled:opacity-50">
+                {{ vendiendo() ? 'Vendiendo…' : 'Confirmar venta' }}
+              </button>
+            </div>
+          </div>
+        } @else {
+          @if (j.titular) {
+            <button (click)="moverAlBanquillo()"
+              class="flex items-center gap-2 w-full py-sm px-md rounded text-label-bold font-bold text-background/80 hover:text-background transition-colors"
+              style="border:1px solid rgba(255,255,255,0.15)">
+              <span class="material-symbols-outlined text-[18px]">arrow_downward</span>
+              Mover al banquillo
+            </button>
+          } @else {
+            <button (click)="subirAlOnce()"
+              class="flex items-center gap-2 w-full py-sm px-md rounded text-label-bold font-bold text-on-background bg-secondary hover:bg-secondary/90 transition-colors">
+              <span class="material-symbols-outlined text-[18px]">arrow_upward</span>
+              Poner titular
+            </button>
+          }
+
+          <button (click)="confirmandoVenta.set(true)"
+            class="flex items-center gap-2 w-full py-sm px-md rounded text-label-bold font-bold text-on-accent bg-primary hover:bg-primary/90 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">payments</span>
+            Vender instantáneamente
+            <span class="ml-auto text-body-md text-on-accent/80">{{ importeVenta() | number:'1.1-1' }}M</span>
+          </button>
+
+          <button disabled
+            class="flex items-center gap-2 w-full py-sm px-md rounded text-label-bold font-bold text-background/35 cursor-not-allowed"
+            style="border:1px solid rgba(255,255,255,0.08)">
+            <span class="material-symbols-outlined text-[18px]">storefront</span>
+            Poner en mercado
+            <span class="ml-auto text-[10px] uppercase tracking-wider bg-white/10 text-background/50 px-2 py-0.5 rounded-full">Próximamente</span>
+          </button>
+
+          <button disabled
+            class="flex items-center gap-2 w-full py-sm px-md rounded text-label-bold font-bold text-background/35 cursor-not-allowed"
+            style="border:1px solid rgba(255,255,255,0.08)">
+            <span class="material-symbols-outlined text-[18px]">trending_up</span>
+            Subir cláusula
+            <span class="ml-auto text-[10px] uppercase tracking-wider bg-white/10 text-background/50 px-2 py-0.5 rounded-full">Próximamente</span>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}
 
 <app-footer />

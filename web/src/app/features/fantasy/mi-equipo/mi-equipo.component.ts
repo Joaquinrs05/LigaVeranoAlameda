@@ -29,11 +29,26 @@ const FORMACIONES: Record<Formacion, { portero: number; defensa: number; centroc
 export class MiEquipoComponent implements OnInit {
   private readonly fantasy = inject(FantasyService);
 
-  readonly seleccionado  = signal<string | null>(null);
-  readonly slotPendiente = signal<IJugadorFantasy['posicion'] | null>(null);
-  readonly errorSlot     = signal<string | null>(null);
-  readonly formacion     = signal<Formacion>((localStorage.getItem('formacion') as Formacion) ?? '1-2-2-2');
-  readonly movidos       = signal<string[]>([]);
+  readonly seleccionado    = signal<string | null>(null);
+  readonly slotPendiente   = signal<IJugadorFantasy['posicion'] | null>(null);
+  readonly errorSlot       = signal<string | null>(null);
+  readonly formacion       = signal<Formacion>((localStorage.getItem('formacion') as Formacion) ?? '1-2-2-2');
+  readonly movidos         = signal<string[]>([]);
+  readonly detalle         = signal<IJugadorFantasy | null>(null);
+  readonly confirmandoVenta = signal(false);
+  readonly vendiendo       = signal(false);
+  readonly sustituyendo    = signal(false);
+
+  // Hoy el backend reembolsa precio_compra completo (= precio). La economía
+  // de "media cláusula" requiere columna `clausula` en backend (ver FANTASY-PENDIENTE).
+  readonly importeVenta = computed(() => this.detalle()?.precio ?? 0);
+
+  // Titulares de la misma posición que el jugador del modal: candidatos a ser sustituidos.
+  readonly titularesSustituibles = computed<IJugadorFantasy[]>(() => {
+    const j = this.detalle();
+    if (!j) return [];
+    return this.titulares().filter(t => t.posicion === j.posicion);
+  });
 
   readonly formaciones: Formacion[] = Object.keys(FORMACIONES) as Formacion[];
 
@@ -114,52 +129,88 @@ export class MiEquipoComponent implements OnInit {
       this.slotPendiente.set(null);
     }
 
-    const actual = this.seleccionado();
-    if (!actual) { this.seleccionado.set(id); return; }
-    if (actual === id) { this.seleccionado.set(null); return; }
-
-    const jActual = this.jugadores().find(j => j.id === actual)!;
-    const jTarget = this.jugadores().find(j => j.id === id)!;
-
-    if (jActual.titular === jTarget.titular) { this.seleccionado.set(null); return; }
-
-    if (jActual.posicion !== jTarget.posicion) {
-      this._mostrarError(
-        `${jActual.nombre.split(' ')[0]} es ${this.posicionAbrev(jActual.posicion)}, no puede cambiar con ${jTarget.nombre.split(' ')[0]} (${this.posicionAbrev(jTarget.posicion)})`
-      );
-      return;
-    }
-
-    const updated = this.jugadores().map(j => {
-      if (j.id === actual) return { ...j, titular: jTarget.titular };
-      if (j.id === id)     return { ...j, titular: jActual.titular };
-      return j;
-    });
-    this.fantasy.miEquipo.set(updated);
-    this.seleccionado.set(null);
-    this.fantasy.actualizarPlantilla(
-      updated.map(j => ({ jugador_id: j.id, es_titular: j.titular, es_capitan: false }))
-    );
+    this.abrirDetalle(id);
   }
 
   seleccionarSlot(posicion: IJugadorFantasy['posicion']): void {
-    const id = this.seleccionado();
-    if (id) {
-      const j = this.jugadores().find(p => p.id === id);
-      if (j && j.posicion !== posicion) {
-        this._mostrarError(`${j.nombre.split(' ')[0]} es ${this.posicionAbrev(j.posicion)}, no puede jugar de ${this.posicionAbrev(posicion)}`);
-        return;
-      }
-      this._promoverATitular(id);
-      return;
-    }
-    this.slotPendiente.set(posicion);
+    this.slotPendiente.set(this.slotPendiente() === posicion ? null : posicion);
   }
 
   cancelar(): void {
     this.seleccionado.set(null);
     this.slotPendiente.set(null);
     this.errorSlot.set(null);
+  }
+
+  // ── Modal de detalle de jugador ──
+
+  abrirDetalle(id: string): void {
+    const j = this.jugadores().find(p => p.id === id) ?? null;
+    this.detalle.set(j);
+    this.seleccionado.set(id);
+    this.slotPendiente.set(null);
+    this.confirmandoVenta.set(false);
+  }
+
+  cerrarDetalle(): void {
+    this.detalle.set(null);
+    this.seleccionado.set(null);
+    this.confirmandoVenta.set(false);
+    this.sustituyendo.set(false);
+  }
+
+  subirAlOnce(): void {
+    const j = this.detalle();
+    if (!j || j.titular) return;
+    const config = FORMACIONES[this.formacion()];
+    const titularesEnPos = this.titulares().filter(t => t.posicion === j.posicion).length;
+    if (titularesEnPos >= config[j.posicion]) {
+      this.sustituyendo.set(true);
+      return;
+    }
+    this._promoverATitular(j.id);
+    this.cerrarDetalle();
+  }
+
+  sustituirPor(titularId: string): void {
+    const entra = this.detalle();
+    if (!entra) return;
+    const updated = this.jugadores().map(p => {
+      if (p.id === entra.id)  return { ...p, titular: true };
+      if (p.id === titularId) return { ...p, titular: false };
+      return p;
+    });
+    this.fantasy.miEquipo.set(updated);
+    this.fantasy.actualizarPlantilla(
+      updated.map(p => ({ jugador_id: p.id, es_titular: p.titular, es_capitan: false }))
+    );
+    this.cerrarDetalle();
+  }
+
+  moverAlBanquillo(): void {
+    const j = this.detalle();
+    if (!j || !j.titular) return;
+    const updated = this.jugadores().map(p => p.id === j.id ? { ...p, titular: false } : p);
+    this.fantasy.miEquipo.set(updated);
+    this.fantasy.actualizarPlantilla(
+      updated.map(p => ({ jugador_id: p.id, es_titular: p.titular, es_capitan: false }))
+    );
+    this.cerrarDetalle();
+  }
+
+  async venderInstantaneamente(): Promise<void> {
+    const j = this.detalle();
+    if (!j || this.vendiendo()) return;
+    this.vendiendo.set(true);
+    try {
+      await this.fantasy.venderJugador(j.id);
+      this.cerrarDetalle();
+    } catch {
+      this._mostrarError('No se pudo vender al jugador. El mercado puede estar cerrado.');
+      this.cerrarDetalle();
+    } finally {
+      this.vendiendo.set(false);
+    }
   }
 
   private _promoverATitular(id: string): void {

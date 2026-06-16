@@ -92,6 +92,7 @@ export const routes: Routes = [
   },
   {
     path: 'ajustes',
+    canActivate: [authGuard],
     loadComponent: () => import('./features/ajustes/ajustes.component').then(m => m.AjustesComponent),
   },
   {
