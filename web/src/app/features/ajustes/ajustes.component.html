@@ -86,15 +86,12 @@
             </label>
             <input
               type="email"
+              readonly
               [value]="email()"
-              (input)="onEmail($event)"
               placeholder="tu@email.es"
-              class="w-full bg-surface border border-outline rounded px-sm py-sm text-body-md text-on-background placeholder:text-on-background/30 focus:border-primary focus:outline-none transition-colors"
-              [class.border-red-400]="email().length > 0 && !emailValido()"
+              class="w-full bg-background border border-outline rounded px-sm py-sm text-body-md text-on-background/60 focus:outline-none cursor-default"
             />
-            @if (email().length > 0 && !emailValido()) {
-              <span class="text-[11px] text-red-500">Email no válido</span>
-            }
+            <span class="text-[11px] text-on-background/40 italic">El email no se puede cambiar desde aquí</span>
           </div>
 
           <div class="flex flex-col gap-xs md:col-span-2">
@@ -197,53 +194,59 @@
 
       <div class="p-lg flex flex-col gap-lg">
 
+        @if (misLigas().length > 0) {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
 
-          <!-- Privacidad -->
+          <!-- Liga activa -->
           <div class="flex flex-col gap-xs">
             <label class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
-              Privacidad del equipo
+              Liga seleccionada
             </label>
             <div class="relative">
               <select
-                [value]="privacidad()"
-                (change)="onPrivacidad($event)"
+                [value]="ligaActiva()?.id"
+                (change)="onSeleccionarLiga($event)"
                 class="w-full appearance-none bg-surface border border-outline rounded px-sm py-sm text-body-md text-on-background focus:border-primary focus:outline-none transition-colors cursor-pointer pr-xl"
               >
-                <option value="publica">Liga pública</option>
-                <option value="privada">Solo invitados</option>
-                <option value="amigos">Solo amigos</option>
+                @for (liga of misLigas(); track liga.id) {
+                  <option [value]="liga.id">{{ liga.nombre }}</option>
+                }
               </select>
               <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-background/40 pointer-events-none text-[20px]">expand_more</span>
             </div>
-            <p class="text-[11px] text-on-background/40 italic">Controla quién puede ver tu equipo y su valor</p>
+            <p class="text-[11px] text-on-background/40 italic">Cambia la liga activa si participas en varias</p>
           </div>
 
-          <!-- Enlace de invitación -->
-          <div class="flex flex-col gap-xs">
-            <label class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
-              Enlace de invitación
-            </label>
-            <div class="flex gap-xs">
-              <input
-                type="text"
-                readonly
-                value="liga-alameda.es/invite/alameda26"
-                class="flex-1 min-w-0 bg-background border border-outline rounded px-sm py-sm text-body-md text-primary font-bold focus:outline-none cursor-default"
-              />
-              <button
-                (click)="copiarEnlace()"
-                class="shrink-0 px-sm py-sm border border-outline rounded hover:border-primary transition-colors flex items-center gap-xs font-bold text-label-bold"
-                [class]="copiado() ? 'bg-tertiary/10 border-tertiary text-tertiary' : 'text-on-background/60 hover:text-primary'"
-              >
-                <span class="material-symbols-outlined text-[18px]">{{ copiado() ? 'check' : 'content_copy' }}</span>
-                {{ copiado() ? 'Copiado' : 'Copiar' }}
-              </button>
+          <!-- Código de invitación -->
+          @if (enLiga()) {
+            <div class="flex flex-col gap-xs">
+              <label class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">
+                Código de invitación
+              </label>
+              <div class="flex gap-xs">
+                <input
+                  type="text"
+                  readonly
+                  [value]="codigoInvitacion()"
+                  class="flex-1 min-w-0 bg-background border border-outline rounded px-sm py-sm text-body-md text-primary font-bold tracking-widest uppercase focus:outline-none cursor-default"
+                />
+                <button
+                  (click)="copiarEnlace()"
+                  class="shrink-0 px-sm py-sm border border-outline rounded hover:border-primary transition-colors flex items-center gap-xs font-bold text-label-bold"
+                  [class]="copiado() ? 'bg-tertiary/10 border-tertiary text-tertiary' : 'text-on-background/60 hover:text-primary'"
+                >
+                  <span class="material-symbols-outlined text-[18px]">{{ copiado() ? 'check' : 'content_copy' }}</span>
+                  {{ copiado() ? 'Copiado' : 'Copiar' }}
+                </button>
+              </div>
+              <p class="text-[11px] text-on-background/40 italic">Comparte este código para invitar a amigos a {{ ligaActiva()?.nombre }}</p>
             </div>
-            <p class="text-[11px] text-on-background/40 italic">Comparte este enlace para invitar a amigos</p>
-          </div>
+          }
 
         </div>
+        } @else {
+          <p class="text-body-md text-on-background/50">No participas en ninguna liga todavía.</p>
+        }
 
         <!-- Salir de la liga -->
         @if (enLiga()) {
