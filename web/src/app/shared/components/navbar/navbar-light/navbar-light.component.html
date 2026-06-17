@@ -82,10 +82,22 @@
     <span class="material-symbols-outlined text-[22px]">calendar_month</span>
     <span>Horarios</span>
   </a>
-  <a routerLink="/fantasy/dashboard" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
-    <span class="material-symbols-outlined text-[22px]">bolt</span>
-    <span>Fantasy</span>
-  </a>
+  @if (auth.autenticado()) {
+    <button
+      type="button"
+      (click)="toggleFantasyMenu()"
+      [class.bottom-nav-active]="fantasyMenuAbierto()"
+      class="bottom-nav-item"
+    >
+      <span class="material-symbols-outlined text-[22px]">bolt</span>
+      <span>Fantasy</span>
+    </button>
+  } @else {
+    <a routerLink="/fantasy/dashboard" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
+      <span class="material-symbols-outlined text-[22px]">bolt</span>
+      <span>Fantasy</span>
+    </a>
+  }
   @if (auth.autenticado()) {
     <a routerLink="/ajustes" routerLinkActive="bottom-nav-active" class="bottom-nav-item">
       <span class="material-symbols-outlined text-[22px]">settings</span>
@@ -105,6 +117,38 @@
     </a>
   }
 </nav>
+
+<!-- ── Desplegable Fantasy (móvil) ── -->
+@if (fantasyMenuAbierto()) {
+  <div class="md:hidden fixed inset-0 z-50" (click)="cerrarFantasyMenu()">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div
+      (click)="$event.stopPropagation()"
+      class="absolute bottom-16 left-0 right-0 bg-surface border-t border-outline shadow-2xl px-margin-mobile py-sm flex flex-col"
+    >
+      <a routerLink="/fantasy/dashboard" routerLinkActive="bg-background text-primary" (click)="cerrarFantasyMenu()"
+        class="flex items-center gap-md py-sm px-sm rounded text-body-md text-on-surface hover:bg-background transition-colors">
+        <span class="material-symbols-outlined text-[20px]">bolt</span>
+        Dashboard Fantasy
+      </a>
+      <a routerLink="/fantasy/clasificacion" routerLinkActive="bg-background text-primary" (click)="cerrarFantasyMenu()"
+        class="flex items-center gap-md py-sm px-sm rounded text-body-md text-on-surface hover:bg-background transition-colors">
+        <span class="material-symbols-outlined text-[20px]">leaderboard</span>
+        Clasificación Fantasy
+      </a>
+      <a routerLink="/fantasy/mi-equipo" routerLinkActive="bg-background text-primary" (click)="cerrarFantasyMenu()"
+        class="flex items-center gap-md py-sm px-sm rounded text-body-md text-on-surface hover:bg-background transition-colors">
+        <span class="material-symbols-outlined text-[20px]">group</span>
+        Mi Equipo
+      </a>
+      <a routerLink="/fantasy/mercado" routerLinkActive="bg-background text-primary" (click)="cerrarFantasyMenu()"
+        class="flex items-center gap-md py-sm px-sm rounded text-body-md text-on-surface hover:bg-background transition-colors">
+        <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+        Mercado
+      </a>
+    </div>
+  </div>
+}
 
 <!-- ── Sidebar ── -->
 <aside
