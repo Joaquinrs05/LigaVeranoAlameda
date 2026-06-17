@@ -2,6 +2,7 @@ import secrets
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
+from postgrest.exceptions import APIError
 
 from app.auth import get_current_user
 from app.database import supabase_admin
@@ -191,21 +192,14 @@ def actualizar_mi_equipo(
 
 @router.get("/ligas/{liga_id}/mercado", response_model=ApiResponse[list[dict]])
 def get_mercado(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict:
-    miembro = _verificar_miembro(str(liga_id), _uid(user))
-
+    _verificar_miembro(str(liga_id), _uid(user))
     _verificar_mercado_activo()
 
-    plantilla_res = (
-        supabase_admin.table("plantilla_fantasy")
-        .select("jugador_id")
-        .eq("miembro_id", miembro["id"])
-        .execute()
-    )
-    ids_en_plantilla = [p["jugador_id"] for p in plantilla_res.data]
+    ids_ocupados = _jugadores_ocupados_en_liga(str(liga_id))
 
     q = supabase_admin.table("jugadores").select("*, equipo:equipos(nombre, abrev)").eq("activo", True).eq("estado_fantasy", "disponible")
-    if ids_en_plantilla:
-        q = q.not_.in_("id", ids_en_plantilla)
+    if ids_ocupados:
+        q = q.not_.in_("id", ids_ocupados)
     result = q.order("precio_fantasy", desc=True).execute()
     return {"data": result.data}
 
@@ -255,6 +249,11 @@ def fichar_jugador(
     if ya_fichado:
         raise HTTPException(status_code=409, detail="El jugador ya está en tu plantilla")
 
+    if str(body.jugador_id) in _jugadores_ocupados_en_liga(str(liga_id)):
+        raise HTTPException(
+            status_code=409, detail="El jugador ya ha sido fichado por otro equipo de la liga"
+        )
+
     # Titular si no hay ningún titular de esa posición todavía; reserva si ya hay uno
     titulares_posicion_res = (
         supabase_admin.table("plantilla_fantasy")
@@ -269,17 +268,28 @@ def fichar_jugador(
     )
     es_titular = titulares_posicion < MAX_TITULARES_POR_POSICION.get(jugador["posicion"], 1)
 
+    # Insertamos antes de descontar el presupuesto: si el jugador ya fue fichado
+    # en la liga (constraint uq_plantilla_liga_jugador, p.ej. por una petición
+    # concurrente), el insert falla y el presupuesto queda intacto.
+    try:
+        result = supabase_admin.table("plantilla_fantasy").insert({
+            "miembro_id": miembro["id"],
+            "jugador_id": str(body.jugador_id),
+            "precio_compra": jugador["precio_fantasy"],
+            "es_titular": es_titular,
+        }).execute()
+    except APIError as exc:
+        if getattr(exc, "code", None) == "23505":
+            raise HTTPException(
+                status_code=409, detail="El jugador ya ha sido fichado por otro equipo de la liga"
+            ) from exc
+        raise
+
     nuevo_presupuesto = float(miembro["presupuesto"]) - float(jugador["precio_fantasy"])
     supabase_admin.table("miembros_liga_fantasy").update(
         {"presupuesto": nuevo_presupuesto}
     ).eq("id", miembro["id"]).execute()
 
-    result = supabase_admin.table("plantilla_fantasy").insert({
-        "miembro_id": miembro["id"],
-        "jugador_id": str(body.jugador_id),
-        "precio_compra": jugador["precio_fantasy"],
-        "es_titular": es_titular,
-    }).execute()
     return {"data": result.data[0] if result.data else None}
 
 
@@ -325,6 +335,31 @@ def vender_jugador(
 
 
 # ---- Helpers ----
+
+def _jugadores_ocupados_en_liga(liga_id: str) -> list[str]:
+    """IDs de jugadores ya fichados por cualquier miembro de la liga.
+
+    La propiedad de un jugador es por-liga: vive en plantilla_fantasy a través
+    de miembro_id -> miembros_liga_fantasy.liga_id. El estado_fantasy del jugador
+    es global y no sirve para esto.
+    """
+    miembros_res = (
+        supabase_admin.table("miembros_liga_fantasy")
+        .select("id")
+        .eq("liga_id", liga_id)
+        .execute()
+    )
+    miembro_ids = [m["id"] for m in miembros_res.data]
+    if not miembro_ids:
+        return []
+    plantillas_res = (
+        supabase_admin.table("plantilla_fantasy")
+        .select("jugador_id")
+        .in_("miembro_id", miembro_ids)
+        .execute()
+    )
+    return [p["jugador_id"] for p in plantillas_res.data]
+
 
 def _verificar_miembro(liga_id: str, uid: str) -> dict:
     miembro = _ms(
