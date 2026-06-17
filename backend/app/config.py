@@ -10,6 +10,12 @@ class Settings(BaseSettings):
     cloudinary_api_key: str = ""
     cloudinary_api_secret: str = ""
 
+    # Rate limiting (slowapi). Formato "N/unidad" (p.ej. "60/minute").
+    # Endpoints públicos sin auth llevan límite más estricto; el resto, el default.
+    rate_limit_default: str = "120/minute"
+    rate_limit_public: str = "60/minute"
+    rate_limit_enabled: bool = True
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     @property

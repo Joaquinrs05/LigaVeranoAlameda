@@ -1,0 +1,33 @@
+# Render Blueprint para el backend de Liga Verano Alameda.
+# Aplicar desde el dashboard de Render (Blueprints) o `render deploy`.
+# Los secretos NO van aquí: se definen en el dashboard (sync: false).
+services:
+  - type: web
+    name: ligaveranoalameda
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: starter            # subir de tier si la RAM no llega para los workers
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # 2 cores -> (2*cores)+1 = 5 workers (óptimo Gunicorn). Cada worker carga
+      # la app + clientes Supabase; si el tier va justo de RAM (Starter ~512MB)
+      # baja a 3-4. Los handlers son síncronos sobre threadpool, así que incluso
+      # 3-4 workers ya dan mucha concurrencia.
+      - key: WEB_CONCURRENCY
+        value: "5"
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

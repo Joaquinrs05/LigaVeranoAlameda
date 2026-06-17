@@ -23,6 +23,9 @@ from app.scoring import calcular_puntos_jugador
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(get_admin_user)])
 
+# Tope duro de paginación para listados que pueden crecer.
+MAX_PAGE = 200
+
 
 # ---- Jornadas ----
 
@@ -138,11 +141,15 @@ def put_estadisticas(partido_id: UUID, body: PutEstadisticasIn) -> dict:
 # ---- Jugadores ----
 
 @router.get("/jugadores", response_model=ApiResponse[list[dict]])
-def listar_jugadores_admin(equipo_id: UUID | None = Query(default=None)) -> dict:
+def listar_jugadores_admin(
+    equipo_id: UUID | None = Query(default=None),
+    limit: int = Query(default=MAX_PAGE, ge=1, le=MAX_PAGE),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
     q = supabase_admin.table("jugadores").select("*, equipo:equipos(id, nombre)")
     if equipo_id is not None:
         q = q.eq("equipo_id", str(equipo_id))
-    result = q.order("nombre").execute()
+    result = q.order("nombre").range(offset, offset + limit - 1).execute()
     return {"data": result.data}
 
 
@@ -217,8 +224,17 @@ def actualizar_equipo(equipo_id: UUID, body: ActualizarEquipoIn) -> dict:
 # ---- Perfiles (para asignar entrenadores) ----
 
 @router.get("/perfiles", response_model=ApiResponse[list[dict]])
-def listar_perfiles() -> dict:
-    result = supabase_admin.table("perfiles").select("id, nombre").order("nombre").execute()
+def listar_perfiles(
+    limit: int = Query(default=MAX_PAGE, ge=1, le=MAX_PAGE),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
+    result = (
+        supabase_admin.table("perfiles")
+        .select("id, nombre")
+        .order("nombre")
+        .range(offset, offset + limit - 1)
+        .execute()
+    )
     return {"data": result.data or []}
 
 
@@ -232,23 +248,32 @@ def listar_ligas_admin() -> dict:
 
 @router.get("/ligas/{liga_id}/participantes", response_model=ApiResponse[list[dict]])
 def listar_participantes(liga_id: UUID) -> dict:
+    # puntos_total y posicion salen ya calculados de la vista clasificacion_fantasy
+    # (suma en vivo de puntuaciones_fantasy); la vista no tiene FK a perfiles, así
+    # que resolvemos los nombres de manager en una consulta aparte.
     result = (
-        supabase_admin.table("miembros_liga_fantasy")
-        .select("id, nombre_equipo, puntos_total, presupuesto, perfil:perfiles!usuario_id(nombre)")
+        supabase_admin.table("clasificacion_fantasy")
+        .select("miembro_id, usuario_id, nombre_equipo, puntos_total, presupuesto, posicion")
         .eq("liga_id", str(liga_id))
         .order("puntos_total", desc=True)
         .execute()
     )
+    usuario_ids = [r["usuario_id"] for r in result.data]
+    nombres: dict[str, str] = {}
+    if usuario_ids:
+        pres = supabase_admin.table("perfiles").select("id, nombre").in_("id", usuario_ids).execute()
+        nombres = {str(p["id"]): str(p["nombre"]) for p in (pres.data or []) if isinstance(p, dict)}
+
     rows = [
         {
-            "posicion": i + 1,
-            "miembro_id": m["id"],
-            "nombre_equipo": m["nombre_equipo"],
-            "manager": (m.get("perfil") or {}).get("nombre", ""),
-            "puntos_total": m["puntos_total"],
-            "presupuesto": m["presupuesto"],
+            "posicion": r["posicion"],
+            "miembro_id": r["miembro_id"],
+            "nombre_equipo": r["nombre_equipo"],
+            "manager": nombres.get(str(r["usuario_id"]), ""),
+            "puntos_total": r["puntos_total"],
+            "presupuesto": r["presupuesto"],
         }
-        for i, m in enumerate(result.data)
+        for r in result.data
     ]
     return {"data": rows}
 
@@ -279,6 +304,10 @@ def calcular_puntuaciones(jornada_numero: int) -> dict:
     if not partido_ids:
         raise HTTPException(status_code=400, detail="No hay partidos finalizados en esta jornada")
 
+    # Cálculo sin bucle por miembro: 4 consultas en total sin importar cuántos
+    # miembros haya. Solo escribimos puntuaciones_fantasy de esta jornada;
+    # puntos_total ya no se materializa (la vista clasificacion_fantasy lo suma
+    # en vivo), así que no hay un segundo write por miembro. Ver migración 004.
     stats_res = (
         supabase_admin.table("estadisticas_jugador")
         .select("jugador_id, puntos_fantasy")
@@ -289,48 +318,31 @@ def calcular_puntuaciones(jornada_numero: int) -> dict:
     for s in stats_res.data:
         jugador_pts[s["jugador_id"]] = jugador_pts.get(s["jugador_id"], 0) + s["puntos_fantasy"]
 
-    miembros_res = supabase_admin.table("miembros_liga_fantasy").select("id, liga_id").execute()
+    miembros_res = supabase_admin.table("miembros_liga_fantasy").select("id").execute()
+    titulares_res = (
+        supabase_admin.table("plantilla_fantasy")
+        .select("miembro_id, jugador_id, es_capitan")
+        .eq("es_titular", True)
+        .execute()
+    )
 
-    registros_insertados = 0
-    for miembro in miembros_res.data:
-        miembro_id = miembro["id"]
-        plantilla_res = (
-            supabase_admin.table("plantilla_fantasy")
-            .select("jugador_id, es_capitan")
-            .eq("miembro_id", miembro_id)
-            .eq("es_titular", True)
-            .execute()
-        )
-        total = 0
-        for item in plantilla_res.data:
-            pts = jugador_pts.get(item["jugador_id"], 0)
-            if item["es_capitan"]:
-                pts *= 2
-            total += pts
+    puntos_por_miembro: dict[str, int] = {m["id"]: 0 for m in miembros_res.data}
+    for t in titulares_res.data:
+        pts = jugador_pts.get(t["jugador_id"], 0)
+        if t["es_capitan"]:
+            pts *= 2
+        puntos_por_miembro[t["miembro_id"]] = puntos_por_miembro.get(t["miembro_id"], 0) + pts
 
+    rows = [
+        {"miembro_id": miembro_id, "jornada_numero": jornada_numero, "puntos": puntos}
+        for miembro_id, puntos in puntos_por_miembro.items()
+    ]
+    if rows:
         supabase_admin.table("puntuaciones_fantasy").upsert(
-            {
-                "miembro_id": miembro_id,
-                "jornada_numero": jornada_numero,
-                "puntos": total,
-            },
-            on_conflict="miembro_id,jornada_numero",
+            rows, on_conflict="miembro_id,jornada_numero"
         ).execute()
 
-        puntos_actuales_res = (
-            supabase_admin.table("miembros_liga_fantasy")
-            .select("puntos_total")
-            .eq("id", miembro_id)
-            .single()
-            .execute()
-        )
-        nuevo_total = puntos_actuales_res.data["puntos_total"] + total
-        supabase_admin.table("miembros_liga_fantasy").update(
-            {"puntos_total": nuevo_total}
-        ).eq("id", miembro_id).execute()
-        registros_insertados += 1
-
-    return {"data": {"miembros_calculados": registros_insertados, "jornada": jornada_numero}}
+    return {"data": {"miembros_calculados": len(rows), "jornada": jornada_numero}}
 
 
 # ---- Cloudinary ----

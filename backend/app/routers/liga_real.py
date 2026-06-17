@@ -1,8 +1,10 @@
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 
+from app.config import settings
 from app.database import supabase_admin
+from app.ratelimit import limiter
 from app.schemas.common import ApiResponse
 from app.schemas.liga_real import (
     ClasificacionRow,
@@ -17,21 +19,27 @@ from app.schemas.liga_real import (
 
 router = APIRouter(tags=["liga-real"])
 
+# Tope duro de paginación para endpoints que pueden crecer.
+MAX_PAGE = 200
+
 
 @router.get("/clasificacion", response_model=ApiResponse[list[ClasificacionRow]])
-def get_clasificacion() -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_clasificacion(request: Request) -> dict:
     result = supabase_admin.table("clasificacion").select("*").execute()
     return {"data": result.data}
 
 
 @router.get("/jornadas", response_model=ApiResponse[list[JornadaOut]])
-def get_jornadas() -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_jornadas(request: Request) -> dict:
     result = supabase_admin.table("jornadas").select("*").order("numero").execute()
     return {"data": result.data}
 
 
 @router.get("/jornadas/{numero}", response_model=ApiResponse[JornadaConPartidosOut])
-def get_jornada(numero: int) -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_jornada(request: Request, numero: int) -> dict:
     jornada = (
         supabase_admin.table("jornadas").select("*").eq("numero", numero).maybe_single().execute()
     )
@@ -48,7 +56,8 @@ def get_jornada(numero: int) -> dict:
 
 
 @router.get("/partidos", response_model=ApiResponse[list[PartidoOut]])
-def get_partidos(jornada: int | None = Query(default=None)) -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_partidos(request: Request, jornada: int | None = Query(default=None)) -> dict:
     q = supabase_admin.table("partidos").select(
         "*, equipo_local:equipos!equipo_local_id(*), equipo_visitante:equipos!equipo_visitante_id(*)"
     )
@@ -64,7 +73,8 @@ def get_partidos(jornada: int | None = Query(default=None)) -> dict:
 
 
 @router.get("/partidos/{partido_id}", response_model=ApiResponse[PartidoConEstadisticasOut])
-def get_partido(partido_id: UUID) -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_partido(request: Request, partido_id: UUID) -> dict:
     partido = (
         supabase_admin.table("partidos")
         .select("*, equipo_local:equipos!equipo_local_id(*), equipo_visitante:equipos!equipo_visitante_id(*)")
@@ -84,13 +94,15 @@ def get_partido(partido_id: UUID) -> dict:
 
 
 @router.get("/equipos", response_model=ApiResponse[list[EquipoOut]])
-def get_equipos() -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_equipos(request: Request) -> dict:
     result = supabase_admin.table("equipos").select("*").order("nombre").execute()
     return {"data": result.data}
 
 
 @router.get("/equipos/{equipo_id}", response_model=ApiResponse[EquipoConStatsOut])
-def get_equipo(equipo_id: UUID) -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_equipo(request: Request, equipo_id: UUID) -> dict:
     equipo = (
         supabase_admin.table("equipos").select("*").eq("id", str(equipo_id)).maybe_single().execute()
     )
@@ -108,16 +120,23 @@ def get_equipo(equipo_id: UUID) -> dict:
 
 
 @router.get("/jugadores", response_model=ApiResponse[list[JugadorOut]])
-def get_jugadores(equipo: UUID | None = Query(default=None)) -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_jugadores(
+    request: Request,
+    equipo: UUID | None = Query(default=None),
+    limit: int = Query(default=MAX_PAGE, ge=1, le=MAX_PAGE),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
     q = supabase_admin.table("jugadores").select("*").eq("activo", True)
     if equipo is not None:
         q = q.eq("equipo_id", str(equipo))
-    result = q.order("nombre").execute()
+    result = q.order("nombre").range(offset, offset + limit - 1).execute()
     return {"data": result.data}
 
 
 @router.get("/goleadores", response_model=ApiResponse[list[dict]])
-def get_goleadores() -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_goleadores(request: Request) -> dict:
     jornada_res = (
         supabase_admin.table("jornadas").select("id").eq("estado", "en_curso").maybe_single().execute()
     )
@@ -178,7 +197,8 @@ def get_goleadores() -> dict:
 
 
 @router.get("/cruces", response_model=ApiResponse[list[dict]])
-def get_cruces() -> dict:
+@limiter.limit(settings.rate_limit_public)
+def get_cruces(request: Request) -> dict:
     result = (
         supabase_admin.table("cruces")
         .select(

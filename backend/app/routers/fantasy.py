@@ -150,6 +150,18 @@ def get_liga(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict:
 @router.get("/ligas/{liga_id}/mi-miembro", response_model=ApiResponse[MiembroOut])
 def get_mi_miembro(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict:
     miembro = _verificar_miembro(str(liga_id), _uid(user))
+    # puntos_total ya no se materializa: se suma en vivo desde puntuaciones_fantasy
+    # (pocas filas, una por jornada calculada).
+    pts_res = (
+        supabase_admin.table("puntuaciones_fantasy")
+        .select("puntos")
+        .eq("miembro_id", miembro["id"])
+        .execute()
+    )
+    total = 0
+    for p in pts_res.data:
+        total += p["puntos"]
+    miembro["puntos_total"] = total
     return {"data": miembro}
 
 
@@ -179,11 +191,29 @@ def actualizar_mi_equipo(
     if len(titulares) > 11:
         raise HTTPException(status_code=400, detail="Máximo 11 titulares")
 
-    for item in body.jugadores:
-        supabase_admin.table("plantilla_fantasy").update({
-            "es_titular": item.es_titular,
-            "es_capitan": item.es_capitan,
-        }).eq("miembro_id", miembro_id).eq("jugador_id", str(item.jugador_id)).execute()
+    # En lugar de un UPDATE por jugador (hasta 15 round-trips secuenciales),
+    # agrupamos por valor: como mucho 4 updates en bloque con .in_(), sin
+    # importar el tamaño de la plantilla. Solo tocan filas ya existentes.
+    titular_ids = [str(j.jugador_id) for j in body.jugadores if j.es_titular]
+    no_titular_ids = [str(j.jugador_id) for j in body.jugadores if not j.es_titular]
+    capitan_ids = [str(j.jugador_id) for j in body.jugadores if j.es_capitan]
+    no_capitan_ids = [str(j.jugador_id) for j in body.jugadores if not j.es_capitan]
+
+    def _bulk_update(campo: str, valor: bool, ids: list[str]) -> None:
+        if not ids:
+            return
+        (
+            supabase_admin.table("plantilla_fantasy")
+            .update({campo: valor})
+            .eq("miembro_id", miembro_id)
+            .in_("jugador_id", ids)
+            .execute()
+        )
+
+    _bulk_update("es_titular", True, titular_ids)
+    _bulk_update("es_titular", False, no_titular_ids)
+    _bulk_update("es_capitan", True, capitan_ids)
+    _bulk_update("es_capitan", False, no_capitan_ids)
 
     return {"data": {"actualizado": True}}
 
@@ -249,10 +279,9 @@ def fichar_jugador(
     if ya_fichado:
         raise HTTPException(status_code=409, detail="El jugador ya está en tu plantilla")
 
-    if str(body.jugador_id) in _jugadores_ocupados_en_liga(str(liga_id)):
-        raise HTTPException(
-            status_code=409, detail="El jugador ya ha sido fichado por otro equipo de la liga"
-        )
+    # No comprobamos aquí si lo tiene otro equipo de la liga: la constraint
+    # uq_plantilla_liga_jugador lo impide y el INSERT de abajo captura el 23505,
+    # devolviendo el mismo 409 sin un round-trip extra (y a prueba de concurrencia).
 
     # Titular si no hay ningún titular de esa posición todavía; reserva si ya hay uno
     titulares_posicion_res = (
@@ -339,23 +368,14 @@ def vender_jugador(
 def _jugadores_ocupados_en_liga(liga_id: str) -> list[str]:
     """IDs de jugadores ya fichados por cualquier miembro de la liga.
 
-    La propiedad de un jugador es por-liga: vive en plantilla_fantasy a través
-    de miembro_id -> miembros_liga_fantasy.liga_id. El estado_fantasy del jugador
-    es global y no sirve para esto.
+    La propiedad de un jugador es por-liga. La migración 003 desnormalizó
+    `liga_id` en plantilla_fantasy (mantenido por trigger), así que basta una
+    única consulta filtrando por liga en lugar de resolver miembros + plantillas.
     """
-    miembros_res = (
-        supabase_admin.table("miembros_liga_fantasy")
-        .select("id")
-        .eq("liga_id", liga_id)
-        .execute()
-    )
-    miembro_ids = [m["id"] for m in miembros_res.data]
-    if not miembro_ids:
-        return []
     plantillas_res = (
         supabase_admin.table("plantilla_fantasy")
         .select("jugador_id")
-        .in_("miembro_id", miembro_ids)
+        .eq("liga_id", liga_id)
         .execute()
     )
     return [p["jugador_id"] for p in plantillas_res.data]
