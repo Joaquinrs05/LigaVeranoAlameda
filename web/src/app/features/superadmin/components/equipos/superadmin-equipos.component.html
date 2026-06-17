@@ -52,7 +52,7 @@
   @if (cargando()) {
     <p class="text-body-md opacity-60">Cargando...</p>
   } @else {
-    <div class="bg-surface rounded-xl border border-outline overflow-hidden">
+    <div class="bg-surface rounded-xl border border-outline overflow-visible">
       <table class="w-full text-body-md">
         <thead class="bg-background">
           <tr>
@@ -100,7 +100,7 @@
                       class="w-full border border-outline rounded px-xs py-0.5 text-body-md min-w-48"
                     />
                     @if (focusedEquipoId() === e.id && perfiles().length > 0) {
-                      <div class="absolute z-20 top-full left-0 right-0 mt-0.5 bg-surface border border-outline rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div class="absolute z-30 top-full left-0 right-0 mt-1 bg-surface border border-outline rounded-lg shadow-xl max-h-72 overflow-y-auto">
                         <button
                           type="button"
                           (mousedown)="seleccionarEntrenador(e, null)"
