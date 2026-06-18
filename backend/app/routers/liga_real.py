@@ -2,6 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query, Request
 
+from app.cache import publico as cache
 from app.config import settings
 from app.database import supabase_admin
 from app.ratelimit import limiter
@@ -26,15 +27,25 @@ MAX_PAGE = 200
 @router.get("/clasificacion", response_model=ApiResponse[list[ClasificacionRow]])
 @limiter.limit(settings.rate_limit_public)
 def get_clasificacion(request: Request) -> dict:
+    cached = cache.get("clasificacion")
+    if cached is not None:
+        return cached
     result = supabase_admin.table("clasificacion").select("*").execute()
-    return {"data": result.data}
+    payload = {"data": result.data}
+    cache.set("clasificacion", payload)
+    return payload
 
 
 @router.get("/jornadas", response_model=ApiResponse[list[JornadaOut]])
 @limiter.limit(settings.rate_limit_public)
 def get_jornadas(request: Request) -> dict:
+    cached = cache.get("jornadas")
+    if cached is not None:
+        return cached
     result = supabase_admin.table("jornadas").select("*").order("numero").execute()
-    return {"data": result.data}
+    payload = {"data": result.data}
+    cache.set("jornadas", payload)
+    return payload
 
 
 @router.get("/jornadas/{numero}", response_model=ApiResponse[JornadaConPartidosOut])
@@ -96,8 +107,13 @@ def get_partido(request: Request, partido_id: UUID) -> dict:
 @router.get("/equipos", response_model=ApiResponse[list[EquipoOut]])
 @limiter.limit(settings.rate_limit_public)
 def get_equipos(request: Request) -> dict:
+    cached = cache.get("equipos")
+    if cached is not None:
+        return cached
     result = supabase_admin.table("equipos").select("*").order("nombre").execute()
-    return {"data": result.data}
+    payload = {"data": result.data}
+    cache.set("equipos", payload)
+    return payload
 
 
 @router.get("/equipos/{equipo_id}", response_model=ApiResponse[EquipoConStatsOut])
@@ -137,6 +153,9 @@ def get_jugadores(
 @router.get("/goleadores", response_model=ApiResponse[list[dict]])
 @limiter.limit(settings.rate_limit_public)
 def get_goleadores(request: Request) -> dict:
+    cached = cache.get("goleadores")
+    if cached is not None:
+        return cached
     jornada_res = (
         supabase_admin.table("jornadas").select("id").eq("estado", "en_curso").maybe_single().execute()
     )
@@ -193,12 +212,17 @@ def get_goleadores(request: Request) -> dict:
         aggregated[jid]["asistencias"] += s.get("asistencias", 0)
 
     top = sorted(aggregated.values(), key=lambda x: (-x["goles"], -x["asistencias"]))[:10]
-    return {"data": top}
+    payload = {"data": top}
+    cache.set("goleadores", payload)
+    return payload
 
 
 @router.get("/cruces", response_model=ApiResponse[list[dict]])
 @limiter.limit(settings.rate_limit_public)
 def get_cruces(request: Request) -> dict:
+    cached = cache.get("cruces")
+    if cached is not None:
+        return cached
     result = (
         supabase_admin.table("cruces")
         .select(
@@ -208,4 +232,6 @@ def get_cruces(request: Request) -> dict:
         )
         .execute()
     )
-    return {"data": result.data}
+    payload = {"data": result.data}
+    cache.set("cruces", payload)
+    return payload
