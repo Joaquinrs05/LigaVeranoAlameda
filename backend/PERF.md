@@ -101,14 +101,27 @@ caliente, así que el coste solo se paga 1 vez cada 20 s. No compensa el cambio.
 
 ---
 
+## Cambio 3 — `fichar`/`vender` → funciones RPC transaccionales (#1)  ·  riesgo ALTO
+
+`migrations/005_fichar_vender_rpc.sql` (nuevo), `app/routers/fantasy.py`.
+
+- Toda la operación (validaciones + insert/delete + presupuesto) en una función
+  Postgres, atómica y con `SELECT ... FOR UPDATE` sobre el miembro.
+- Reduce de **~8 round-trips a 1** por fichaje.
+- Arregla la **condición de carrera del presupuesto (bug B4)**: dos fichajes
+  simultáneos ya no se pisan ni dejan dinero/plantilla inconsistentes.
+- Evita de paso el 500 con varias jornadas en curso (`LIMIT 1`, bug B6).
+- Seguridad: `EXECUTE` solo para `service_role`; revocado a `anon`/`authenticated`
+  (si no, sería un bypass de auth con la anon key pública).
+
+**Verificado** (script reversible contra Supabase real): códigos de error correctos
+(PT403/PT404), y fichar+vender deja el presupuesto idéntico al original (100→95→100),
+sin residuos.
+
+---
+
 ## 4. Pendiente (mayor riesgo o fuera de alcance de esta ronda)
 
-Son cambios de **escritura** o de gran superficie; requieren migración SQL + pruebas
-en staging, no un commit más:
-
-- **`fichar`/`vender` → función RPC de Postgres** (riesgo ALTO). Reduce de ~8
-  round-trips a 1 por fichaje y arregla la condición de carrera de presupuesto (bug
-  B4). Mueve dinero/plantilla: un error corrompe datos. Hacer con migración y pruebas.
 - **`calcular_puntuaciones` en SQL** (riesgo ALTO). Arrastra los bugs B1/B9/B14;
   tocarlo solo por rendimiento puede corromper puntos de todos los usuarios. Hacer
   junto a la corrección de esos bugs, no aislado.
