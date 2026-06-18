@@ -13,7 +13,7 @@ Severidades: 🔴 crítico (rompe datos o funcionalidad), 🟠 medio (comportami
 
 El upsert en `puntuaciones_fantasy` sí es idempotente, pero después **siempre suma** el total de la jornada a `miembros_liga_fantasy.puntos_total`. Si el admin pulsa "Calcular" dos veces para la misma jornada (la UI de superadmin lo permite sin aviso), los puntos se duplican.
 
-**Fix sugerido:** recalcular `puntos_total` como `SUM(puntos)` de `puntuaciones_fantasy` del miembro, en lugar de acumular incrementalmente. Alternativa: restar el valor previo del registro antes del upsert.
+**Fix sugerido:** recalcula `puntos_total` como `SUM(puntos)` de `puntuaciones_fantasy` del miembro, en lugar de acumular incrementalmente. Alternativa: restar el valor previo del registro antes del upsert.
 
 ### 🔴 B2. `get_admin_user` puede lanzar 500 en vez de 403
 
