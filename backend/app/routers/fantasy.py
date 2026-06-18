@@ -20,14 +20,24 @@ from app.schemas.fantasy import (
 
 router = APIRouter(prefix="/fantasy", tags=["fantasy"])
 
-MAX_JUGADORES_PLANTILLA = 15
-MAX_TITULARES_POR_POSICION: dict[str, int] = {
-    "portero": 1, "defensa": 2, "centrocampista": 2, "delantero": 2,
-}
-
 
 def _uid(user: dict) -> str:
     return user.get("sub", "")
+
+
+def _rpc_http_error(exc: APIError) -> HTTPException:
+    """Traduce el error de una RPC a HTTPException.
+
+    Las funciones RPC lanzan SQLSTATE 'PTxyz' (ver migración 005); PostgREST lo
+    propaga como code='PTxyz'. Lo mapeamos al HTTP xyz con el mensaje original.
+    Si no es un código nuestro, devolvemos 400 con el mensaje (mejor que un 500
+    genérico que oculta la causa real al usuario).
+    """
+    code = getattr(exc, "code", "") or ""
+    msg = getattr(exc, "message", None) or "No se pudo completar la operación"
+    if len(code) == 5 and code.startswith("PT") and code[2:].isdigit():
+        return HTTPException(status_code=int(code[2:]), detail=msg)
+    return HTTPException(status_code=400, detail=msg)
 
 
 def _ms(result) -> dict | None:
@@ -240,86 +250,18 @@ def get_mercado(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict:
 def fichar_jugador(
     liga_id: UUID, body: FicharJugadorIn, user: dict = Depends(get_current_user)
 ) -> dict:
-    miembro = _verificar_miembro(str(liga_id), _uid(user))
-    _verificar_mercado_activo()
-
-    jugador = _ms(
-        supabase_admin.table("jugadores")
-        .select("id, posicion, precio_fantasy, estado_fantasy, activo")
-        .eq("id", str(body.jugador_id))
-        .maybe_single()
-        .execute()
-    )
-    if not jugador:
-        raise HTTPException(status_code=404, detail="Jugador no encontrado")
-    if not jugador["activo"] or jugador["estado_fantasy"] != "disponible":
-        raise HTTPException(status_code=400, detail="Jugador no disponible en el mercado")
-    if float(jugador["precio_fantasy"]) > float(miembro["presupuesto"]):
-        raise HTTPException(status_code=400, detail="Presupuesto insuficiente")
-
-    count_res = (
-        supabase_admin.table("plantilla_fantasy")
-        .select("id", count="exact")
-        .eq("miembro_id", miembro["id"])
-        .execute()
-    )
-    if (count_res.count or 0) >= MAX_JUGADORES_PLANTILLA:
-        raise HTTPException(
-            status_code=400, detail=f"Plantilla llena (máximo {MAX_JUGADORES_PLANTILLA} jugadores)"
-        )
-
-    ya_fichado = _ms(
-        supabase_admin.table("plantilla_fantasy")
-        .select("id")
-        .eq("miembro_id", miembro["id"])
-        .eq("jugador_id", str(body.jugador_id))
-        .maybe_single()
-        .execute()
-    )
-    if ya_fichado:
-        raise HTTPException(status_code=409, detail="El jugador ya está en tu plantilla")
-
-    # No comprobamos aquí si lo tiene otro equipo de la liga: la constraint
-    # uq_plantilla_liga_jugador lo impide y el INSERT de abajo captura el 23505,
-    # devolviendo el mismo 409 sin un round-trip extra (y a prueba de concurrencia).
-
-    # Titular si no hay ningún titular de esa posición todavía; reserva si ya hay uno
-    titulares_posicion_res = (
-        supabase_admin.table("plantilla_fantasy")
-        .select("jugador:jugadores(posicion)")
-        .eq("miembro_id", miembro["id"])
-        .eq("es_titular", True)
-        .execute()
-    )
-    titulares_posicion = sum(
-        1 for item in titulares_posicion_res.data
-        if item.get("jugador") and item["jugador"].get("posicion") == jugador["posicion"]
-    )
-    es_titular = titulares_posicion < MAX_TITULARES_POR_POSICION.get(jugador["posicion"], 1)
-
-    # Insertamos antes de descontar el presupuesto: si el jugador ya fue fichado
-    # en la liga (constraint uq_plantilla_liga_jugador, p.ej. por una petición
-    # concurrente), el insert falla y el presupuesto queda intacto.
+    # Toda la operación (validaciones + insert + descuento de presupuesto) vive en
+    # una RPC transaccional con lock sobre el miembro (migración 005): 1 round-trip
+    # en lugar de ~8 y sin la condición de carrera del presupuesto (bug B4).
     try:
-        result = supabase_admin.table("plantilla_fantasy").insert({
-            "miembro_id": miembro["id"],
-            "jugador_id": str(body.jugador_id),
-            "precio_compra": jugador["precio_fantasy"],
-            "es_titular": es_titular,
+        res = supabase_admin.rpc("fichar_jugador", {
+            "p_liga_id": str(liga_id),
+            "p_usuario_id": _uid(user),
+            "p_jugador_id": str(body.jugador_id),
         }).execute()
     except APIError as exc:
-        if getattr(exc, "code", None) == "23505":
-            raise HTTPException(
-                status_code=409, detail="El jugador ya ha sido fichado por otro equipo de la liga"
-            ) from exc
-        raise
-
-    nuevo_presupuesto = float(miembro["presupuesto"]) - float(jugador["precio_fantasy"])
-    supabase_admin.table("miembros_liga_fantasy").update(
-        {"presupuesto": nuevo_presupuesto}
-    ).eq("id", miembro["id"]).execute()
-
-    return {"data": result.data[0] if result.data else None}
+        raise _rpc_http_error(exc) from exc
+    return {"data": res.data}
 
 
 @router.delete("/ligas/{liga_id}/salir", response_model=ApiResponse[dict])
@@ -339,28 +281,17 @@ def salir_de_liga(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict
 def vender_jugador(
     liga_id: UUID, jugador_id: UUID, user: dict = Depends(get_current_user)
 ) -> dict:
-    miembro = _verificar_miembro(str(liga_id), _uid(user))
-    _verificar_mercado_activo()
-
-    item = _ms(
-        supabase_admin.table("plantilla_fantasy")
-        .select("id, precio_compra")
-        .eq("miembro_id", miembro["id"])
-        .eq("jugador_id", str(jugador_id))
-        .maybe_single()
-        .execute()
-    )
-    if not item:
-        raise HTTPException(status_code=404, detail="Jugador no está en tu plantilla")
-
-    precio_venta = float(item["precio_compra"])
-    nuevo_presupuesto = float(miembro["presupuesto"]) + precio_venta
-    supabase_admin.table("miembros_liga_fantasy").update(
-        {"presupuesto": nuevo_presupuesto}
-    ).eq("id", miembro["id"]).execute()
-
-    supabase_admin.table("plantilla_fantasy").delete().eq("id", item["id"]).execute()
-    return {"data": {"vendido": True, "precio": precio_venta}}
+    # Borrado + devolución de presupuesto atómicos en una RPC (migración 005):
+    # si algo falla no hay dinero gratis ni jugador perdido.
+    try:
+        res = supabase_admin.rpc("vender_jugador", {
+            "p_liga_id": str(liga_id),
+            "p_usuario_id": _uid(user),
+            "p_jugador_id": str(jugador_id),
+        }).execute()
+    except APIError as exc:
+        raise _rpc_http_error(exc) from exc
+    return {"data": {"vendido": True, "precio": float(res.data or 0)}}
 
 
 # ---- Helpers ----
