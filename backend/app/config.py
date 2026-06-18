@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     rate_limit_public: str = "60/minute"
     rate_limit_enabled: bool = True
 
+    # TTL de la caché en proceso para endpoints públicos (segundos). 0 = desactivada.
+    cache_ttl_seconds: float = 20.0
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     @property
