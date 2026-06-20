@@ -40,8 +40,8 @@
       <!-- Stats -->
       <div class="grid grid-cols-3 gap-sm">
         <div class="rounded p-sm flex flex-col gap-xs" style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.15)">
-          <span class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">Puntos jornada</span>
-          <span class="text-headline-md font-bold text-primary">{{ equipo.puntuacionJornada }}</span>
+          <span class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">Puntos totales</span>
+          <span class="text-headline-md font-bold text-primary">{{ equipo.puntuacionTotal }}</span>
         </div>
         <div class="rounded p-sm flex flex-col gap-xs" style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.15)">
           <span class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">Valor equipo</span>
@@ -98,6 +98,7 @@
                     [nombre]="slot.jugador.nombre"
                     [posicion]="posicionAbrev(slot.jugador.posicion)"
                     [fotoUrl]="slot.jugador.fotoUrl"
+                    [puntuacion]="slot.jugador.puntuacionTotal"
                     [estado]="slot.jugador.estado"
                     [seleccionado]="seleccionado() === slot.jugador.id"
                     size="md"
@@ -121,6 +122,7 @@
                     [nombre]="slot.jugador.nombre"
                     [posicion]="posicionAbrev(slot.jugador.posicion)"
                     [fotoUrl]="slot.jugador.fotoUrl"
+                    [puntuacion]="slot.jugador.puntuacionTotal"
                     [estado]="slot.jugador.estado"
                     [seleccionado]="seleccionado() === slot.jugador.id"
                     size="md"
@@ -144,6 +146,7 @@
                     [nombre]="slot.jugador.nombre"
                     [posicion]="posicionAbrev(slot.jugador.posicion)"
                     [fotoUrl]="slot.jugador.fotoUrl"
+                    [puntuacion]="slot.jugador.puntuacionTotal"
                     [estado]="slot.jugador.estado"
                     [seleccionado]="seleccionado() === slot.jugador.id"
                     size="md"
@@ -167,6 +170,7 @@
                     [nombre]="slot.jugador.nombre"
                     [posicion]="posicionAbrev(slot.jugador.posicion)"
                     [fotoUrl]="slot.jugador.fotoUrl"
+                    [puntuacion]="slot.jugador.puntuacionTotal"
                     [estado]="slot.jugador.estado"
                     [seleccionado]="seleccionado() === slot.jugador.id"
                     size="md"
@@ -205,7 +209,7 @@
                 [nombre]="j.nombre"
                 [posicion]="posicionAbrev(j.posicion)"
                 [fotoUrl]="j.fotoUrl"
-                [puntuacion]="j.puntuacionJornada"
+                [puntuacion]="j.puntuacionTotal"
                 [estado]="j.estado"
                 [seleccionado]="seleccionado() === j.id"
                 size="sm"
@@ -220,7 +224,7 @@
                   } @else if (j.estado === 'sancionado') {
                     <span class="text-[9px] font-bold text-yellow-600">SAN</span>
                   }
-                  <span class="text-[11px] text-on-background/40">{{ j.puntuacionJornada }} pts</span>
+                  <span class="text-[11px] text-on-background/40">{{ j.puntuacionTotal }} pts</span>
                 </div>
               </div>
             </button>
@@ -264,7 +268,7 @@
       <div class="grid grid-cols-3 gap-px px-lg pb-md">
         <div class="flex flex-col gap-0.5">
           <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Puntos</span>
-          <span class="text-headline-md font-bold text-secondary">{{ j.puntuacionJornada }}</span>
+          <span class="text-headline-md font-bold text-secondary">{{ j.puntuacionTotal }}</span>
         </div>
         <div class="flex flex-col gap-0.5">
           <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Valor</span>
@@ -300,7 +304,7 @@
               </span>
               <div class="flex flex-col min-w-0">
                 <span class="text-body-md font-bold text-background truncate">{{ primerNombre(t.nombre) }}</span>
-                <span class="text-[11px] text-background/45">{{ t.puntuacionJornada }} pts · sale al banquillo</span>
+                <span class="text-[11px] text-background/45">{{ t.puntuacionTotal }} pts · sale al banquillo</span>
               </div>
               <span class="material-symbols-outlined text-[18px] text-secondary ml-auto">swap_horiz</span>
             </button>

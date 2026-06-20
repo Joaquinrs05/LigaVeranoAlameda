@@ -73,6 +73,7 @@ class PlantillaItemOut(BaseModel):
     es_capitan: bool
     precio_compra: Decimal
     fichado_at: datetime
+    puntos_total: int = 0
 
 
 # ---- Requests ----

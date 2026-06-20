@@ -35,6 +35,7 @@ interface ApiPlantillaItem {
   id: string; miembro_id: string; jugador_id: string;
   jugador: ApiJugadorBase | null;
   es_titular: boolean; es_capitan: boolean; precio_compra: number;
+  puntos_total: number;
 }
 interface ApiJugadorMercado extends ApiJugadorBase { activo: boolean }
 
@@ -199,7 +200,7 @@ export class FantasyService {
       equipo:           item.jugador?.equipo?.nombre ?? '',
       posicion:         (item.jugador?.posicion       ?? 'delantero') as IJugadorFantasy['posicion'],
       puntuacionJornada: 0,
-      puntuacionTotal:  0,
+      puntuacionTotal:  item.puntos_total ?? 0,
       precio:           Number(item.precio_compra),
       estado:           (item.jugador?.estado_fantasy ?? 'disponible') as IJugadorFantasy['estado'],
       titular:          item.es_titular,

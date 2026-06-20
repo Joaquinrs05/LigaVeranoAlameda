@@ -67,12 +67,12 @@ export class MiEquipoComponent implements OnInit {
 
   readonly miembro = this.fantasy.miembro;
 
-  get equipo(): { nombre: string; propietario: string; puntuacionJornada: number; presupuesto: number } {
+  get equipo(): { nombre: string; propietario: string; puntuacionTotal: number; presupuesto: number } {
     const m = this.fantasy.miembro();
     return {
       nombre:            m?.nombre_equipo ?? 'Mi Equipo',
       propietario:       m?.nombre_equipo ?? '',
-      puntuacionJornada: 0,
+      puntuacionTotal:   m?.puntos_total  ?? 0,
       presupuesto:       m?.presupuesto   ?? 100,
     };
   }

@@ -184,7 +184,24 @@ def get_mi_equipo(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict
         .eq("miembro_id", miembro["id"])
         .execute()
     )
-    return {"data": plantilla.data}
+    items = plantilla.data or []
+
+    # Puntos acumulados por jugador (suma de todos sus partidos).
+    jugador_ids = [it["jugador_id"] for it in items]
+    puntos_map: dict[str, int] = {}
+    if jugador_ids:
+        stats = (
+            supabase_admin.table("estadisticas_jugador")
+            .select("jugador_id, puntos_fantasy")
+            .in_("jugador_id", jugador_ids)
+            .execute()
+        )
+        for s in stats.data:
+            puntos_map[s["jugador_id"]] = puntos_map.get(s["jugador_id"], 0) + s["puntos_fantasy"]
+    for it in items:
+        it["puntos_total"] = puntos_map.get(it["jugador_id"], 0)
+
+    return {"data": items}
 
 
 @router.patch("/ligas/{liga_id}/mi-equipo", response_model=ApiResponse[dict])
