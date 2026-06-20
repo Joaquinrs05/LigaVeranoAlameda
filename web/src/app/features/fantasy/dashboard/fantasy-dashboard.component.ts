@@ -49,6 +49,23 @@ export class FantasyDashboardComponent implements OnInit, AfterViewInit {
     return porHora.filter(p => this.semanaKey(p.horaInicio) === semana);
   }
 
+  // Hora local del partido en formato HH:MM
+  horaPartido(partido: IPartido): string {
+    if (!partido.horaInicio) return '';
+    const fecha = new Date(partido.horaInicio);
+    if (Number.isNaN(fecha.getTime())) return partido.horaInicio;
+    return fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Día abreviado + hora, ej. "LUN 20:30"
+  diaHora(partido: IPartido): string {
+    if (!partido.horaInicio) return '';
+    const fecha = new Date(partido.horaInicio);
+    if (Number.isNaN(fecha.getTime())) return partido.horaInicio;
+    const dia = fecha.toLocaleDateString('es-ES', { weekday: 'short' }).toUpperCase();
+    return `${dia} ${this.horaPartido(partido)}`;
+  }
+
   // Clave de la semana (lunes) que contiene la fecha dada
   private semanaKey(iso: string | null): string {
     if (!iso) return '';

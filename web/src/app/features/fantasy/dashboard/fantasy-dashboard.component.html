@@ -262,7 +262,7 @@
               [style.box-shadow]="partido.estado === 'live' ? '0 4px 24px rgba(192,85,42,0.18),0 1px 4px rgba(0,0,0,0.06)' : '0 2px 12px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04)'"
             >
               <div class="flex justify-between items-center text-[10px] uppercase tracking-widest font-bold">
-                <span class="text-on-background/50">{{ partido.estado === 'upcoming' ? partido.horaInicio : partido.minuto }}</span>
+                <span class="text-on-background/50">{{ partido.estado === 'live' ? partido.minuto : diaHora(partido) }}</span>
                 @if (partido.estado === 'live') {
                   <span class="text-primary flex items-center gap-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
@@ -276,7 +276,13 @@
               </div>
               <div class="flex justify-between items-center text-data-mono font-semibold">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-accent text-[10px] font-bold shrink-0">{{ partido.abrevLocal }}</div>
+                  <div class="w-7 h-7 rounded-full flex items-center justify-center text-on-accent text-[10px] font-bold shrink-0 overflow-hidden" [style.background]="partido.colorLocal">
+                    @if (partido.fotoLocal) {
+                      <img [src]="partido.fotoLocal" [alt]="partido.equipoLocal" class="w-full h-full object-contain p-0.5" />
+                    } @else {
+                      {{ partido.abrevLocal }}
+                    }
+                  </div>
                   <span>{{ partido.equipoLocal }}</span>
                 </div>
                 @if (partido.golesLocal !== null) {
@@ -287,7 +293,13 @@
               </div>
               <div class="flex justify-between items-center text-data-mono">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-on-accent text-[10px] font-bold shrink-0">{{ partido.abrevVisitante }}</div>
+                  <div class="w-7 h-7 rounded-full flex items-center justify-center text-on-accent text-[10px] font-bold shrink-0 overflow-hidden" [style.background]="partido.colorVisitante">
+                    @if (partido.fotoVisitante) {
+                      <img [src]="partido.fotoVisitante" [alt]="partido.equipoVisitante" class="w-full h-full object-contain p-0.5" />
+                    } @else {
+                      {{ partido.abrevVisitante }}
+                    }
+                  </div>
                   <span class="text-on-background/70">{{ partido.equipoVisitante }}</span>
                 </div>
                 @if (partido.golesVisitante !== null) {
