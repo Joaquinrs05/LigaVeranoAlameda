@@ -449,9 +449,15 @@
                 >
                   <div class="flex items-center gap-sm min-w-0">
                     <div
-                      class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold text-on-accent"
+                      class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold text-on-accent overflow-hidden"
                       [style.background]="jugador.posicion === 'portero' ? '#1a4a2e' : jugador.posicion === 'defensa' ? '#c0552a' : jugador.posicion === 'centrocampista' ? '#0f5a8a' : '#7b2d8b'"
-                    >{{ posicionAbrev(jugador.posicion) }}</div>
+                    >
+                      @if (jugador.fotoUrl) {
+                        <img [src]="jugador.fotoUrl" [alt]="jugador.nombre" class="w-full h-full object-cover" />
+                      } @else {
+                        {{ posicionAbrev(jugador.posicion) }}
+                      }
+                    </div>
                     <div class="flex flex-col min-w-0">
                       <span class="font-bold text-body-md text-on-background truncate">{{ jugador.nombre }}</span>
                       <div class="flex items-center gap-1">
@@ -466,9 +472,9 @@
                   </div>
                   <div
                     class="w-9 h-9 rounded flex items-center justify-center font-bold text-body-md shrink-0"
-                    [style.background]="jugador.puntuacionJornada >= 10 ? '#1a4a2e' : jugador.puntuacionJornada >= 6 ? 'rgba(26,74,46,0.12)' : 'rgba(192,85,42,0.08)'"
-                    [style.color]="jugador.puntuacionJornada >= 10 ? '#FFD600' : jugador.puntuacionJornada >= 6 ? '#1a4a2e' : '#c0552a'"
-                  >{{ jugador.puntuacionJornada }}</div>
+                    [style.background]="jugador.puntuacionTotal >= 10 ? '#1a4a2e' : jugador.puntuacionTotal >= 6 ? 'rgba(26,74,46,0.12)' : 'rgba(192,85,42,0.08)'"
+                    [style.color]="jugador.puntuacionTotal >= 10 ? '#FFD600' : jugador.puntuacionTotal >= 6 ? '#1a4a2e' : '#c0552a'"
+                  >{{ jugador.puntuacionTotal }}</div>
                 </div>
               }
             </div>
