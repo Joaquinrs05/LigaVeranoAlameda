@@ -4,8 +4,8 @@ services:
     container_name: liga-verano-api
     restart: unless-stopped
     ports:
-      # Solo localhost: Nginx hace de proxy delante. NUNCA publicar en 0.0.0.0
-      # (eso reexpone el :8004 al mundo saltándose TLS y rate-limit).
-      - "127.0.0.1:8004:8004"
+      # Expuesto en todas las interfaces para recibir peticiones externas.
+      # TODO: poner un reverse proxy (Nginx/Caddy) con TLS delante antes de producción.
+      - "8004:8004"
     env_file:
       - .env
