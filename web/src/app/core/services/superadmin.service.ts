@@ -69,6 +69,36 @@ export interface AdminEstadisticaIn {
   portero_sin_goles: boolean;
 }
 
+export interface AdminEventoResumen {
+  jugador: string;
+  equipo_id: string | null;
+  posicion: string | null;
+  goles: number;
+  asistencias: number;
+  tarjeta_amarilla: boolean;
+  tarjeta_roja: boolean;
+  puntos: number;
+}
+
+export interface AdminPartidoResumen {
+  partido_id: string;
+  estado: string;
+  equipo_local: string | null;
+  equipo_visitante: string | null;
+  equipo_local_id: string | null;
+  equipo_visitante_id: string | null;
+  goles_local: number | null;
+  goles_visitante: number | null;
+  porteria_cero_local: boolean;
+  porteria_cero_visitante: boolean;
+  eventos: AdminEventoResumen[];
+}
+
+export interface AdminResumenJornada {
+  jornada: number;
+  partidos: AdminPartidoResumen[];
+}
+
 export interface AdminParticipante {
   posicion: number;
   miembro_id: string;
@@ -166,6 +196,12 @@ export class SuperadminService {
   }
 
   // Puntuaciones
+  getResumenPuntuaciones(jornadaNumero: number): Observable<AdminResumenJornada | null> {
+    return this.http
+      .get<ApiResp<AdminResumenJornada>>(`${this.base}/puntuaciones/resumen/${jornadaNumero}`)
+      .pipe(map(r => r.data));
+  }
+
   calcularPuntuaciones(jornadaNumero: number): Observable<{ miembros_calculados: number; jornada: number }> {
     return this.http
       .post<ApiResp<{ miembros_calculados: number; jornada: number }>>(`${this.base}/puntuaciones/calcular/${jornadaNumero}`, {})

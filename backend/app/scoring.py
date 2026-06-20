@@ -1,34 +1,35 @@
 
-#FIXME EN UN FUTURO CAMBIAR SI HACE  FALTA LOS PUTNOS Y LAS COSAS 
-_GOL_PTS: dict[str, int] = {
-    "delantero": 6,
-    "centrocampista": 8,
-    "defensa": 10,
-    "portero": 12,
-}
+#FIXME EN UN FUTURO CAMBIAR SI HACE  FALTA LOS PUTNOS Y LAS COSAS
+_GOL_PTS = 2
+_VICTORIA_PTS = 3
+_EMPATE_PTS = 1
+_AMARILLA_PTS = -1
+_ROJA_PTS = -2
+_PORTERIA_CERO_DEF = 2
+_PORTERIA_CERO_ATK = 1
 
 
 def calcular_puntos_jugador(
     posicion: str,
     goles: int,
-    asistencias: int,
     tarjeta_amarilla: bool,
     tarjeta_roja: bool,
-    minutos_jugados: int,
-    portero_sin_goles: bool,
+    equipo_gana: bool,
+    equipo_empata: bool,
+    porteria_cero: bool,
 ) -> int:
-    pts = goles * _GOL_PTS.get(posicion, 6)
-    pts += asistencias * 3
-    if posicion == "portero" and portero_sin_goles:
-        pts += 8
-    elif posicion == "defensa" and portero_sin_goles:
-        pts += 4
+    pts = goles * _GOL_PTS
+    if equipo_gana:
+        pts += _VICTORIA_PTS
+    elif equipo_empata:
+        pts += _EMPATE_PTS
+    if porteria_cero and not equipo_empata:
+        if posicion in ("portero", "defensa"):
+            pts += _PORTERIA_CERO_DEF
+        else:
+            pts += _PORTERIA_CERO_ATK
     if tarjeta_amarilla:
-        pts -= 1
+        pts += _AMARILLA_PTS
     if tarjeta_roja:
-        pts -= 3
-    if minutos_jugados >= 60:
-        pts += 1
-    if minutos_jugados > 0:
-        pts += 1
+        pts += _ROJA_PTS
     return pts

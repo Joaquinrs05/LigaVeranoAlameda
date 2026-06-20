@@ -296,26 +296,27 @@ Admin tras cada jornada
 
 ## 4. Sistema de puntuaciones fantasy
 
-> **Estado: TBD — pendiente de validar con el usuario antes de implementar.**
-> La fórmula siguiente es una propuesta. No se implementa hasta que haya acuerdo.
+> **Estado: implementado.** Baremo simplificado acordado con el usuario.
+> Implementación en `app/scoring.py` (`calcular_puntos_jugador`).
 
-### Propuesta de fórmula
+### Fórmula vigente
 
-| Evento | DEL | MC | DEF | POR |
-|---|---|---|---|---|
-| Gol marcado | +6 | +8 | +10 | +12 |
-| Asistencia | +3 | +3 | +3 | +3 |
-| Portero a cero (≥60 min jugados) | — | — | +4 | +8 |
-| Tarjeta amarilla | -1 | -1 | -1 | -1 |
-| Tarjeta roja | -3 | -3 | -3 | -3 |
-| ≥60 minutos jugados | +1 | +1 | +1 | +1 |
-| Titular en alineación inicial | +1 | +1 | +1 | +1 |
-| Capitán | × 2 sobre el total del jugador | — | — | — |
+| Evento | Puntos |
+|---|---|
+| Su equipo gana el partido | +3 |
+| Su equipo empata | +1 |
+| Gol marcado | +2 (por gol) |
+| Portería a cero (portero y defensa) | +2 |
+| Portería a cero (centrocampista y delantero) | +1 |
+| Tarjeta amarilla | -1 |
+| Tarjeta roja | -2 |
 
 **Notas:**
-- Solo puntúan los jugadores marcados como `es_titular = true` en la plantilla
-- El capitán dobla sus puntos (se aplica al final del cálculo)
-- Si un jugador está `lesionado` o `sancionado`, puntúa 0 automáticamente
+- El bonus de victoria/empate y de portería a cero dependen del resultado del equipo real del jugador en ese partido (`partidos.goles_local` vs `goles_visitante`). Portería a cero = el equipo del jugador no encajó goles. Si el marcador aún no está registrado, no se aplica ningún bonus de resultado.
+- En un empate **el bonus de portería a cero no se acumula**: un 0-0 suma solo el +1 del empate (no el bonus de portería a cero).
+- Los puntos por jugador se calculan al registrar las estadísticas del partido y al marcarlo como `finished`; se almacenan en `estadisticas_jugador.puntos_fantasy`.
+- Solo puntúan los jugadores marcados como `es_titular = true` en la plantilla.
+- Los campos `asistencias`, `minutos_jugados` y `portero_sin_goles` se siguen registrando como datos del partido pero ya no afectan a la puntuación.
 
 ### Pseudocódigo del cálculo
 
@@ -325,9 +326,7 @@ def calcular_puntos_miembro(miembro_id, jornada_numero):
     total = 0
     for jugador in titulares:
         stats = estadisticas_jugador WHERE jugador_id AND partido.jornada_numero
-        pts = formula(stats, jugador.posicion)
-        if jugador.es_capitan:
-            pts *= 2
+        pts = formula(stats, jugador.posicion, resultado_equipo_real(jugador, partido))
         total += pts
     INSERT INTO puntuaciones_fantasy (miembro_id, jornada_numero, puntos, calculado_at)
     UPDATE miembros_liga_fantasy SET puntos_total += pts WHERE id = miembro_id

@@ -102,23 +102,27 @@ def put_estadisticas(partido_id: UUID, body: PutEstadisticasIn) -> dict:
     jugador_ids = [str(e.jugador_id) for e in body.estadisticas]
     jugadores_res = (
         supabase_admin.table("jugadores")
-        .select("id, posicion")
+        .select("id, equipo_id, posicion")
         .in_("id", jugador_ids)
         .execute()
     )
+    equipo_map: dict[str, str] = {j["id"]: j["equipo_id"] for j in jugadores_res.data}
     pos_map: dict[str, str] = {j["id"]: j["posicion"] for j in jugadores_res.data}
+    resultado_map = _resultado_equipo_map(str(partido_id))
 
     rows = []
     for e in body.estadisticas:
-        posicion = pos_map.get(str(e.jugador_id), "delantero")
+        gana, empata, porteria_cero = resultado_map.get(
+            equipo_map.get(str(e.jugador_id), ""), (False, False, False)
+        )
         pts = calcular_puntos_jugador(
-            posicion=posicion,
+            posicion=pos_map.get(str(e.jugador_id), "delantero"),
             goles=e.goles,
-            asistencias=e.asistencias,
             tarjeta_amarilla=e.tarjeta_amarilla,
             tarjeta_roja=e.tarjeta_roja,
-            minutos_jugados=e.minutos_jugados,
-            portero_sin_goles=e.portero_sin_goles,
+            equipo_gana=gana,
+            equipo_empata=empata,
+            porteria_cero=porteria_cero,
         )
         rows.append({
             "jugador_id": str(e.jugador_id),
@@ -280,6 +284,94 @@ def listar_participantes(liga_id: UUID) -> dict:
 
 # ---- Puntuaciones ----
 
+@router.get("/puntuaciones/resumen/{jornada_numero}", response_model=ApiResponse[dict])
+def resumen_puntuaciones(jornada_numero: int) -> dict:
+    """Eventos registrados de una jornada (goles, tarjetas) para revisar antes de calcular."""
+    jornada_res = (
+        supabase_admin.table("jornadas")
+        .select("id")
+        .eq("numero", jornada_numero)
+        .maybe_single()
+        .execute()
+    )
+    jornada = jornada_res.data if jornada_res is not None else None
+    if not jornada:
+        raise HTTPException(status_code=404, detail="Jornada no encontrada")
+
+    partidos_res = (
+        supabase_admin.table("partidos")
+        .select(
+            "id, estado, goles_local, goles_visitante, "
+            "equipo_local:equipos!equipo_local_id(id, nombre), "
+            "equipo_visitante:equipos!equipo_visitante_id(id, nombre)"
+        )
+        .eq("jornada_id", jornada["id"])
+        .order("hora_inicio")
+        .execute()
+    )
+    partidos = partidos_res.data or []
+    partido_ids = [p["id"] for p in partidos]
+
+    stats_by_partido: dict[str, list] = {}
+    jugador_ids: list[str] = []
+    if partido_ids:
+        stats_res = (
+            supabase_admin.table("estadisticas_jugador")
+            .select("partido_id, jugador_id, goles, asistencias, tarjeta_amarilla, tarjeta_roja, puntos_fantasy")
+            .in_("partido_id", partido_ids)
+            .execute()
+        )
+        for s in stats_res.data:
+            stats_by_partido.setdefault(s["partido_id"], []).append(s)
+            jugador_ids.append(s["jugador_id"])
+
+    jugador_map: dict[str, dict] = {}
+    if jugador_ids:
+        jug_res = (
+            supabase_admin.table("jugadores")
+            .select("id, nombre, posicion, equipo_id")
+            .in_("id", jugador_ids)
+            .execute()
+        )
+        jugador_map = {j["id"]: j for j in jug_res.data}
+
+    partidos_out = []
+    for p in partidos:
+        gl, gv = p["goles_local"], p["goles_visitante"]
+        eventos = []
+        for s in stats_by_partido.get(p["id"], []):
+            if not (s["goles"] or s["tarjeta_amarilla"] or s["tarjeta_roja"] or s["asistencias"]):
+                continue
+            j = jugador_map.get(s["jugador_id"], {})
+            eventos.append({
+                "jugador": j.get("nombre", "—"),
+                "equipo_id": j.get("equipo_id"),
+                "posicion": j.get("posicion"),
+                "goles": s["goles"],
+                "asistencias": s["asistencias"],
+                "tarjeta_amarilla": s["tarjeta_amarilla"],
+                "tarjeta_roja": s["tarjeta_roja"],
+                "puntos": s["puntos_fantasy"],
+            })
+        local = p["equipo_local"]
+        visitante = p["equipo_visitante"]
+        partidos_out.append({
+            "partido_id": p["id"],
+            "estado": p["estado"],
+            "equipo_local": local["nombre"] if local else None,
+            "equipo_visitante": visitante["nombre"] if visitante else None,
+            "equipo_local_id": local["id"] if local else None,
+            "equipo_visitante_id": visitante["id"] if visitante else None,
+            "goles_local": gl,
+            "goles_visitante": gv,
+            "porteria_cero_local": gv == 0 if gv is not None else False,
+            "porteria_cero_visitante": gl == 0 if gl is not None else False,
+            "eventos": eventos,
+        })
+
+    return {"data": {"jornada": jornada_numero, "partidos": partidos_out}}
+
+
 @router.post("/puntuaciones/calcular/{jornada_numero}", response_model=ApiResponse[dict])
 def calcular_puntuaciones(jornada_numero: int) -> dict:
     _jornada_res = (
@@ -321,7 +413,7 @@ def calcular_puntuaciones(jornada_numero: int) -> dict:
     miembros_res = supabase_admin.table("miembros_liga_fantasy").select("id").execute()
     titulares_res = (
         supabase_admin.table("plantilla_fantasy")
-        .select("miembro_id, jugador_id, es_capitan")
+        .select("miembro_id, jugador_id")
         .eq("es_titular", True)
         .execute()
     )
@@ -329,8 +421,6 @@ def calcular_puntuaciones(jornada_numero: int) -> dict:
     puntos_por_miembro: dict[str, int] = {m["id"]: 0 for m in miembros_res.data}
     for t in titulares_res.data:
         pts = jugador_pts.get(t["jugador_id"], 0)
-        if t["es_capitan"]:
-            pts *= 2
         puntos_por_miembro[t["miembro_id"]] = puntos_por_miembro.get(t["miembro_id"], 0) + pts
 
     rows = [
@@ -363,10 +453,35 @@ def generar_firma_upload(folder: str = Query(default="liga")) -> dict:
 
 # ---- Helpers ----
 
+def _resultado_equipo_map(partido_id: str) -> dict[str, tuple[bool, bool, bool]]:
+    """Devuelve {equipo_id: (gana, empata, porteria_cero)} para ambos equipos.
+
+    Portería a cero = el equipo no encajó goles. Si el marcador aún no está
+    registrado, ambos equipos quedan sin bonus.
+    """
+    p_res = (
+        supabase_admin.table("partidos")
+        .select("equipo_local_id, equipo_visitante_id, goles_local, goles_visitante")
+        .eq("id", partido_id)
+        .maybe_single()
+        .execute()
+    )
+    p = p_res.data if p_res is not None else None
+    if not p or p["goles_local"] is None or p["goles_visitante"] is None:
+        return {}
+    gl, gv = p["goles_local"], p["goles_visitante"]
+    local, visitante = p["equipo_local_id"], p["equipo_visitante_id"]
+    gana_local, empate = gl > gv, gl == gv
+    return {
+        local: (gana_local, empate, gv == 0),
+        visitante: (not gana_local and not empate, empate, gl == 0),
+    }
+
+
 def _recalcular_puntos_partido(partido_id: str) -> None:
     stats_res = (
         supabase_admin.table("estadisticas_jugador")
-        .select("id, jugador_id, goles, asistencias, tarjeta_amarilla, tarjeta_roja, minutos_jugados, portero_sin_goles")
+        .select("id, jugador_id, goles, tarjeta_amarilla, tarjeta_roja")
         .eq("partido_id", partido_id)
         .execute()
     )
@@ -375,21 +490,26 @@ def _recalcular_puntos_partido(partido_id: str) -> None:
     jugador_ids = [s["jugador_id"] for s in stats_res.data]
     jug_res = (
         supabase_admin.table("jugadores")
-        .select("id, posicion")
+        .select("id, equipo_id, posicion")
         .in_("id", jugador_ids)
         .execute()
     )
+    equipo_map = {j["id"]: j["equipo_id"] for j in jug_res.data}
     pos_map = {j["id"]: j["posicion"] for j in jug_res.data}
+    resultado_map = _resultado_equipo_map(partido_id)
 
     for s in stats_res.data:
+        gana, empata, porteria_cero = resultado_map.get(
+            equipo_map.get(s["jugador_id"], ""), (False, False, False)
+        )
         pts = calcular_puntos_jugador(
             posicion=pos_map.get(s["jugador_id"], "delantero"),
             goles=s["goles"],
-            asistencias=s["asistencias"],
             tarjeta_amarilla=s["tarjeta_amarilla"],
             tarjeta_roja=s["tarjeta_roja"],
-            minutos_jugados=s["minutos_jugados"],
-            portero_sin_goles=s["portero_sin_goles"],
+            equipo_gana=gana,
+            equipo_empata=empata,
+            porteria_cero=porteria_cero,
         )
         supabase_admin.table("estadisticas_jugador").update(
             {"puntos_fantasy": pts}

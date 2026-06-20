@@ -8,6 +8,42 @@
     Selecciona una jornada finalizada para calcular y publicar las puntuaciones fantasy de todos los miembros.
   </p>
 
+  <!-- Desplegable: baremo de puntuación -->
+  <div class="bg-surface border border-outline rounded-xl overflow-hidden">
+    <button type="button" (click)="mostrarBaremo.set(!mostrarBaremo())"
+      class="w-full flex items-center justify-between px-md py-sm text-left hover:bg-background/40 transition-colors">
+      <span class="text-label-bold text-on-surface">¿Cómo se calculan los puntos?</span>
+      <span class="material-symbols-outlined text-[18px] text-on-surface opacity-70">
+        {{ mostrarBaremo() ? 'expand_less' : 'expand_more' }}
+      </span>
+    </button>
+
+    @if (mostrarBaremo()) {
+      <div class="px-md pb-md space-y-sm border-t border-outline pt-sm">
+        <p class="text-body-md text-on-surface opacity-70">
+          Cada jugador suma estos puntos según su actuación en los partidos finalizados de la jornada:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-md gap-y-1">
+          @for (b of baremo; track b.concepto) {
+            <div class="flex items-center justify-between border-b border-outline/50 py-1">
+              <span class="text-body-md text-on-surface">{{ b.concepto }}</span>
+              <span class="text-data-mono font-semibold text-primary">{{ b.puntos }}</span>
+            </div>
+          }
+        </div>
+        <p class="text-body-md text-on-surface opacity-70">
+          En un empate 0-0 solo se suma el punto del empate (el bonus de portería a cero no se acumula).
+        </p>
+
+        <p class="text-body-md text-on-surface opacity-70">
+          Al pulsar <span class="font-semibold">Calcular y publicar</span>, cada equipo recibe la suma de los puntos
+          de sus jugadores <span class="font-semibold">titulares</span> (los suplentes no puntúan). El total se guarda
+          y la clasificación fantasy se actualiza automáticamente.
+        </p>
+      </div>
+    }
+  </div>
+
   @if (error()) {
     <div class="bg-red-50 border border-red-200 text-red-700 px-md py-sm rounded-lg text-body-md">{{ error() }}</div>
   }
@@ -39,6 +75,84 @@
   </div>
 
   @if (jornadaSeleccionada()) {
+
+    <!-- Resumen de eventos registrados antes de calcular -->
+    @if (cargandoResumen()) {
+      <p class="text-body-md opacity-60">Cargando eventos de la jornada...</p>
+    } @else {
+      <div class="space-y-sm">
+        <p class="text-label-bold text-on-background">Eventos registrados — revisa antes de calcular</p>
+
+        @for (p of resumen(); track p.partido_id) {
+          <div class="bg-surface border border-outline rounded-xl overflow-hidden">
+
+            <!-- Marcador -->
+            <div class="flex items-center gap-sm px-md py-sm bg-background/40 border-b border-outline">
+              <span class="flex-1 font-semibold text-body-md text-on-surface truncate">{{ p.equipo_local ?? '—' }}</span>
+              <span class="text-data-mono font-bold text-on-surface shrink-0">
+                {{ p.goles_local ?? '-' }} - {{ p.goles_visitante ?? '-' }}
+              </span>
+              <span class="flex-1 font-semibold text-body-md text-on-surface truncate text-right">{{ p.equipo_visitante ?? '—' }}</span>
+            </div>
+
+            @if (p.eventos.length === 0) {
+              <p class="text-body-md opacity-50 px-md py-sm">Sin eventos registrados en este partido.</p>
+            } @else {
+              <div class="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-outline">
+
+                <!-- Local -->
+                <div class="p-md space-y-1">
+                  <div class="flex items-center gap-xs mb-1">
+                    <span class="text-[11px] font-bold text-primary uppercase tracking-wider">{{ p.equipo_local }}</span>
+                    @if (p.porteria_cero_local) {
+                      <span class="text-[10px] bg-tertiary text-white rounded-full px-1.5 py-0.5">Portería a cero</span>
+                    }
+                  </div>
+                  @for (e of eventosEquipo(p, p.equipo_local_id); track e.jugador) {
+                    <div class="flex items-center gap-xs text-body-md">
+                      @if (e.goles > 0) { <span title="Goles">⚽ {{ e.goles }}</span> }
+                      @if (e.asistencias > 0) { <span title="Asistencias" class="opacity-70">🅰 {{ e.asistencias }}</span> }
+                      @if (e.tarjeta_amarilla) { <span title="Tarjeta amarilla">🟡</span> }
+                      @if (e.tarjeta_roja) { <span title="Tarjeta roja">🔴</span> }
+                      <span class="font-semibold truncate">{{ e.jugador }}</span>
+                      <span class="ml-auto text-data-mono text-xs font-bold text-primary shrink-0">{{ e.puntos }} pts</span>
+                    </div>
+                  } @empty {
+                    <p class="text-body-md opacity-40">—</p>
+                  }
+                </div>
+
+                <!-- Visitante -->
+                <div class="p-md space-y-1">
+                  <div class="flex items-center gap-xs mb-1">
+                    <span class="text-[11px] font-bold text-primary uppercase tracking-wider">{{ p.equipo_visitante }}</span>
+                    @if (p.porteria_cero_visitante) {
+                      <span class="text-[10px] bg-tertiary text-white rounded-full px-1.5 py-0.5">Portería a cero</span>
+                    }
+                  </div>
+                  @for (e of eventosEquipo(p, p.equipo_visitante_id); track e.jugador) {
+                    <div class="flex items-center gap-xs text-body-md">
+                      @if (e.goles > 0) { <span title="Goles">⚽ {{ e.goles }}</span> }
+                      @if (e.asistencias > 0) { <span title="Asistencias" class="opacity-70">🅰 {{ e.asistencias }}</span> }
+                      @if (e.tarjeta_amarilla) { <span title="Tarjeta amarilla">🟡</span> }
+                      @if (e.tarjeta_roja) { <span title="Tarjeta roja">🔴</span> }
+                      <span class="font-semibold truncate">{{ e.jugador }}</span>
+                      <span class="ml-auto text-data-mono text-xs font-bold text-primary shrink-0">{{ e.puntos }} pts</span>
+                    </div>
+                  } @empty {
+                    <p class="text-body-md opacity-40">—</p>
+                  }
+                </div>
+
+              </div>
+            }
+          </div>
+        } @empty {
+          <p class="text-body-md opacity-50">No hay partidos en esta jornada.</p>
+        }
+      </div>
+    }
+
     <div class="bg-surface border border-outline rounded-xl p-md space-y-sm">
       <p class="text-body-md">
         Jornada seleccionada: <span class="font-semibold">J{{ jornadaSeleccionada()!.numero }}</span>
