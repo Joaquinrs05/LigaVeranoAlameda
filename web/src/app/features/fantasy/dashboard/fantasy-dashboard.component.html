@@ -176,7 +176,7 @@
         <div class="flex flex-col gap-sm">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-secondary text-[18px]">bolt</span>
-            <span class="text-on-accent/50 text-[11px] font-bold uppercase tracking-widest">Fantasy · Jornada 12</span>
+            <span class="text-on-accent/50 text-[11px] font-bold uppercase tracking-widest">Fantasy · Jornada {{ jornadaNumero }}</span>
           </div>
           <h1 class="text-display-lg font-bold text-on-accent leading-tight">{{ equipo.nombre }}</h1>
           <span class="text-on-accent/60 text-body-md">{{ posicionLabel }} en la liga fantasy</span>
@@ -234,9 +234,9 @@
     <section data-anim="partidos" class="flex flex-col gap-md">
       <div class="flex items-center justify-between">
         <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-          Partidos en Directo
-          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline">| Jornada 12</span>
+          <span class="w-2 h-2 rounded-full bg-primary"></span>
+          Partidos de la Semana
+          <span class="text-on-background/40 font-normal ml-1 hidden sm:inline">| Jornada {{ jornadaNumero }}</span>
         </h2>
         <a routerLink="/clasificacion" class="text-label-bold font-bold text-primary hover:underline text-[11px] uppercase tracking-wider hidden sm:block">
           Ver todos

@@ -28,9 +28,36 @@ export class FantasyDashboardComponent implements OnInit, AfterViewInit {
   readonly miembro       = this.fantasy.miembro;
 
   // Getters: Angular rastrea lecturas de signals en templates sin necesitar ()
+  get jornadaNumero(): number {
+    return this.ligaReal.jornadaActual();
+  }
+
+  // Partidos de la semana del partido ancla (en vivo > próximo > último), duplicados para el scroll.
   get partidos(): IPartido[] {
-    const lista = this.ligaReal.partidos();
-    return [...lista, ...lista];
+    const semana = this.partidosSemana();
+    return [...semana, ...semana];
+  }
+
+  private partidosSemana(): IPartido[] {
+    const porHora = [...this.ligaReal.partidos()]
+      .sort((a, b) => (a.horaInicio ?? '').localeCompare(b.horaInicio ?? ''));
+    if (!porHora.length) return [];
+    const ancla = porHora.find(p => p.estado === 'live')
+      ?? porHora.find(p => p.estado === 'upcoming')
+      ?? porHora.at(-1);
+    const semana = this.semanaKey(ancla?.horaInicio ?? null);
+    return porHora.filter(p => this.semanaKey(p.horaInicio) === semana);
+  }
+
+  // Clave de la semana (lunes) que contiene la fecha dada
+  private semanaKey(iso: string | null): string {
+    if (!iso) return '';
+    const fecha = new Date(iso);
+    if (Number.isNaN(fecha.getTime())) return iso;
+    const diaSemana = (fecha.getDay() + 6) % 7; // lunes = 0
+    const lunes = new Date(fecha);
+    lunes.setDate(fecha.getDate() - diaSemana);
+    return `${lunes.getFullYear()}-${lunes.getMonth()}-${lunes.getDate()}`;
   }
 
   get equipo(): { nombre: string; puntuacionJornada: number; puntuacionTotal: number; presupuesto: number } {
