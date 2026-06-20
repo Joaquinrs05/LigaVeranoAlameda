@@ -20,6 +20,9 @@ from app.schemas.fantasy import (
 
 router = APIRouter(prefix="/fantasy", tags=["fantasy"])
 
+# Presupuesto inicial (millones) con el que arranca cada miembro nuevo.
+PRESUPUESTO_INICIAL = 50
+
 
 def _uid(user: dict) -> str:
     return user.get("sub", "")
@@ -87,6 +90,7 @@ def crear_liga(body: CrearLigaIn, user: dict = Depends(get_current_user)) -> dic
         "liga_id": liga["id"],
         "usuario_id": uid,
         "nombre_equipo": body.nombre_equipo,
+        "presupuesto": PRESUPUESTO_INICIAL,
     }).execute()
 
     return {"data": {"liga_id": liga["id"], "codigo": codigo}}
@@ -121,6 +125,7 @@ def unirse_a_liga(body: UnirseALigaIn, user: dict = Depends(get_current_user)) -
         "liga_id": liga_id,
         "usuario_id": uid,
         "nombre_equipo": body.nombre_equipo,
+        "presupuesto": PRESUPUESTO_INICIAL,
     }).execute()
     miembro = result.data[0]
     return {"data": {"liga_id": liga_id, "miembro_id": miembro["id"]}}

@@ -57,7 +57,7 @@ export class FantasyService {
   readonly error          = signal<string | null>(null);
 
   readonly enLiga      = computed(() => this.ligaActiva() !== null);
-  readonly presupuesto = computed(() => this.miembro()?.presupuesto ?? 100);
+  readonly presupuesto = computed(() => this.miembro()?.presupuesto ?? 50);
   readonly ligaId      = computed(() => this.ligaActiva()?.id ?? null);
 
   seleccionarLiga(liga: ApiLiga): void {

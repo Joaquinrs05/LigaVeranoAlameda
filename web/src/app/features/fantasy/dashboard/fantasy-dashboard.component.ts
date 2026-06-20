@@ -39,7 +39,7 @@ export class FantasyDashboardComponent implements OnInit, AfterViewInit {
       nombre:            m?.nombre_equipo ?? 'Mi Equipo',
       puntuacionJornada: 0,
       puntuacionTotal:   m?.puntos_total  ?? 0,
-      presupuesto:       m?.presupuesto   ?? 100,
+      presupuesto:       m?.presupuesto   ?? 50,
     };
   }
 

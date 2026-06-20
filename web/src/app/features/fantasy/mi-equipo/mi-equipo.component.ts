@@ -73,7 +73,7 @@ export class MiEquipoComponent implements OnInit {
       nombre:            m?.nombre_equipo ?? 'Mi Equipo',
       propietario:       m?.nombre_equipo ?? '',
       puntuacionTotal:   m?.puntos_total  ?? 0,
-      presupuesto:       m?.presupuesto   ?? 100,
+      presupuesto:       m?.presupuesto   ?? 50,
     };
   }
 
