@@ -298,6 +298,8 @@ def resumen_puntuaciones(jornada_numero: int) -> dict:
     if not jornada:
         raise HTTPException(status_code=404, detail="Jornada no encontrada")
 
+    _recalcular_jornada(jornada["id"])
+
     partidos_res = (
         supabase_admin.table("partidos")
         .select(
@@ -395,6 +397,11 @@ def calcular_puntuaciones(jornada_numero: int) -> dict:
     partido_ids = [p["id"] for p in partidos_res.data]
     if not partido_ids:
         raise HTTPException(status_code=400, detail="No hay partidos finalizados en esta jornada")
+
+    # Recalcula los puntos por jugador con la fórmula vigente antes de agregar,
+    # para que un cambio de baremo se refleje en partidos ya guardados.
+    for pid in partido_ids:
+        _recalcular_puntos_partido(pid)
 
     # Cálculo sin bucle por miembro: 4 consultas en total sin importar cuántos
     # miembros haya. Solo escribimos puntuaciones_fantasy de esta jornada;
@@ -514,3 +521,17 @@ def _recalcular_puntos_partido(partido_id: str) -> None:
         supabase_admin.table("estadisticas_jugador").update(
             {"puntos_fantasy": pts}
         ).eq("id", s["id"]).execute()
+
+
+def _recalcular_jornada(jornada_id: str) -> None:
+    """Recalcula los puntos de todos los partidos finalizados de una jornada con la
+    fórmula vigente. Idempotente: parte de los datos crudos (goles, tarjetas, marcador)."""
+    partidos_res = (
+        supabase_admin.table("partidos")
+        .select("id")
+        .eq("jornada_id", jornada_id)
+        .eq("estado", "finished")
+        .execute()
+    )
+    for p in partidos_res.data:
+        _recalcular_puntos_partido(p["id"])
