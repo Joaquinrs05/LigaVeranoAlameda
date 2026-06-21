@@ -1,0 +1,20 @@
+<div
+  #overlay
+  class="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-xl bg-on-background px-margin-mobile"
+>
+  <img
+    #escudo
+    src="/escudo-malaga.png"
+    alt="Escudo del Málaga CF"
+    class="w-40 max-w-[55vw] drop-shadow-2xl sm:w-56"
+  />
+
+  <button
+    #boton
+    type="button"
+    (click)="entrar()"
+    class="rounded-full bg-secondary px-xl py-md text-label-bold uppercase tracking-wide text-on-background transition-transform hover:scale-105 active:scale-95"
+  >
+    Entrar en la liga
+  </button>
+</div>
