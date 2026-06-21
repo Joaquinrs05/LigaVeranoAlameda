@@ -13,6 +13,7 @@ export class SplashComponent implements AfterViewInit {
 
   private readonly overlay = viewChild.required<ElementRef<HTMLElement>>('overlay');
   private readonly escudo = viewChild.required<ElementRef<HTMLElement>>('escudo');
+  private readonly somos = viewChild.required<ElementRef<HTMLElement>>('somos');
   private readonly boton = viewChild.required<ElementRef<HTMLElement>>('boton');
 
   readonly cerrado = output<void>();
@@ -27,9 +28,14 @@ export class SplashComponent implements AfterViewInit {
         ease: 'back.out(1.7)',
       })
       .from(
+        this.somos().nativeElement,
+        { opacity: 0, x: 40, duration: 0.6, ease: 'power2.out' },
+        '-=0.4',
+      )
+      .from(
         this.boton().nativeElement,
         { opacity: 0, y: 24, duration: 0.5, ease: 'power2.out' },
-        '-=0.25',
+        '-=0.2',
       );
   }
 

@@ -1,19 +1,28 @@
 <div
   #overlay
-  class="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-xl bg-on-background px-margin-mobile"
+  class="bandera-malaga fixed inset-0 z-100 flex flex-col items-center justify-center gap-xl px-margin-mobile"
 >
-  <img
-    #escudo
-    src="/escudo-malaga.png"
-    alt="Escudo del Málaga CF"
-    class="w-40 max-w-[55vw] drop-shadow-2xl sm:w-56"
-  />
+  <div class="flex flex-wrap items-center justify-center gap-lg">
+    <img
+      #escudo
+      src="/escudo-malaga.png"
+      alt="Escudo del Málaga CF"
+      class="w-64 max-w-[70vw] drop-shadow-2xl sm:w-80"
+    />
+
+    <img
+      #somos
+      src="/somos-de-primera.jpg"
+      alt="Somos de primera"
+      class="w-56 max-w-[75vw] rounded-lg drop-shadow-2xl sm:w-72"
+    />
+  </div>
 
   <button
     #boton
     type="button"
     (click)="entrar()"
-    class="rounded-full bg-secondary px-xl py-md text-label-bold uppercase tracking-wide text-on-background transition-transform hover:scale-105 active:scale-95"
+    class="rounded-full bg-secondary px-xl py-md text-label-bold uppercase tracking-wide text-black transition-transform hover:scale-105 active:scale-95"
   >
     Entrar en la liga
   </button>

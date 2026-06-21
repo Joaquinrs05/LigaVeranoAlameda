@@ -242,3 +242,15 @@ body::after {
 .bottom-nav-item.bottom-nav-active {
   color: var(--color-primary);
 }
+
+/* ── Bandera Málaga CF (intro splash) — azul y blanco a franjas horizontales ── */
+.bandera-malaga {
+  background-color: #0067b1;
+  background-image: repeating-linear-gradient(
+    180deg,
+    #ffffff 0,
+    #ffffff 8%,
+    #0067b1 8%,
+    #0067b1 16%
+  );
+}
