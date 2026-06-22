@@ -271,8 +271,8 @@
           <span class="text-headline-md font-bold text-secondary">{{ j.puntuacionTotal }}</span>
         </div>
         <div class="flex flex-col gap-0.5">
-          <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Valor</span>
-          <span class="text-headline-md font-bold text-background">{{ j.precio | number:'1.1-1' }}M</span>
+          <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Cláusula</span>
+          <span class="text-headline-md font-bold text-primary">{{ (j.clausula ?? j.precio) | number:'1.0-1' }}M</span>
         </div>
         <div class="flex flex-col gap-0.5">
           <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Estado</span>
