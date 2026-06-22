@@ -156,35 +156,21 @@ def get_goleadores(request: Request) -> dict:
     cached = cache.get("goleadores")
     if cached is not None:
         return cached
-    jornada_res = (
-        supabase_admin.table("jornadas").select("id").eq("estado", "en_curso").maybe_single().execute()
-    )
-    if not jornada_res or not jornada_res.data:
-        j_res = (
-            supabase_admin.table("jornadas")
-            .select("id")
-            .eq("estado", "finalizada")
-            .order("numero", desc=True)
-            .limit(1)
-            .execute()
-        )
-        jornada_id = j_res.data[0]["id"] if j_res.data else None
-    else:
-        jornada_id = jornada_res.data["id"]
 
-    if not jornada_id:
-        return {"data": []}
-
+    # Tabla acumulada de toda la liga: se suman goles y asistencias de TODOS los
+    # partidos finalizados (cualquier jornada). A medida que se cierran partidos
+    # nuevos, los totales de cada jugador van creciendo.
     partidos_res = (
         supabase_admin.table("partidos")
         .select("id")
-        .eq("jornada_id", jornada_id)
         .eq("estado", "finished")
         .execute()
     )
     partido_ids = [p["id"] for p in partidos_res.data]
     if not partido_ids:
-        return {"data": []}
+        payload = {"data": []}
+        cache.set("goleadores", payload)
+        return payload
 
     stats_res = (
         supabase_admin.table("estadisticas_jugador")
