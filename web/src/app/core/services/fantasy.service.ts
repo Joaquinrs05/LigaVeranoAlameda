@@ -200,7 +200,7 @@ export class FantasyService {
     this._cargarDatosLiga(id);
   }
 
-  // Subir la cláusula de un jugador propio.
+  // Subir la cláusula de un jugador propio (descuenta el incremento del presupuesto).
   async subirClausula(jugadorId: string, clausula: number): Promise<void> {
     const id = this.ligaId();
     if (!id) return;
@@ -211,6 +211,7 @@ export class FantasyService {
       )
     );
     this.refrescarMiEquipo();
+    this.refrescarMiMiembro();
   }
 
   actualizarPlantilla(
@@ -228,6 +229,14 @@ export class FantasyService {
     if (!id) return;
     this.http.get<ApiResp<ApiPlantillaItem[]>>(`${this.base}/fantasy/ligas/${id}/mi-equipo`).subscribe({
       next: r => this.miEquipo.set(r.data?.map(item => this._mapPlantillaItem(item)) ?? []),
+    });
+  }
+
+  refrescarMiMiembro(): void {
+    const id = this.ligaId();
+    if (!id) return;
+    this.http.get<ApiResp<ApiMiembro>>(`${this.base}/fantasy/ligas/${id}/mi-miembro`).subscribe({
+      next: r => { if (r.data) this.miembro.set(r.data); },
     });
   }
 
