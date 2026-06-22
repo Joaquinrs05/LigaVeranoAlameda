@@ -10,6 +10,9 @@ export interface IJugadorFantasy {
   titular: boolean;
   clausula?: number;
   fotoUrl?: string;
+  enVenta?: boolean;
+  precioVenta?: number;
+  vendedor?: string;
 }
 
 export interface IEquipoFantasy {

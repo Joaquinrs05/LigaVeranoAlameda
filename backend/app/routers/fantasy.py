@@ -14,6 +14,7 @@ from app.schemas.fantasy import (
     FicharJugadorIn,
     LigaDetalleOut,
     LigaFantasyOut,
+    ListarJugadorIn,
     MiembroOut,
     PlantillaItemOut,
     SubirClausulaIn,
@@ -203,8 +204,17 @@ def _plantilla_con_puntos(miembro_id: str):
         )
         for s in stats.data:
             puntos_map[s["jugador_id"]] = puntos_map.get(s["jugador_id"], 0) + s["puntos_fantasy"]
+    listados_res = (
+        supabase_admin.table("mercado_listados")
+        .select("jugador_id, precio")
+        .eq("vendedor_id", miembro_id)
+        .execute()
+    )
+    listados_map = {l["jugador_id"]: float(l["precio"]) for l in listados_res.data}
+
     for it in items:
         it["puntos_total"] = puntos_map.get(it["jugador_id"], 0)
+        it["precio_venta"] = listados_map.get(it["jugador_id"])
 
     return items
 
@@ -283,7 +293,7 @@ def actualizar_mi_equipo(
 
 @router.get("/ligas/{liga_id}/mercado", response_model=ApiResponse[list[dict]])
 def get_mercado(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict:
-    _verificar_miembro(str(liga_id), _uid(user))
+    miembro = _verificar_miembro(str(liga_id), _uid(user))
     _verificar_mercado_activo()
 
     ids_ocupados = _jugadores_ocupados_en_liga(str(liga_id))
@@ -291,8 +301,81 @@ def get_mercado(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict:
     q = supabase_admin.table("jugadores").select("*, equipo:equipos(nombre, abrev)").eq("activo", True).eq("estado_fantasy", "disponible")
     if ids_ocupados:
         q = q.not_.in_("id", ids_ocupados)
-    result = q.order("precio_fantasy", desc=True).execute()
-    return {"data": result.data}
+    free_result = q.order("precio_fantasy", desc=True).execute()
+    free_agents = [
+        {**j, "en_venta": False, "precio_venta": None, "vendedor": None, "vendedor_miembro_id": None}
+        for j in free_result.data
+    ]
+
+    # Jugadores listados por otros miembros de la liga
+    listados_res = (
+        supabase_admin.table("mercado_listados")
+        .select("precio, jugador_id, vendedor_id, vendedor:miembros_liga_fantasy(nombre_equipo), jugador:jugadores(*, equipo:equipos(nombre, abrev))")
+        .eq("liga_id", str(liga_id))
+        .neq("vendedor_id", miembro["id"])
+        .execute()
+    )
+    listed = []
+    for item in listados_res.data:
+        j = item.get("jugador") or {}
+        vendedor = item.get("vendedor") or {}
+        listed.append({
+            **j,
+            "en_venta": True,
+            "precio_venta": float(item["precio"]),
+            "vendedor": vendedor.get("nombre_equipo"),
+            "vendedor_miembro_id": item["vendedor_id"],
+        })
+
+    return {"data": listed + free_agents}
+
+
+# ---- Mercado listados ----
+
+@router.post("/ligas/{liga_id}/mercado/listados", response_model=ApiResponse[dict], status_code=201)
+def listar_jugador(
+    liga_id: UUID, body: ListarJugadorIn, user: dict = Depends(get_current_user)
+) -> dict:
+    try:
+        supabase_admin.rpc("listar_jugador", {
+            "p_liga_id":    str(liga_id),
+            "p_usuario_id": _uid(user),
+            "p_jugador_id": str(body.jugador_id),
+            "p_precio":     float(body.precio),
+        }).execute()
+    except APIError as exc:
+        raise _rpc_http_error(exc) from exc
+    return {"data": {"listado": True}}
+
+
+@router.delete("/ligas/{liga_id}/mercado/listados/{jugador_id}", response_model=ApiResponse[dict])
+def cancelar_listado(
+    liga_id: UUID, jugador_id: UUID, user: dict = Depends(get_current_user)
+) -> dict:
+    try:
+        supabase_admin.rpc("cancelar_listado", {
+            "p_liga_id":    str(liga_id),
+            "p_usuario_id": _uid(user),
+            "p_jugador_id": str(jugador_id),
+        }).execute()
+    except APIError as exc:
+        raise _rpc_http_error(exc) from exc
+    return {"data": {"cancelado": True}}
+
+
+@router.post("/ligas/{liga_id}/mercado/listados/{jugador_id}/comprar", response_model=ApiResponse[dict], status_code=201)
+def comprar_listado(
+    liga_id: UUID, jugador_id: UUID, user: dict = Depends(get_current_user)
+) -> dict:
+    try:
+        supabase_admin.rpc("comprar_listado", {
+            "p_liga_id":    str(liga_id),
+            "p_usuario_id": _uid(user),
+            "p_jugador_id": str(jugador_id),
+        }).execute()
+    except APIError as exc:
+        raise _rpc_http_error(exc) from exc
+    return {"data": {"comprado": True}}
 
 
 # ---- Fichajes ----

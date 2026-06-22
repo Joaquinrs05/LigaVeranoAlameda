@@ -43,9 +43,11 @@ export class MiEquipoComponent implements OnInit {
   readonly procesandoClausula = signal(false);
   nuevaClausula = 0;
 
-  // Hoy el backend reembolsa precio_compra completo (= precio). La economía
-  // de "media cláusula" requiere columna `clausula` en backend (ver FANTASY-PENDIENTE).
-  readonly importeVenta = computed(() => this.detalle()?.precio ?? 0);
+  readonly poniendoEnMercado  = signal(false);
+  readonly procesandoMercado  = signal(false);
+  precioMercado = 0;
+
+  readonly importeVenta = computed(() => (this.detalle()?.clausula ?? 0) / 2);
 
   // Titulares de la misma posición que el jugador del modal: candidatos a ser sustituidos.
   readonly titularesSustituibles = computed<IJugadorFantasy[]>(() => {
@@ -162,6 +164,47 @@ export class MiEquipoComponent implements OnInit {
     this.confirmandoVenta.set(false);
     this.sustituyendo.set(false);
     this.subiendoClausula.set(false);
+    this.poniendoEnMercado.set(false);
+  }
+
+  abrirPonerEnMercado(): void {
+    const j = this.detalle();
+    this.precioMercado = j?.precioVenta ?? j?.precio ?? 0;
+    this.poniendoEnMercado.set(true);
+  }
+
+  async confirmarPonerEnMercado(): Promise<void> {
+    const j = this.detalle();
+    if (!j || this.procesandoMercado()) return;
+    const valor = Number(this.precioMercado);
+    const minimo = j.precio;
+    if (!(valor > 0) || valor < minimo) {
+      this._mostrarError(`El precio mínimo es ${minimo}M (tu precio de compra)`);
+      return;
+    }
+    this.procesandoMercado.set(true);
+    try {
+      await this.fantasy.listarJugador(j.id, valor);
+      this.cerrarDetalle();
+    } catch {
+      this._mostrarError('No se pudo publicar el anuncio. Inténtalo de nuevo.');
+    } finally {
+      this.procesandoMercado.set(false);
+    }
+  }
+
+  async cancelarListado(): Promise<void> {
+    const j = this.detalle();
+    if (!j || this.procesandoMercado()) return;
+    this.procesandoMercado.set(true);
+    try {
+      await this.fantasy.cancelarListado(j.id);
+      this.cerrarDetalle();
+    } catch {
+      this._mostrarError('No se pudo cancelar el anuncio.');
+    } finally {
+      this.procesandoMercado.set(false);
+    }
   }
 
   abrirSubirClausula(): void {

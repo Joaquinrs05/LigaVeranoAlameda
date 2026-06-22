@@ -102,18 +102,30 @@
             <div class="font-bold text-body-md text-on-background truncate group-hover:text-primary transition-colors">
               {{ j.nombre }}
             </div>
-            <div class="text-[11px] text-on-background/50">{{ j.equipo }}</div>
+            @if (j.enVenta && j.vendedor) {
+              <div class="flex items-center gap-1 mt-0.5">
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full text-on-accent bg-tertiary uppercase tracking-wide">En venta</span>
+                <span class="text-[10px] text-on-background/50">{{ j.vendedor }}</span>
+              </div>
+            } @else {
+              <div class="text-[11px] text-on-background/50">{{ j.equipo }}</div>
+            }
           </div>
 
           <!-- Precio y estado -->
           <div class="text-right shrink-0 mr-sm">
-            <div class="font-bold text-on-background text-data-mono">{{ j.precio }}M</div>
-            @if (j.estado === 'lesionado') {
-              <div class="text-[9px] text-red-600 font-bold">Lesionado</div>
-            } @else if (j.estado === 'sancionado') {
-              <div class="text-[9px] text-yellow-600 font-bold">Sancionado</div>
+            @if (j.enVenta) {
+              <div class="font-bold text-tertiary text-data-mono">{{ j.precioVenta }}M</div>
+              <div class="text-[9px] text-on-background/30">Valor {{ j.precio }}M</div>
             } @else {
-              <div class="text-[9px] text-on-background/30">Disponible</div>
+              <div class="font-bold text-on-background text-data-mono">{{ j.precio }}M</div>
+              @if (j.estado === 'lesionado') {
+                <div class="text-[9px] text-red-600 font-bold">Lesionado</div>
+              } @else if (j.estado === 'sancionado') {
+                <div class="text-[9px] text-yellow-600 font-bold">Sancionado</div>
+              } @else {
+                <div class="text-[9px] text-on-background/30">Disponible</div>
+              }
             }
           </div>
 
@@ -128,7 +140,20 @@
               disabled
               class="shrink-0 px-sm py-1 rounded text-label-bold font-bold text-on-background/20 bg-background cursor-not-allowed whitespace-nowrap"
               title="Mercado cerrado"
-            >Fichar</button>
+            >{{ j.enVenta ? 'Comprar' : 'Fichar' }}</button>
+          } @else if (j.enVenta) {
+            @if (presupuesto() < (j.precioVenta ?? 0)) {
+              <button
+                disabled
+                class="shrink-0 px-sm py-1 rounded text-label-bold font-bold text-on-background/30 bg-background cursor-not-allowed whitespace-nowrap"
+                title="Presupuesto insuficiente"
+              >Comprar</button>
+            } @else {
+              <button
+                (click)="comprar(j)"
+                class="shrink-0 px-sm py-1 rounded text-label-bold font-bold bg-tertiary text-on-accent hover:opacity-90 transition-opacity active:scale-95 whitespace-nowrap"
+              >Comprar</button>
+            }
           } @else if (j.estado !== 'disponible' || presupuesto() < j.precio) {
             <button
               disabled

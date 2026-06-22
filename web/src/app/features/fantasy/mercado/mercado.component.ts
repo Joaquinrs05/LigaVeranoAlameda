@@ -70,6 +70,12 @@ export class MercadoComponent implements OnInit {
     await this.fantasy.ficharJugador(jugador.id);
   }
 
+  async comprar(jugador: IJugadorFantasy): Promise<void> {
+    if (this.idsEnEquipo().has(jugador.id)) return;
+    if (this.presupuesto() < (jugador.precioVenta ?? 0)) return;
+    await this.fantasy.comprarListado(jugador.id);
+  }
+
   posicionAbrev(pos: IJugadorFantasy['posicion']): string {
     return { portero: 'POR', defensa: 'DEF', centrocampista: 'MC', delantero: 'DEL' }[pos];
   }

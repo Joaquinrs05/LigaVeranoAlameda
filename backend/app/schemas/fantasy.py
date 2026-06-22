@@ -75,6 +75,7 @@ class PlantillaItemOut(BaseModel):
     clausula: Decimal = Decimal(0)
     fichado_at: datetime
     puntos_total: int = 0
+    precio_venta: Decimal | None = None
 
 
 # ---- Requests ----
@@ -109,3 +110,8 @@ class SubirClausulaIn(BaseModel):
 
 class ClausulazoIn(BaseModel):
     jugador_id: UUID
+
+
+class ListarJugadorIn(BaseModel):
+    jugador_id: UUID
+    precio: Decimal = Field(gt=Decimal(0))

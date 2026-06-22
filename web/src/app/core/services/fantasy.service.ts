@@ -37,8 +37,15 @@ interface ApiPlantillaItem {
   es_titular: boolean; es_capitan: boolean; precio_compra: number;
   clausula: number;
   puntos_total: number;
+  precio_venta?: number | null;
 }
-interface ApiJugadorMercado extends ApiJugadorBase { activo: boolean }
+interface ApiJugadorMercado extends ApiJugadorBase {
+  activo: boolean;
+  en_venta: boolean;
+  precio_venta: number | null;
+  vendedor: string | null;
+  vendedor_miembro_id: string | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class FantasyService {
@@ -163,6 +170,36 @@ export class FantasyService {
     this._cargarDatosLiga(id);
   }
 
+  // Listar un jugador propio en el mercado (precio ≥ precio_compra).
+  async listarJugador(jugadorId: string, precio: number): Promise<void> {
+    const id = this.ligaId();
+    if (!id) return;
+    await firstValueFrom(
+      this.http.post(`${this.base}/fantasy/ligas/${id}/mercado/listados`, { jugador_id: jugadorId, precio })
+    );
+    this.refrescarMiEquipo();
+  }
+
+  // Cancelar el anuncio de venta de un jugador propio.
+  async cancelarListado(jugadorId: string): Promise<void> {
+    const id = this.ligaId();
+    if (!id) return;
+    await firstValueFrom(
+      this.http.delete(`${this.base}/fantasy/ligas/${id}/mercado/listados/${jugadorId}`)
+    );
+    this.refrescarMiEquipo();
+  }
+
+  // Comprar un jugador listado por otro miembro.
+  async comprarListado(jugadorId: string): Promise<void> {
+    const id = this.ligaId();
+    if (!id) return;
+    await firstValueFrom(
+      this.http.post(`${this.base}/fantasy/ligas/${id}/mercado/listados/${jugadorId}/comprar`, {})
+    );
+    this._cargarDatosLiga(id);
+  }
+
   // Subir la cláusula de un jugador propio.
   async subirClausula(jugadorId: string, clausula: number): Promise<void> {
     const id = this.ligaId();
@@ -243,6 +280,8 @@ export class FantasyService {
       titular:          item.es_titular,
       clausula:         Number(item.clausula ?? item.precio_compra),
       fotoUrl:          item.jugador?.foto_url ?? undefined,
+      enVenta:          item.precio_venta != null,
+      precioVenta:      item.precio_venta != null ? Number(item.precio_venta) : undefined,
     };
   }
 
@@ -258,6 +297,9 @@ export class FantasyService {
       estado:           j.estado_fantasy as IJugadorFantasy['estado'],
       titular:          false,
       fotoUrl:          j.foto_url ?? undefined,
+      enVenta:          j.en_venta,
+      precioVenta:      j.precio_venta != null ? Number(j.precio_venta) : undefined,
+      vendedor:         j.vendedor ?? undefined,
     };
   }
 }
