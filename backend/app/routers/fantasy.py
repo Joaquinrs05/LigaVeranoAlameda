@@ -9,12 +9,14 @@ from app.database import supabase_admin
 from app.schemas.common import ApiResponse
 from app.schemas.fantasy import (
     ActualizarPlantillaIn,
+    ClausulazoIn,
     CrearLigaIn,
     FicharJugadorIn,
     LigaDetalleOut,
     LigaFantasyOut,
     MiembroOut,
     PlantillaItemOut,
+    SubirClausulaIn,
     UnirseALigaIn,
 )
 
@@ -180,13 +182,11 @@ def get_mi_miembro(liga_id: UUID, user: dict = Depends(get_current_user)) -> dic
     return {"data": miembro}
 
 
-@router.get("/ligas/{liga_id}/mi-equipo", response_model=ApiResponse[list[PlantillaItemOut]])
-def get_mi_equipo(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict:
-    miembro = _verificar_miembro(str(liga_id), _uid(user))
+def _plantilla_con_puntos(miembro_id: str):
     plantilla = (
         supabase_admin.table("plantilla_fantasy")
         .select("*, jugador:jugadores(id, nombre, dorsal, posicion, precio_fantasy, estado_fantasy, activo, foto_url, equipo:equipos(nombre, abrev))")
-        .eq("miembro_id", miembro["id"])
+        .eq("miembro_id", miembro_id)
         .execute()
     )
     items = plantilla.data or []
@@ -206,7 +206,36 @@ def get_mi_equipo(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict
     for it in items:
         it["puntos_total"] = puntos_map.get(it["jugador_id"], 0)
 
-    return {"data": items}
+    return items
+
+
+@router.get("/ligas/{liga_id}/mi-equipo", response_model=ApiResponse[list[PlantillaItemOut]])
+def get_mi_equipo(liga_id: UUID, user: dict = Depends(get_current_user)) -> dict:
+    miembro = _verificar_miembro(str(liga_id), _uid(user))
+    return {"data": _plantilla_con_puntos(miembro["id"])}
+
+
+@router.get(
+    "/ligas/{liga_id}/miembros/{miembro_id}/equipo",
+    response_model=ApiResponse[list[PlantillaItemOut]],
+)
+def get_equipo_miembro(
+    liga_id: UUID, miembro_id: UUID, user: dict = Depends(get_current_user)
+) -> dict:
+    # El solicitante debe ser miembro de la liga; entonces puede ver la plantilla
+    # de cualquier otro miembro (solo lectura, para el cláusulazo).
+    _verificar_miembro(str(liga_id), _uid(user))
+    objetivo = _ms(
+        supabase_admin.table("miembros_liga_fantasy")
+        .select("id")
+        .eq("id", str(miembro_id))
+        .eq("liga_id", str(liga_id))
+        .maybe_single()
+        .execute()
+    )
+    if not objetivo:
+        raise HTTPException(status_code=404, detail="Ese miembro no pertenece a esta liga")
+    return {"data": _plantilla_con_puntos(str(miembro_id))}
 
 
 @router.patch("/ligas/{liga_id}/mi-equipo", response_model=ApiResponse[dict])
@@ -314,6 +343,45 @@ def vender_jugador(
     except APIError as exc:
         raise _rpc_http_error(exc) from exc
     return {"data": {"vendido": True, "precio": float(res.data or 0)}}
+
+
+# ---- Cláusula ----
+
+@router.patch(
+    "/ligas/{liga_id}/mi-equipo/{jugador_id}/clausula", response_model=ApiResponse[dict]
+)
+def subir_clausula(
+    liga_id: UUID, jugador_id: UUID, body: SubirClausulaIn,
+    user: dict = Depends(get_current_user),
+) -> dict:
+    # El dueño sube la cláusula de un jugador propio (solo subir, ver RPC).
+    try:
+        res = supabase_admin.rpc("subir_clausula", {
+            "p_liga_id": str(liga_id),
+            "p_usuario_id": _uid(user),
+            "p_jugador_id": str(jugador_id),
+            "p_clausula": float(body.clausula),
+        }).execute()
+    except APIError as exc:
+        raise _rpc_http_error(exc) from exc
+    return {"data": res.data}
+
+
+@router.post("/ligas/{liga_id}/clausulazos", response_model=ApiResponse[dict], status_code=201)
+def clausulazo(
+    liga_id: UUID, body: ClausulazoIn, user: dict = Depends(get_current_user)
+) -> dict:
+    # Robo entre miembros: pago de cláusula + transferencia, todo atómico en la RPC
+    # (lock de ambos miembros, mercado abierto, presupuesto). Ver migración 006.
+    try:
+        res = supabase_admin.rpc("clausulazo", {
+            "p_liga_id": str(liga_id),
+            "p_usuario_id": _uid(user),
+            "p_jugador_id": str(body.jugador_id),
+        }).execute()
+    except APIError as exc:
+        raise _rpc_http_error(exc) from exc
+    return {"data": res.data}
 
 
 # ---- Helpers ----

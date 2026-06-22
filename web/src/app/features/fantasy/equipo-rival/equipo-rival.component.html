@@ -1,0 +1,224 @@
+<app-navbar-light />
+
+<!-- Blobs decorativos -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index:-1">
+  <div style="position:absolute;top:-20%;right:-15%;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(192,85,42,0.14) 0%,transparent 65%);animation:blob-drift-1 24s ease-in-out infinite"></div>
+  <div style="position:absolute;top:28%;left:-22%;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(26,74,46,0.11) 0%,transparent 65%);animation:blob-drift-2 30s ease-in-out infinite"></div>
+</div>
+
+<main class="pt-24 pb-24 md:pb-xl md:pl-70 px-margin-mobile md:pr-margin-desktop min-h-screen max-w-360 mx-auto">
+  <div class="flex flex-col gap-lg">
+
+    <!-- ── CABECERA ── -->
+    <div class="flex flex-col gap-md">
+      <a routerLink="/fantasy/clasificacion"
+        class="flex items-center gap-1 text-label-bold font-bold text-on-background/50 hover:text-primary transition-colors w-fit">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Clasificación
+      </a>
+
+      <div class="flex items-start justify-between">
+        <div>
+          <h1 class="text-display-lg font-bold text-primary leading-tight">{{ info()?.equipo ?? 'Equipo rival' }}</h1>
+          <span class="text-body-md text-on-background/50">
+            @if (info(); as i) { {{ i.posicion }}º · {{ i.puntos }} pts }
+            @else { Equipo de la liga }
+          </span>
+        </div>
+        <div class="rounded p-sm flex flex-col gap-xs text-right" style="background:rgba(255,255,255,0.75);border:1px solid rgba(192,85,42,0.15)">
+          <span class="text-[10px] font-bold text-on-background/40 uppercase tracking-widest">Tu presupuesto</span>
+          <span class="text-headline-md font-bold text-tertiary">{{ miPresupuesto() | number:'1.0-1' }}M</span>
+        </div>
+      </div>
+
+      <div class="rounded p-sm flex items-center gap-2 border border-secondary/40" style="background:rgba(255,214,0,0.08)">
+        <span class="material-symbols-outlined text-[18px] text-on-background/60">bolt</span>
+        <span class="text-body-md text-on-background/70">Pulsa un jugador para pagar su <strong>cláusula</strong> y llevártelo a tu equipo.</span>
+      </div>
+    </div>
+
+    @if (cargando()) {
+      <div class="flex items-center justify-center py-2xl text-on-background/40">
+        <span class="material-symbols-outlined animate-spin text-[32px]">progress_activity</span>
+      </div>
+    } @else if (jugadores().length === 0) {
+      <div class="flex flex-col items-center justify-center py-2xl gap-sm text-on-background/40">
+        <span class="material-symbols-outlined text-[40px]">group_off</span>
+        <span class="text-body-lg">Este equipo todavía no tiene jugadores.</span>
+      </div>
+    } @else {
+
+      <!-- ── CAMPO ── -->
+      <div class="flex flex-col gap-lg">
+        <div
+          class="relative w-full rounded-lg overflow-hidden"
+          style="background:linear-gradient(180deg,#0e2c1a 0%,#1a4a2e 35%,#1a4a2e 65%,#0e2c1a 100%);min-height:580px"
+        >
+          <!-- Líneas del campo -->
+          <div class="absolute left-4 right-4 pointer-events-none" style="top:50%;height:1px;background:rgba(255,255,255,0.15)"></div>
+          <div class="absolute pointer-events-none" style="top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;border:1px solid rgba(255,255,255,0.15)"></div>
+          <div class="absolute pointer-events-none" style="top:50%;left:50%;transform:translate(-50%,-50%);width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.3)"></div>
+          <div class="absolute left-1/2 pointer-events-none" style="top:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-top:none"></div>
+          <div class="absolute left-1/2 pointer-events-none" style="bottom:0;transform:translateX(-50%);width:40%;height:13%;border:1px solid rgba(255,255,255,0.15);border-bottom:none"></div>
+          <div class="absolute top-0 left-0 right-0 h-px pointer-events-none" style="background:linear-gradient(90deg,transparent,rgba(255,214,0,0.3),transparent)"></div>
+
+          <div class="relative z-10 flex flex-col justify-around py-xl" style="min-height:580px">
+
+            <!-- Delanteros -->
+            <div class="flex justify-center gap-lg">
+              @for (j of delanteros(); track j.id) {
+                <button (click)="abrir(j)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                  <app-player-card [nombre]="j.nombre" [posicion]="posicionAbrev(j.posicion)" [fotoUrl]="j.fotoUrl"
+                    [puntuacion]="j.puntuacionTotal" [estado]="j.estado" size="md" />
+                </button>
+              }
+            </div>
+
+            <!-- Centrocampistas -->
+            <div class="flex justify-center gap-md md:gap-lg">
+              @for (j of centrocampistas(); track j.id) {
+                <button (click)="abrir(j)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                  <app-player-card [nombre]="j.nombre" [posicion]="posicionAbrev(j.posicion)" [fotoUrl]="j.fotoUrl"
+                    [puntuacion]="j.puntuacionTotal" [estado]="j.estado" size="md" />
+                </button>
+              }
+            </div>
+
+            <!-- Defensas -->
+            <div class="flex justify-center gap-xl md:gap-2xl">
+              @for (j of defensas(); track j.id) {
+                <button (click)="abrir(j)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                  <app-player-card [nombre]="j.nombre" [posicion]="posicionAbrev(j.posicion)" [fotoUrl]="j.fotoUrl"
+                    [puntuacion]="j.puntuacionTotal" [estado]="j.estado" size="md" />
+                </button>
+              }
+            </div>
+
+            <!-- Portero -->
+            <div class="flex justify-center">
+              @for (j of porteros(); track j.id) {
+                <button (click)="abrir(j)" class="outline-none" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.6))">
+                  <app-player-card [nombre]="j.nombre" [posicion]="posicionAbrev(j.posicion)" [fotoUrl]="j.fotoUrl"
+                    [puntuacion]="j.puntuacionTotal" [estado]="j.estado" size="md" />
+                </button>
+              }
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── RESERVAS ── -->
+        @if (reservas().length > 0) {
+          <div class="flex flex-col gap-sm">
+            <h2 class="text-headline-md font-semibold text-primary flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px]">people_outline</span>
+              Suplentes
+            </h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-sm">
+              @for (j of reservas(); track j.id) {
+                <button (click)="abrir(j)"
+                  class="flex items-center gap-sm p-sm rounded border transition-all duration-200 text-left outline-none hover:-translate-y-px"
+                  style="background:rgba(255,255,255,0.75);border-color:rgba(192,85,42,0.15);box-shadow:0 2px 8px rgba(0,0,0,0.05)"
+                  [class.opacity-60]="j.estado !== 'disponible'"
+                >
+                  <app-player-card [nombre]="j.nombre" [posicion]="posicionAbrev(j.posicion)" [fotoUrl]="j.fotoUrl"
+                    [puntuacion]="j.puntuacionTotal" [estado]="j.estado" size="sm" />
+                  <div class="flex flex-col min-w-0">
+                    <span class="font-bold text-body-md text-on-background truncate">{{ primerNombre(j.nombre) }}</span>
+                    <span class="text-[11px] text-on-background/40">Cláusula {{ j.clausula | number:'1.0-1' }}M</span>
+                  </div>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</main>
+
+<!-- ── MODAL CLÁUSULAZO (modo oscuro) ── -->
+@if (detalle(); as j) {
+  <div role="dialog" aria-modal="true"
+    style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem">
+    <div (click)="cerrar()" style="position:absolute;inset:0;background:rgba(7,12,18,0.78);backdrop-filter:blur(2px)"></div>
+
+    <div class="bg-on-background text-background rounded-lg overflow-hidden"
+      style="position:relative;width:100%;max-width:28rem;flex-shrink:0;--color-background:#f5f0e8;--color-on-background:#0f1923;border:1px solid rgba(255,214,0,0.18);box-shadow:0 20px 60px rgba(0,0,0,0.6)">
+
+      <!-- Cabecera -->
+      <div class="flex items-center gap-md p-lg" style="background:linear-gradient(135deg,rgba(26,74,46,0.55),rgba(15,25,35,0))">
+        <div class="flex items-center justify-center rounded-full font-bold text-background overflow-hidden"
+          style="width:52px;height:52px" [style.background]="posicionColor(j.posicion)">
+          @if (j.fotoUrl) {
+            <img [src]="j.fotoUrl" [alt]="j.nombre" class="w-full h-full object-cover" />
+          } @else {
+            {{ iniciales(j.nombre) }}
+          }
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="text-headline-md font-bold text-background truncate">{{ j.nombre }}</span>
+          <span class="text-body-md text-background/55">{{ posicionAbrev(j.posicion) }} · {{ j.equipo }}</span>
+        </div>
+        <button (click)="cerrar()" class="ml-auto text-background/50 hover:text-background transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-px px-lg pb-md">
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Puntos</span>
+          <span class="text-headline-md font-bold text-secondary">{{ j.puntuacionTotal }}</span>
+        </div>
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[10px] font-bold text-background/40 uppercase tracking-widest">Cláusula</span>
+          <span class="text-headline-md font-bold text-primary">{{ j.clausula | number:'1.0-1' }}M</span>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="flex flex-col gap-sm p-lg pt-md" style="border-top:1px solid rgba(255,255,255,0.08)">
+
+        @if (error()) {
+          <div class="rounded p-sm flex items-center gap-2 text-red-300" style="background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.4)">
+            <span class="material-symbols-outlined text-[18px]">block</span>
+            <span class="text-body-md">{{ error() }}</span>
+          </div>
+        }
+
+        @if (!puedePagar()) {
+          <div class="rounded p-sm flex items-center gap-2 text-background/70" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12)">
+            <span class="material-symbols-outlined text-[18px]">savings</span>
+            <span class="text-body-md">No te llega el presupuesto para esta cláusula.</span>
+          </div>
+        }
+
+        @if (confirmando()) {
+          <div class="rounded p-md flex flex-col gap-sm" style="background:rgba(192,85,42,0.12);border:1px solid rgba(192,85,42,0.35)">
+            <span class="text-body-md text-background/80">¿Pagar <strong class="text-secondary">{{ j.clausula | number:'1.0-1' }}M</strong> y robar a <strong>{{ primerNombre(j.nombre) }}</strong>? Entrará en tu equipo como suplente.</span>
+            <div class="flex gap-sm">
+              <button (click)="confirmando.set(false)"
+                class="flex-1 py-sm rounded text-label-bold font-bold text-background/70 hover:text-background transition-colors"
+                style="border:1px solid rgba(255,255,255,0.15)">Cancelar</button>
+              <button (click)="confirmarClausulazo()" [disabled]="procesando()"
+                class="flex-1 py-sm rounded text-label-bold font-bold bg-primary text-on-accent hover:bg-primary/90 transition-colors disabled:opacity-50">
+                {{ procesando() ? 'Robando…' : 'Confirmar cláusulazo' }}
+              </button>
+            </div>
+          </div>
+        } @else {
+          <button (click)="confirmando.set(true)" [disabled]="!puedePagar()"
+            class="flex items-center gap-2 w-full py-sm px-md rounded text-label-bold font-bold text-on-accent bg-primary hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-[18px]">bolt</span>
+            Cláusulazo
+            <span class="ml-auto text-body-md text-on-accent/80">{{ j.clausula | number:'1.0-1' }}M</span>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<app-footer />

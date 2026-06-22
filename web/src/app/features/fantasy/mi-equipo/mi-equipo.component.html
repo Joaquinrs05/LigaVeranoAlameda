@@ -325,6 +325,25 @@
               </button>
             </div>
           </div>
+        } @else if (subiendoClausula()) {
+          <div class="rounded p-md flex flex-col gap-sm" style="background:rgba(26,74,46,0.12);border:1px solid rgba(26,74,46,0.35)">
+            <span class="text-body-md text-background/80">Nueva cláusula de <strong>{{ primerNombre(j.nombre) }}</strong> (actual {{ (j.clausula ?? j.precio) | number:'1.0-1' }}M). Solo puedes subirla.</span>
+            <div class="flex items-center gap-sm">
+              <input type="number" [(ngModel)]="nuevaClausula" [min]="j.clausula ?? 0" step="1"
+                class="flex-1 py-sm px-md rounded bg-white/10 text-background font-bold outline-none"
+                style="border:1px solid rgba(255,255,255,0.15)" />
+              <span class="text-body-md font-bold text-background/60">M</span>
+            </div>
+            <div class="flex gap-sm">
+              <button (click)="subiendoClausula.set(false)"
+                class="flex-1 py-sm rounded text-label-bold font-bold text-background/70 hover:text-background transition-colors"
+                style="border:1px solid rgba(255,255,255,0.15)">Cancelar</button>
+              <button (click)="confirmarSubirClausula()" [disabled]="procesandoClausula()"
+                class="flex-1 py-sm rounded text-label-bold font-bold bg-tertiary text-on-accent hover:opacity-90 transition-opacity disabled:opacity-50">
+                {{ procesandoClausula() ? 'Guardando…' : 'Subir cláusula' }}
+              </button>
+            </div>
+          </div>
         } @else {
           @if (j.titular) {
             <button (click)="moverAlBanquillo()"
@@ -356,12 +375,11 @@
             <span class="ml-auto text-[10px] uppercase tracking-wider bg-white/10 text-background/50 px-2 py-0.5 rounded-full">Próximamente</span>
           </button>
 
-          <button disabled
-            class="flex items-center gap-2 w-full py-sm px-md rounded text-label-bold font-bold text-background/35 cursor-not-allowed"
-            style="border:1px solid rgba(255,255,255,0.08)">
+          <button (click)="abrirSubirClausula()"
+            class="flex items-center gap-2 w-full py-sm px-md rounded text-label-bold font-bold text-on-accent bg-tertiary hover:opacity-90 transition-opacity">
             <span class="material-symbols-outlined text-[18px]">trending_up</span>
             Subir cláusula
-            <span class="ml-auto text-[10px] uppercase tracking-wider bg-white/10 text-background/50 px-2 py-0.5 rounded-full">Próximamente</span>
+            <span class="ml-auto text-body-md text-on-accent/80">{{ (j.clausula ?? j.precio) | number:'1.0-1' }}M</span>
           </button>
         }
       </div>

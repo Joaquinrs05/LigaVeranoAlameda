@@ -1,5 +1,6 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { NavbarLightComponent } from '../../../shared/components/navbar/navbar-light/navbar-light.component';
@@ -23,7 +24,7 @@ const FORMACIONES: Record<Formacion, { portero: number; defensa: number; centroc
 @Component({
   selector: 'app-mi-equipo',
   standalone: true,
-  imports: [NavbarLightComponent, FooterComponent, RouterLink, DecimalPipe, PlayerCardComponent],
+  imports: [NavbarLightComponent, FooterComponent, RouterLink, DecimalPipe, PlayerCardComponent, FormsModule],
   templateUrl: './mi-equipo.component.html',
 })
 export class MiEquipoComponent implements OnInit {
@@ -38,6 +39,9 @@ export class MiEquipoComponent implements OnInit {
   readonly confirmandoVenta = signal(false);
   readonly vendiendo       = signal(false);
   readonly sustituyendo    = signal(false);
+  readonly subiendoClausula   = signal(false);
+  readonly procesandoClausula = signal(false);
+  nuevaClausula = 0;
 
   // Hoy el backend reembolsa precio_compra completo (= precio). La economía
   // de "media cláusula" requiere columna `clausula` en backend (ver FANTASY-PENDIENTE).
@@ -157,6 +161,33 @@ export class MiEquipoComponent implements OnInit {
     this.seleccionado.set(null);
     this.confirmandoVenta.set(false);
     this.sustituyendo.set(false);
+    this.subiendoClausula.set(false);
+  }
+
+  abrirSubirClausula(): void {
+    const j = this.detalle();
+    this.nuevaClausula = j?.clausula ?? j?.precio ?? 0;
+    this.subiendoClausula.set(true);
+  }
+
+  async confirmarSubirClausula(): Promise<void> {
+    const j = this.detalle();
+    if (!j || this.procesandoClausula()) return;
+    const valor = Number(this.nuevaClausula);
+    const minimo = j.clausula ?? 0;
+    if (!(valor > 0) || valor < minimo) {
+      this._mostrarError(`La cláusula solo se puede subir (mínimo ${minimo}M)`);
+      return;
+    }
+    this.procesandoClausula.set(true);
+    try {
+      await this.fantasy.subirClausula(j.id, valor);
+      this.cerrarDetalle();
+    } catch {
+      this._mostrarError('No se pudo actualizar la cláusula.');
+    } finally {
+      this.procesandoClausula.set(false);
+    }
   }
 
   subirAlOnce(): void {

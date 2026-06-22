@@ -8,6 +8,7 @@ export interface IJugadorFantasy {
   precio: number;
   estado: 'disponible' | 'lesionado' | 'sancionado';
   titular: boolean;
+  clausula?: number;
   fotoUrl?: string;
 }
 
@@ -35,5 +36,6 @@ export interface IClasificacionFantasy {
   propietario: string;
   puntos: number;
   pj: number;
+  miembroId: string;
   esUsuario?: boolean;
 }

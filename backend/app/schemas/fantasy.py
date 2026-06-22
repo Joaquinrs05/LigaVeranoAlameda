@@ -72,6 +72,7 @@ class PlantillaItemOut(BaseModel):
     es_titular: bool
     es_capitan: bool
     precio_compra: Decimal
+    clausula: Decimal = Decimal(0)
     fichado_at: datetime
     puntos_total: int = 0
 
@@ -99,4 +100,12 @@ class ActualizarPlantillaIn(BaseModel):
 
 
 class FicharJugadorIn(BaseModel):
+    jugador_id: UUID
+
+
+class SubirClausulaIn(BaseModel):
+    clausula: Decimal = Field(gt=Decimal(0))
+
+
+class ClausulazoIn(BaseModel):
     jugador_id: UUID

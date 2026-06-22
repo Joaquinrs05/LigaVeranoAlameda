@@ -65,6 +65,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/fantasy/mi-equipo/mi-equipo.component').then(m => m.MiEquipoComponent),
       },
       {
+        path: 'equipo/:miembroId',
+        loadComponent: () => import('./features/fantasy/equipo-rival/equipo-rival.component').then(m => m.EquipoRivalComponent),
+      },
+      {
         path: 'ligas',
         loadComponent: () => import('./features/fantasy/mis-ligas/mis-ligas.component').then(m => m.MisLigasComponent),
       },

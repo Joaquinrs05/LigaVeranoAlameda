@@ -141,8 +141,9 @@
 
         <div class="divide-y" style="divide-color:rgba(192,85,42,0.08)">
           @for (entry of clasificacion(); track entry.posicion) {
-            <div
-              class="flex items-center px-md py-md transition-colors hover:bg-primary/3"
+            <a
+              [routerLink]="entry.esUsuario ? '/fantasy/mi-equipo' : ['/fantasy/equipo', entry.miembroId]"
+              class="flex items-center px-md py-md transition-colors hover:bg-primary/3 cursor-pointer"
               [class.border-l-2]="entry.esUsuario"
               [class.border-l-tertiary]="entry.esUsuario"
               [style.background]="entry.posicion === 1 ? 'linear-gradient(90deg,rgba(192,85,42,0.06) 0%,transparent 60%)' : entry.esUsuario ? 'rgba(26,74,46,0.04)' : ''"
@@ -180,7 +181,7 @@
                   [class.text-tertiary]="entry.esUsuario"
                 >{{ entry.puntos }}</span>
               </div>
-            </div>
+            </a>
           }
         </div>
       </div>

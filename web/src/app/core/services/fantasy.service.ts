@@ -35,6 +35,7 @@ interface ApiPlantillaItem {
   id: string; miembro_id: string; jugador_id: string;
   jugador: ApiJugadorBase | null;
   es_titular: boolean; es_capitan: boolean; precio_compra: number;
+  clausula: number;
   puntos_total: number;
 }
 interface ApiJugadorMercado extends ApiJugadorBase { activo: boolean }
@@ -140,6 +141,41 @@ export class FantasyService {
     this._cargarDatosLiga(id);
   }
 
+  // Plantilla de otro miembro de la liga (solo lectura, para el cláusulazo).
+  async verEquipoMiembro(miembroId: string): Promise<IJugadorFantasy[]> {
+    const id = this.ligaId();
+    if (!id) return [];
+    const r = await firstValueFrom(
+      this.http.get<ApiResp<ApiPlantillaItem[]>>(
+        `${this.base}/fantasy/ligas/${id}/miembros/${miembroId}/equipo`
+      )
+    );
+    return r.data?.map(item => this._mapPlantillaItem(item)) ?? [];
+  }
+
+  // Robar un jugador de otro equipo pagando su cláusula.
+  async clausulazo(jugadorId: string): Promise<void> {
+    const id = this.ligaId();
+    if (!id) return;
+    await firstValueFrom(
+      this.http.post(`${this.base}/fantasy/ligas/${id}/clausulazos`, { jugador_id: jugadorId })
+    );
+    this._cargarDatosLiga(id);
+  }
+
+  // Subir la cláusula de un jugador propio.
+  async subirClausula(jugadorId: string, clausula: number): Promise<void> {
+    const id = this.ligaId();
+    if (!id) return;
+    await firstValueFrom(
+      this.http.patch(
+        `${this.base}/fantasy/ligas/${id}/mi-equipo/${jugadorId}/clausula`,
+        { clausula }
+      )
+    );
+    this.refrescarMiEquipo();
+  }
+
   actualizarPlantilla(
     jugadores: { jugador_id: string; es_titular: boolean; es_capitan: boolean }[]
   ): void {
@@ -189,6 +225,7 @@ export class FantasyService {
       propietario: c.nombre_equipo,
       puntos:      c.puntos_total,
       pj:          0,
+      miembroId:   c.miembro_id,
       esUsuario:   c.usuario_id === uid,
     };
   }
@@ -204,6 +241,7 @@ export class FantasyService {
       precio:           Number(item.precio_compra),
       estado:           (item.jugador?.estado_fantasy ?? 'disponible') as IJugadorFantasy['estado'],
       titular:          item.es_titular,
+      clausula:         Number(item.clausula ?? item.precio_compra),
       fotoUrl:          item.jugador?.foto_url ?? undefined,
     };
   }
