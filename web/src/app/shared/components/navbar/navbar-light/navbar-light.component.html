@@ -39,16 +39,37 @@
       </button>
     }
 
-    @if (auth.autenticado() && auth.usuario()?.fotoPerfil) {
-      <a routerLink="/ajustes">
-        <img
-          [src]="auth.usuario()!.fotoPerfil!"
-          class="w-8 h-8 rounded-full object-cover border border-background/50 hover:border-secondary transition-colors cursor-pointer"
-        />
-      </a>
+    @if (auth.autenticado()) {
+      <!-- móvil: abre modal de perfil -->
+      <button
+        (click)="togglePerfilModal()"
+        class="md:hidden w-8 h-8 rounded-full overflow-hidden border border-background/50 hover:border-secondary transition-colors flex items-center justify-center bg-white/20"
+      >
+        @if (auth.usuario()?.fotoPerfil) {
+          <img [src]="auth.usuario()!.fotoPerfil!" class="w-full h-full object-cover" />
+        } @else {
+          <span class="material-symbols-outlined text-on-accent text-[18px]">person</span>
+        }
+      </button>
+      <!-- desktop: va a ajustes -->
+      @if (auth.usuario()?.fotoPerfil) {
+        <a routerLink="/ajustes" class="hidden md:block">
+          <img
+            [src]="auth.usuario()!.fotoPerfil!"
+            class="w-8 h-8 rounded-full object-cover border border-background/50 hover:border-secondary transition-colors cursor-pointer"
+          />
+        </a>
+      } @else {
+        <a
+          routerLink="/ajustes"
+          class="hidden md:flex w-8 h-8 rounded-full bg-white/20 border border-background/50 items-center justify-center hover:border-secondary transition-colors"
+        >
+          <span class="material-symbols-outlined text-on-accent text-[18px]">person</span>
+        </a>
+      }
     } @else {
       <a
-        [routerLink]="auth.autenticado() ? '/ajustes' : '/auth/login'"
+        routerLink="/auth/login"
         class="w-8 h-8 rounded-full bg-white/20 border border-background/50 flex items-center justify-center hover:border-secondary transition-colors"
       >
         <span class="material-symbols-outlined text-on-accent text-[18px]">person</span>
@@ -146,6 +167,32 @@
         <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
         Mercado
       </a>
+    </div>
+  </div>
+}
+
+<!-- ── Modal Perfil (móvil) ── -->
+@if (perfilModalAbierto()) {
+  <div class="md:hidden fixed inset-0 z-50" (click)="cerrarPerfilModal()">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div
+      (click)="$event.stopPropagation()"
+      class="absolute bottom-16 left-0 right-0 bg-surface border-t border-outline shadow-2xl px-margin-mobile py-sm flex flex-col"
+    >
+      <button
+        (click)="irAjustes()"
+        class="flex items-center gap-md py-sm px-sm rounded text-body-md text-on-surface hover:bg-background transition-colors"
+      >
+        <span class="material-symbols-outlined text-[20px]">settings</span>
+        Ajustes
+      </button>
+      <button
+        (click)="cerrarSesion()"
+        class="flex items-center gap-md py-sm px-sm rounded text-body-md text-primary hover:bg-background transition-colors"
+      >
+        <span class="material-symbols-outlined text-[20px]">logout</span>
+        Cerrar sesión
+      </button>
     </div>
   </div>
 }
