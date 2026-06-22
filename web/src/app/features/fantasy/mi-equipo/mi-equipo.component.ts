@@ -217,9 +217,14 @@ export class MiEquipoComponent implements OnInit {
     const j = this.detalle();
     if (!j || this.procesandoClausula()) return;
     const valor = Number(this.nuevaClausula);
-    const minimo = j.clausula ?? 0;
-    if (!(valor > 0) || valor < minimo) {
-      this._mostrarError(`La cláusula solo se puede subir (mínimo ${minimo}M)`);
+    const actual = j.clausula ?? 0;
+    if (!(valor > 0) || valor <= actual) {
+      this._mostrarError(`La cláusula solo se puede subir (actual ${actual}M)`);
+      return;
+    }
+    const costo = valor - actual;
+    if (costo > this.equipo.presupuesto) {
+      this._mostrarError(`Presupuesto insuficiente: cuesta ${costo}M y tienes ${this.equipo.presupuesto}M`);
       return;
     }
     this.procesandoClausula.set(true);

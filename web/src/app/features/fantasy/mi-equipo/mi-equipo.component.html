@@ -346,18 +346,27 @@
           </div>
         } @else if (subiendoClausula()) {
           <div class="rounded p-md flex flex-col gap-sm" style="background:rgba(26,74,46,0.12);border:1px solid rgba(26,74,46,0.35)">
-            <span class="text-body-md text-background/80">Nueva cláusula de <strong>{{ primerNombre(j.nombre) }}</strong> (actual {{ (j.clausula ?? j.precio) | number:'1.0-1' }}M). Solo puedes subirla.</span>
+            <span class="text-body-md text-background/80">Nueva cláusula de <strong>{{ primerNombre(j.nombre) }}</strong>. Actual: <strong>{{ (j.clausula ?? j.precio) | number:'1.0-1' }}M</strong>. El incremento se descuenta de tu presupuesto.</span>
             <div class="flex items-center gap-sm">
-              <input type="number" [(ngModel)]="nuevaClausula" [min]="j.clausula ?? 0" step="1"
+              <input type="number" [(ngModel)]="nuevaClausula" [min]="(j.clausula ?? j.precio) + 0.5" step="0.5"
                 class="flex-1 py-sm px-md rounded bg-white/10 text-background font-bold outline-none"
                 style="border:1px solid rgba(255,255,255,0.15)" />
               <span class="text-body-md font-bold text-background/60">M</span>
             </div>
+            @if (nuevaClausula > (j.clausula ?? j.precio)) {
+              <div class="flex justify-between text-[12px] px-xs">
+                <span class="text-background/60">Te costará: <strong class="text-secondary">{{ (nuevaClausula - (j.clausula ?? j.precio)) | number:'1.0-1' }}M</strong></span>
+                <span [class.text-red-400]="(nuevaClausula - (j.clausula ?? j.precio)) > equipo.presupuesto"
+                      [class.text-background]="!((nuevaClausula - (j.clausula ?? j.precio)) > equipo.presupuesto)">
+                  Te quedarás con: <strong>{{ (equipo.presupuesto - (nuevaClausula - (j.clausula ?? j.precio))) | number:'1.0-1' }}M</strong>
+                </span>
+              </div>
+            }
             <div class="flex gap-sm">
               <button (click)="subiendoClausula.set(false)"
                 class="flex-1 py-sm rounded text-label-bold font-bold text-background/70 hover:text-background transition-colors"
                 style="border:1px solid rgba(255,255,255,0.15)">Cancelar</button>
-              <button (click)="confirmarSubirClausula()" [disabled]="procesandoClausula()"
+              <button (click)="confirmarSubirClausula()" [disabled]="procesandoClausula() || nuevaClausula <= (j.clausula ?? j.precio) || (nuevaClausula - (j.clausula ?? j.precio)) > equipo.presupuesto"
                 class="flex-1 py-sm rounded text-label-bold font-bold bg-tertiary text-on-accent hover:opacity-90 transition-opacity disabled:opacity-50">
                 {{ procesandoClausula() ? 'Guardando…' : 'Subir cláusula' }}
               </button>

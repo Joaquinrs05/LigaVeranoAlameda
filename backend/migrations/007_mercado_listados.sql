@@ -166,6 +166,55 @@ BEGIN
 END;
 $$;
 
+-- ── subir_clausula (recreada: el incremento se cobra del presupuesto) ────────
+
+CREATE OR REPLACE FUNCTION subir_clausula(
+  p_liga_id uuid, p_usuario_id uuid, p_jugador_id uuid, p_clausula numeric
+) RETURNS plantilla_fantasy
+LANGUAGE plpgsql AS $$
+DECLARE
+  v_miembro miembros_liga_fantasy;
+  v_actual  numeric;
+  v_costo   numeric;
+  v_fila    plantilla_fantasy;
+BEGIN
+  SELECT * INTO v_miembro FROM miembros_liga_fantasy
+    WHERE liga_id = p_liga_id AND usuario_id = p_usuario_id
+    FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'No eres miembro de esta liga' USING ERRCODE = 'PT403';
+  END IF;
+
+  SELECT clausula INTO v_actual FROM plantilla_fantasy
+    WHERE miembro_id = v_miembro.id AND jugador_id = p_jugador_id
+    FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Jugador no está en tu plantilla' USING ERRCODE = 'PT404';
+  END IF;
+
+  IF p_clausula <= v_actual THEN
+    RAISE EXCEPTION 'La cláusula solo se puede subir' USING ERRCODE = 'PT400';
+  END IF;
+
+  v_costo := p_clausula - v_actual;
+
+  IF v_costo > v_miembro.presupuesto THEN
+    RAISE EXCEPTION 'Presupuesto insuficiente: subir la cláusula cuesta %.1fM y tienes %.1fM',
+      v_costo, v_miembro.presupuesto USING ERRCODE = 'PT400';
+  END IF;
+
+  UPDATE miembros_liga_fantasy
+    SET presupuesto = presupuesto - v_costo
+    WHERE id = v_miembro.id;
+
+  UPDATE plantilla_fantasy SET clausula = p_clausula
+    WHERE miembro_id = v_miembro.id AND jugador_id = p_jugador_id
+    RETURNING * INTO v_fila;
+
+  RETURN v_fila;
+END;
+$$;
+
 -- ── vender_jugador (recreada: sin check de mercado, reembolso = cláusula / 2) ─
 
 CREATE OR REPLACE FUNCTION vender_jugador(
@@ -283,15 +332,17 @@ $$;
 
 -- ── Permisos ─────────────────────────────────────────────────────────────────
 
-REVOKE ALL ON FUNCTION listar_jugador(uuid, uuid, uuid, numeric) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION cancelar_listado(uuid, uuid, uuid)        FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION comprar_listado(uuid, uuid, uuid)         FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION vender_jugador(uuid, uuid, uuid)          FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION clausulazo(uuid, uuid, uuid)              FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION listar_jugador(uuid, uuid, uuid, numeric)  FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION cancelar_listado(uuid, uuid, uuid)         FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION comprar_listado(uuid, uuid, uuid)          FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION subir_clausula(uuid, uuid, uuid, numeric)  FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION vender_jugador(uuid, uuid, uuid)           FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION clausulazo(uuid, uuid, uuid)               FROM PUBLIC, anon, authenticated;
 
 GRANT EXECUTE ON FUNCTION listar_jugador(uuid, uuid, uuid, numeric) TO service_role;
 GRANT EXECUTE ON FUNCTION cancelar_listado(uuid, uuid, uuid)        TO service_role;
 GRANT EXECUTE ON FUNCTION comprar_listado(uuid, uuid, uuid)         TO service_role;
+GRANT EXECUTE ON FUNCTION subir_clausula(uuid, uuid, uuid, numeric) TO service_role;
 GRANT EXECUTE ON FUNCTION vender_jugador(uuid, uuid, uuid)          TO service_role;
 GRANT EXECUTE ON FUNCTION clausulazo(uuid, uuid, uuid)              TO service_role;
 
