@@ -1,18 +1,1 @@
-@if (mostrarSplash()) {
-  <app-splash (cerrado)="cerrarSplash()" />
-}
-
 <router-outlet />
-
-@if (audio.activo()) {
-  <button
-    type="button"
-    (click)="audio.toggleSilencio()"
-    [attr.aria-label]="audio.silenciado() ? 'Activar himno' : 'Silenciar himno'"
-    class="fixed bottom-margin-mobile right-margin-mobile z-50 flex h-12 w-12 items-center justify-center rounded-full bg-tertiary text-on-accent shadow-lg transition-transform hover:scale-105 active:scale-95"
-  >
-    <span class="material-symbols-outlined">
-      {{ audio.silenciado() ? 'music_off' : 'music_note' }}
-    </span>
-  </button>
-}
