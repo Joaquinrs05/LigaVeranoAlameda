@@ -6,8 +6,8 @@ import { NavbarLightComponent } from '../../shared/components/navbar/navbar-ligh
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { LigaRealService } from '../../core/services/liga-real.service';
 import { IPartido } from '../../core/models/partido.model';
-import { IClasificacionEntry } from '../../core/models/clasificacion.model';
 import { IGoleadorJornada } from '../../core/models/jugador.model';
+import { ICruce } from '../../core/models/torneo.model';
 
 @Component({
   selector: 'app-home',
@@ -114,13 +114,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.ligaReal.jornadaActual();
   }
 
-  readonly totalEquipos = computed(() => this.ligaReal.clasificacion().length);
-  readonly mostrarTodosClasificacion = signal(false);
+  get cuartos(): ICruce[] {
+    return this.ligaReal.cruces().cuartos;
+  }
 
-  readonly clasificacionVisible = computed<IClasificacionEntry[]>(() => {
-    const all = this.ligaReal.clasificacion();
-    return (this.mostrarTodosClasificacion() || all.length <= 6) ? all : all.slice(0, 6);
-  });
+  isWinner(cruce: ICruce, lado: 'local' | 'visitante'): boolean {
+    if (cruce.estado !== 'finished' || cruce.golesLocal === null || cruce.golesVisitante === null) return false;
+    return lado === 'local'
+      ? cruce.golesLocal > cruce.golesVisitante
+      : cruce.golesVisitante > cruce.golesLocal;
+  }
+
+  abrev(nombre: string): string {
+    return nombre.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase();
+  }
 
   readonly totalGoleadores = computed(() => this.ligaReal.goleadores().length);
   readonly mostrarTodosGoleadores = signal(false);
@@ -131,9 +138,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.ligaReal.cargarClasificacion();
     this.ligaReal.cargarPartidos();
     this.ligaReal.cargarGoleadores();
+    this.ligaReal.cargarCruces();
 
     this.slideTimer = setInterval(() => {
       const total = this.partidosDelDia.length;

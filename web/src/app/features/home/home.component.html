@@ -315,9 +315,9 @@
       </div>
     </section>
 
-    <!-- ── SECCIÓN 2: Clasificación + Goleadores ── -->
+    <!-- ── SECCIÓN 2: Cuartos de Final + Goleadores ── -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-lg items-start">
-      <!-- Clasificación -->
+      <!-- Cuartos de Final -->
       <div
         data-anim="clasificacion"
         class="flex flex-col overflow-hidden rounded"
@@ -345,7 +345,7 @@
             >
               <span class="material-symbols-outlined" style="font-size: 13px">trophy</span>
             </span>
-            Clasificación
+            Cuartos de Final
           </h3>
           <a
             routerLink="/clasificacion"
@@ -355,93 +355,62 @@
           </a>
         </div>
 
-        <div class="relative overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr
-                  class="text-[10px] font-bold text-on-background/50 uppercase tracking-widest"
-                  style="
-                    border-bottom: 1px solid rgba(192, 85, 42, 0.15);
-                    background: rgba(245, 240, 232, 0.4);
-                  "
-                >
-                  <th class="p-sm pl-md w-8">#</th>
-                  <th class="p-sm">Equipo</th>
-                  <th class="p-sm text-center w-8">PJ</th>
-                  <th class="p-sm text-center w-8">PG</th>
-                  <th class="p-sm text-center w-8">PE</th>
-                  <th class="p-sm text-center w-8">PP</th>
-                  <th class="p-sm text-center w-10">GD</th>
-                  <th class="p-sm pr-md text-right w-10">Pts</th>
-                </tr>
-              </thead>
-              <tbody class="text-data-mono">
-                @for (entry of clasificacionVisible(); track entry.posicion) {
-                  <tr
-                    class="transition-colors hover:bg-primary/4"
-                    [style.background]="
-                      $index === 0
-                        ? 'linear-gradient(90deg, rgba(192,85,42,0.06) 0%, transparent 60%)'
-                        : ''
-                    "
-                    style="border-bottom: 1px solid rgba(192, 85, 42, 0.1)"
-                  >
-                    <td
-                      class="p-sm pl-md font-bold"
-                      [class.text-primary]="$index === 0"
-                      [class.text-on-background/40]="$index !== 0"
-                    >
-                      {{ entry.posicion }}
-                    </td>
-                    <td class="p-sm font-semibold text-on-background text-body-md">
-                      {{ entry.equipo }}
-                    </td>
-                    <td class="p-sm text-center text-on-background/60">{{ entry.pj }}</td>
-                    <td class="p-sm text-center text-on-background/60">{{ entry.pg }}</td>
-                    <td class="p-sm text-center text-on-background/60">{{ entry.pe }}</td>
-                    <td class="p-sm text-center text-on-background/60">{{ entry.pp }}</td>
-                    <td class="p-sm text-center text-on-background/60">
-                      {{ entry.gf - entry.gc }}
-                    </td>
-                    <td class="p-sm pr-md text-right font-bold text-primary">{{ entry.puntos }}</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-
-        </div>
-
-        @if (totalEquipos() > 6 && !mostrarTodosClasificacion()) {
-          <div
-            class="h-12 -mt-12 pointer-events-none relative z-10"
-            style="background: linear-gradient(to top, var(--fade-surface) 0%, transparent 100%);"
-          ></div>
-        }
-
-        <!-- Botón expandir/colapsar -->
-        @if (totalEquipos() > 6) {
-          @if (!mostrarTodosClasificacion()) {
-            <button
-              (click)="mostrarTodosClasificacion.set(true)"
-              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/5"
-              style="border-top: 1px solid rgba(192, 85, 42, 0.12)"
-            >
-              <span class="material-symbols-outlined text-[16px]">expand_more</span>
-              Ver todos los equipos
-            </button>
-          } @else {
-            <button
-              (click)="mostrarTodosClasificacion.set(false)"
-              class="w-full py-sm flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-on-background/40 transition-colors hover:bg-primary/5"
-              style="border-top: 5px solid rgba(192, 85, 42, 0.12)"
-            >
-              <span class="material-symbols-outlined text-[16px]">expand_less</span>
-              Ver menos
-            </button>
+        <div class="p-md flex flex-col gap-sm">
+          @for (cruce of cuartos; track cruce.id) {
+            <div class="rounded overflow-hidden border border-outline/30 bg-surface">
+              <div
+                class="flex items-center justify-between px-3 gap-2 border-b border-outline/20"
+                style="height:40px"
+                [class.bg-background/50]="isWinner(cruce, 'local')"
+              >
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                  <div
+                    class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
+                    [class.bg-primary]="cruce.equipoLocal !== null"
+                    [class.text-on-accent]="cruce.equipoLocal !== null"
+                    [class.bg-outline/30]="cruce.equipoLocal === null"
+                    [class.text-on-background/50]="cruce.equipoLocal === null"
+                  >{{ cruce.equipoLocal ? abrev(cruce.equipoLocal) : '?' }}</div>
+                  <span
+                    class="text-body-md font-semibold truncate"
+                    [class.text-on-background]="cruce.equipoLocal !== null"
+                    [class.text-on-background/50]="cruce.equipoLocal === null"
+                  >{{ cruce.equipoLocal ?? 'Sin definir' }}</span>
+                </div>
+                <span
+                  class="text-body-lg font-bold tabular-nums shrink-0"
+                  [class.text-on-background]="cruce.golesLocal !== null"
+                  [class.text-on-background/30]="cruce.golesLocal === null"
+                >{{ cruce.golesLocal ?? '—' }}</span>
+              </div>
+              <div
+                class="flex items-center justify-between px-3 gap-2"
+                style="height:40px"
+                [class.bg-background/50]="isWinner(cruce, 'visitante')"
+              >
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                  <div
+                    class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[9px] font-bold"
+                    [class.bg-tertiary]="cruce.equipoVisitante !== null"
+                    [class.text-on-accent]="cruce.equipoVisitante !== null"
+                    [class.bg-outline/30]="cruce.equipoVisitante === null"
+                    [class.text-on-background/50]="cruce.equipoVisitante === null"
+                  >{{ cruce.equipoVisitante ? abrev(cruce.equipoVisitante) : '?' }}</div>
+                  <span
+                    class="text-body-md font-semibold truncate"
+                    [class.text-on-background]="cruce.equipoVisitante !== null"
+                    [class.text-on-background/50]="cruce.equipoVisitante === null"
+                  >{{ cruce.equipoVisitante ?? 'Sin definir' }}</span>
+                </div>
+                <span
+                  class="text-body-lg font-bold tabular-nums shrink-0"
+                  [class.text-on-background]="cruce.golesVisitante !== null"
+                  [class.text-on-background/30]="cruce.golesVisitante === null"
+                >{{ cruce.golesVisitante ?? '—' }}</span>
+              </div>
+            </div>
           }
-        }
+        </div>
       </div>
 
       <!-- Goleadores -->
