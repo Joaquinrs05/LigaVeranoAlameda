@@ -1,119 +1,123 @@
-# Liga Verano Alameda
+# Liga Verano Alameda ⚽
 
-Aplicación web para la Liga de Fútbol Sala Alameda. Combina una **web informativa pública** con un **módulo Fantasy privado** para gestionar equipos, fichajes y puntuaciones.
+Aplicación web completa para la Liga de Fútbol Sala Alameda: una **web pública** con calendario, clasificación y equipos de la liga, y un **juego Fantasy privado** en el que cada usuario gestiona su propio equipo con jugadores reales de la competición.
 
----
-
-## Módulos
-
-### Web informativa (modo claro)
-Vista pública sin necesidad de login. Muestra la clasificación, resultados, estadísticas y fichas de equipos y jugadores reales de la liga.
-
-### Módulo Fantasy (requiere login)
-Panel privado para la competición fantasy. Gestión del equipo, mercado de fichajes, puntuaciones por jornada y clasificación fantasy.
+🔗 **Demo:** https://liga-verano-alameda.vercel.app  
+👤 **Autor:** Joaquín Rodríguez Sánchez · [LinkedIn](https://linkedin.com/in/joaquin-rodriguez-sanchez) · [GitHub](https://github.com/Joaquinrs05) · joaquinrodsanchez@gmail.com
 
 ---
 
-## Stack
+## En resumen
+
+- **Proyecto full-stack de principio a fin:** diseño, frontend, API REST propia, base de datos, autenticación y despliegue.
+- **De prototipo a aplicación desplegada** con demo pública.
+- **Stack moderno:** Angular (Signals, standalone), TypeScript strict, Tailwind CSS v4, Python + FastAPI, PostgreSQL (Supabase), Docker.
+- **Metodología spec-driven:** cada funcionalidad se define primero en una especificación escrita y después se implementa.
+
+---
+
+## Funcionalidades
+
+### Web pública (sin registro)
+- Portada con próximos partidos y resumen de la clasificación
+- Clasificación completa de la liga
+- Listado de equipos y ficha de detalle de cada equipo y sus jugadores
+
+### Fantasy (con login)
+- Registro e inicio de sesión con email/contraseña o **Google**
+- **Mi equipo:** alineación visual sobre el campo y gestión de reservas
+- **Mercado:** buscador de jugadores con filtros y fichajes
+- **Dashboard:** puntuaciones por jornada y clasificación fantasy
+- **Ajustes:** perfil, notificaciones y configuración de la liga
+
+---
+
+## Stack técnico
 
 | Capa | Tecnología |
 |---|---|
-| Frontend | Angular (standalone components, Signals, Tailwind CSS v4) |
+| Frontend | Angular (standalone components, Signals) |
 | Lenguaje | TypeScript strict |
-| Estilos | Tailwind CSS v4 con tokens de diseño en `styles.css` |
-| Iconos | Material Symbols Outlined |
-| Fuente | Chivo (Google Fonts) |
-| Auth | Supabase Auth (email/contraseña + Google OAuth) |
-| Base de datos | Supabase (PostgreSQL) |
-| Backend | Python + FastAPI |
+| Estilos | Tailwind CSS v4 con design tokens propios |
+| Backend | Python + FastAPI (API REST, verificación de JWT) |
+| Base de datos | PostgreSQL (Supabase) |
+| Autenticación | Supabase Auth (email/contraseña + Google OAuth) |
+| Despliegue | Docker · Vercel |
+| UI | Material Symbols, tipografía Chivo |
 
 ---
 
-## Estructura del repositorio
+## Arquitectura
 
 ```
 LigaVerano/
-├── web/                    # App Angular
+├── web/                # Frontend Angular (SPA)
 │   └── src/app/
-│       ├── core/           # Modelos, servicios, datos mock
-│       ├── shared/         # Componentes reutilizables (navbar, footer, player-card)
-│       └── features/       # Una carpeta por pantalla
-├── specs/                  # Especificaciones de cada feature
-├── screens/                # Mockups HTML de referencia
-└── DESIGN.md               # Tokens de color y reglas de diseño
+│       ├── core/       # Modelos, servicios y guards
+│       ├── shared/     # Componentes reutilizables (navbar, footer, player-card)
+│       └── features/   # Una carpeta por pantalla
+├── backend/            # API REST en FastAPI
+├── specs/              # Especificación de cada funcionalidad
+├── screens/            # Mockups HTML de referencia
+└── DESIGN.md           # Sistema de diseño: colores, tipografía, reglas
 ```
+
+- **Frontend y backend desacoplados:** la SPA en Angular consume la API REST propia en Python.
+- **Separación clara** entre la parte pública (`/`, `/clasificacion`, `/equipos`) y la privada (`/fantasy/**`, `/ajustes`), protegida con `authGuard`.
+- **Autenticación:** el frontend se autentica con Supabase y envía el JWT al backend, que lo verifica antes de servir los datos del Fantasy.
+- **Sistema de diseño centralizado:** todos los colores salen de tokens definidos en `styles.css` (`@theme`), sin valores HEX en los templates.
 
 ---
 
-## Arrancar en desarrollo
+## Proceso de desarrollo
+
+El proyecto sigue un flujo **spec-driven**: antes de escribir código, cada funcionalidad tiene su especificación en `specs/`, con requisitos, pantallas y criterios. Así cada pieza está documentada y es fácil de mantener o ampliar.
+
+| ID | Funcionalidad | Estado |
+|---|---|---|
+| 00 | [Arquitectura](specs/00-architecture.md) | ✅ |
+| 01 | [Home](specs/01-home-dashboard.md) | ✅ |
+| 02 | [Clasificación](specs/02-clasificacion.md) | ✅ |
+| 03 | [Fantasy Dashboard](specs/03-fantasy-dashboard.md) | ✅ |
+| 04 | [Mercado](specs/04-mercado.md) | ✅ |
+| 05 | [Mi Equipo](specs/05-mi-equipo.md) | ✅ |
+| 06 | [Ajustes](specs/06-ajustes.md) | ✅ |
+| 07 | [Equipos](specs/07-equipos.md) | ✅ |
+| 08 | [Autenticación](specs/08-auth.md) | ✅ |
+| 09 | [Backend Python](specs/09-backend.md) | ✅ |
+
+---
+
+## Ejecutar en local
+
+**Frontend**
 
 ```bash
 cd web
 npm install
-ng serve
+ng serve        # http://localhost:4200
 ```
 
-Abre `http://localhost:4200`
+**Backend**
 
----
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload    # http://localhost:8000
+```
 
-## Specs
-
-Cada feature tiene su spec en `specs/`. El agente lee la spec antes de escribir código. El estado de cada spec refleja si la UI está implementada o pendiente.
-
-| ID | Spec | Estado | Notas |
-|---|---|---|---|
-| `00` | [Arquitectura](specs/00-architecture.md) | ✅ listo | Decisiones de stack, estructura y tokens de diseño |
-| `01` | [Home / Dashboard](specs/01-home-dashboard.md) | ✅ implementado | Portada pública con próximos partidos y clasificación |
-| `02` | [Clasificación](specs/02-clasificacion.md) | ✅ implementado | Tabla de clasificación de la liga |
-| `03` | [Fantasy Dashboard](specs/03-fantasy-dashboard.md) | ✅ implementado | Panel principal del módulo fantasy |
-| `04` | [Mercado](specs/04-mercado.md) | ✅ implementado | Grid de jugadores con filtros y acción de fichaje |
-| `05` | [Mi Equipo](specs/05-mi-equipo.md) | ✅ implementado | Alineación visual en campo + gestión de reservas |
-| `06` | [Ajustes](specs/06-ajustes.md) | ✅ implementado | Perfil, notificaciones, configuración de liga |
-| `07` | [Equipos](specs/07-equipos.md) | ✅ implementado | Listado de equipos y página de detalle |
-| `08` | [Autenticación](specs/08-auth.md) | 🔲 pendiente | Login, registro, Google OAuth vía Supabase, guards |
-| `09` | [Backend Python](specs/09-backend.md) | 🔲 pendiente | FastAPI + Supabase, verificación JWT, endpoints |
-
-### Convención de estados
-
-| Estado | Significado |
-|---|---|
-| ✅ implementado | UI Angular completa y funcionando |
-| 🔲 pendiente | Spec escrita, pendiente de implementar |
-| 🚧 en progreso | Implementación en curso |
-
----
-
-## Rutas
-
-| Ruta | Descripción | Auth |
-|---|---|---|
-| `/` | Home con próximos partidos | Pública |
-| `/clasificacion` | Tabla de la liga | Pública |
-| `/equipos` | Listado de equipos | Pública |
-| `/equipos/:id` | Detalle de equipo | Pública |
-| `/fantasy/dashboard` | Panel fantasy | 🔒 Requiere login |
-| `/fantasy/mi-equipo` | Mi equipo | 🔒 Requiere login |
-| `/fantasy/mercado` | Mercado de fichajes | 🔒 Requiere login |
-| `/ajustes` | Ajustes de cuenta | 🔒 Requiere login |
-| `/auth/login` | Login | Pública |
-| `/auth/register` | Registro | Pública |
-| `/auth/callback` | Callback OAuth Google | Pública |
-
-> Las rutas `/fantasy/**` estarán protegidas por `authGuard` una vez implementada la spec `08-auth`.
+Variables de entorno necesarias: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_JWT_SECRET`.
 
 ---
 
 ## Diseño
 
-Los tokens de color, tipografía y espaciado están definidos en [`DESIGN.md`](DESIGN.md) y en `web/src/styles.css` dentro del bloque `@theme`. **Nunca hardcodear colores HEX en los templates** — usar siempre clases Tailwind con los tokens.
+Identidad visual propia, documentada en [`DESIGN.md`](DESIGN.md):
 
-| Token | Valor | Uso |
+| Token | Color | Uso |
 |---|---|---|
-| `primary` | `#C0552A` | Terracota — identidad, títulos, botones |
-| `secondary` | `#FFD600` | Amarillo — solo sobre `tertiary` o `on-background` |
-| `tertiary` | `#1A4A2E` | Verde — navbar, acentos |
-| `background` | `#F5F0E8` | Fondo modo claro |
+| `primary` | `#C0552A` terracota | Identidad, títulos, botones |
+| `secondary` | `#FFD600` amarillo | Acentos sobre fondos oscuros |
+| `tertiary` | `#1A4A2E` verde | Navbar, acentos |
+| `background` | `#F5F0E8` | Fondo |
 | `on-background` | `#0F1923` | Texto principal |
-| `surface` | `#ffffff` | Cards |
-| `outline` | `rgba(192,85,42,0.3)` | Bordes |
